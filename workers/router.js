@@ -10,6 +10,8 @@ import { createCors } from './middleware/cors';
 import { authenticateRequest } from './middleware/auth';
 import { logAuditEvent } from './middleware/audit';
 import { encrypt, decrypt } from './middleware/encryption';
+import { validateMedicalFile, sanitizeInput, RateLimiter } from './middleware/security';
+import { errorResponse, successResponse, isValidFile, sanitizeFilename } from './utils/responses';
 
 // GIVC API Routes
 const API_ROUTES = {
@@ -85,15 +87,13 @@ export default {
           resourceId: path,
           timestamp: new Date(),
           resolved: false,
+          metadata: {
+            error: authResult.error,
+            userAgent: request.headers.get('User-Agent') || 'unknown'
+          }
         });
         
-        return new Response(JSON.stringify({ 
-          error: 'Unauthorized', 
-          message: 'Valid authentication required' 
-        }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
+        return errorResponse('UNAUTHORIZED', 'Valid authentication required', 401);
       }
 
       // Log authorized access
@@ -137,18 +137,12 @@ export default {
       }
 
       // Unknown endpoint
-      return new Response(JSON.stringify({ 
-        error: 'Not Found', 
-        message: 'API endpoint not found' 
-      }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      return errorResponse('NOT_FOUND', 'API endpoint not found', 404);
 
     } catch (error) {
       console.error('GIVC API Error:', error);
       
-      // Log system error
+      // Log system error with enhanced details
       await logAuditEvent(env, {
         type: 'system_error',
         severity: 'critical',
@@ -157,15 +151,14 @@ export default {
         resourceId: path,
         timestamp: new Date(),
         resolved: false,
+        metadata: {
+          errorStack: error.stack,
+          method: method,
+          path: path
+        }
       });
 
-      return new Response(JSON.stringify({ 
-        error: 'Internal Server Error', 
-        message: 'An unexpected error occurred' 
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      return errorResponse('INTERNAL_SERVER_ERROR', 'An unexpected error occurred', 500);
     }
   }
 };
@@ -203,85 +196,83 @@ async function handleAuthentication(request: Request, env: Env): Promise<Respons
 
   if (request.method === 'POST' && url.pathname === '/api/v1/auth/login') {
     try {
-      const { email, password } = await request.json();
+      const requestBody = await request.json();
+      const email = sanitizeInput(requestBody.email);
+      const password = sanitizeInput(requestBody.password);
       
-      // In a real implementation, validate against database
-      // For demo purposes, accept any non-empty credentials
-      if (email && password) {
-        const user = {
-          id: '1',
-          email: email,
-          name: email.includes('fadil') ? 'Dr. Al Fadil' : 'Healthcare Professional',
-          role: email.includes('fadil') ? 'admin' : 'physician',
-          permissions: ['read_medical_data', 'write_medical_data', 'access_ai_agents'],
-          organization: 'BRAINSAIT LTD',
-        };
-
-        // Generate JWT token (simplified for demo)
-        const token = `jwt_${Date.now()}_${user.id}`;
-        
-        // Log successful login
+      // Enhanced validation - check for non-empty credentials and basic email format
+      if (!email || !password || email.length < 3 || password.length < 3) {
         await logAuditEvent(env, {
-          type: 'successful_login',
-          severity: 'informational',
-          description: `User login: ${email}`,
-          userId: user.id,
+          type: 'failed_authentication',
+          severity: 'medium',
+          description: `Failed login attempt: invalid format`,
+          userId: 'unknown',
           timestamp: new Date(),
           resolved: true,
+          metadata: {
+            reason: 'invalid_format'
+          }
         });
-
-        return new Response(JSON.stringify({
-          success: true,
-          data: { user, token },
-          timestamp: new Date().toISOString(),
-          requestId: `req_${Date.now()}`,
-        }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
+        return errorResponse('INVALID_CREDENTIALS', 'Invalid email or password format', 401);
       }
+      
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return errorResponse('INVALID_EMAIL_FORMAT', 'Invalid email format', 400);
+      }
+      
+      // In a real implementation, validate against database with proper password hashing
+      // For demo purposes, accept valid email/password combinations
+      const user = {
+        id: email.includes('fadil') ? 'admin_1' : `user_${Date.now()}`,
+        email: email,
+        name: email.includes('fadil') ? 'Dr. Al Fadil' : 'Healthcare Professional',
+        role: email.includes('fadil') ? 'admin' : 'physician',
+        permissions: ['read_medical_data', 'write_medical_data', 'access_ai_agents'],
+        organization: 'BRAINSAIT LTD',
+      };
 
-      // Invalid credentials
+      // Generate enhanced JWT token with expiration (still demo-level but more secure)
+      const expirationTime = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours
+      const token = `jwt_${Date.now()}_${user.id}_${expirationTime}`;
+      
+      // Log successful login
       await logAuditEvent(env, {
-        type: 'failed_authentication',
-        severity: 'medium',
-        description: `Failed login attempt: ${email}`,
-        userId: 'unknown',
+        type: 'successful_login',
+        severity: 'informational',
+        description: `User login: ${email}`,
+        userId: user.id,
         timestamp: new Date(),
         resolved: true,
+        metadata: {
+          email: email,
+          role: user.role,
+          tokenExpiration: expirationTime
+        }
       });
 
-      return new Response(JSON.stringify({
-        success: false,
-        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' },
-        timestamp: new Date().toISOString(),
-        requestId: `req_${Date.now()}`,
-      }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      return successResponse(
+        { user, token, expiresAt: new Date(expirationTime * 1000).toISOString() },
+        'Authentication successful'
+      );
 
     } catch (error) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: { code: 'AUTH_ERROR', message: 'Authentication failed' },
-        timestamp: new Date().toISOString(),
-        requestId: `req_${Date.now()}`,
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      // Log authentication error
+      await logAuditEvent(env, {
+        type: 'authentication_error',
+        severity: 'high',
+        description: `Authentication system error: ${error.message}`,
+        userId: 'system',
+        timestamp: new Date(),
+        resolved: false,
       });
+      
+      return errorResponse('AUTH_ERROR', 'Authentication failed', 500);
     }
   }
 
-  return new Response(JSON.stringify({
-    success: false,
-    error: { code: 'METHOD_NOT_ALLOWED', message: 'Method not allowed' },
-    timestamp: new Date().toISOString(),
-    requestId: `req_${Date.now()}`,
-  }), {
-    status: 405,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return errorResponse('METHOD_NOT_ALLOWED', 'Method not allowed', 405);
 }
 
 // MediVault Handler
@@ -293,32 +284,43 @@ async function handleMediVault(request: Request, env: Env, user: any): Promise<R
     // List files from metadata store
     const files = await env.MEDICAL_METADATA.list();
     
-    return new Response(JSON.stringify({
-      success: true,
-      data: files.keys.map(key => ({ id: key.name, metadata: key.metadata })),
-      timestamp: new Date().toISOString(),
-      requestId: `req_${Date.now()}`,
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return successResponse(
+      files.keys.map(key => ({ id: key.name, metadata: key.metadata })),
+      'Files retrieved successfully'
+    );
   }
 
   if (request.method === 'POST' && url.pathname === '/api/v1/medivault/upload') {
-    // Handle file upload to R2
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
+    // Rate limiting check
+    const rateLimiter = new RateLimiter(env);
+    const userIdentifier = `upload_${user.id}`;
+    const isAllowed = await rateLimiter.isAllowed(userIdentifier, 50, 3600); // 50 uploads per hour
     
-    if (!file) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: { code: 'NO_FILE', message: 'No file provided' },
-        timestamp: new Date().toISOString(),
-        requestId: `req_${Date.now()}`,
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    if (!isAllowed) {
+      return errorResponse('RATE_LIMIT_EXCEEDED', 'Upload rate limit exceeded. Please try again later.', 429);
+    }
+
+    // Handle file upload to R2 with proper validation
+    const formData = await request.formData();
+    const fileData = formData.get('file');
+    
+    // Critical Fix: Replace unsafe type assertion with proper validation
+    if (!isValidFile(fileData)) {
+      return errorResponse('INVALID_FILE', 'No valid file provided or file is empty', 400);
+    }
+    
+    const file = fileData; // Now we know it's a valid File
+    
+    // Validate medical file compliance
+    const fileValidation = validateMedicalFile(file);
+    if (!fileValidation.valid) {
+      return errorResponse('FILE_VALIDATION_FAILED', 'File validation failed', 400, {
+        violations: fileValidation.violations
       });
     }
+    
+    // Sanitize filename
+    const sanitizedFilename = sanitizeFilename(file.name);
 
     const fileId = `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const fileData = await file.arrayBuffer();
@@ -326,22 +328,23 @@ async function handleMediVault(request: Request, env: Env, user: any): Promise<R
     // Encrypt file data
     const encryptedData = await encrypt(fileData, env.ENCRYPTION_KEY);
     
-    // Store in R2
+    // Store in R2 with sanitized metadata
     await env.MEDICAL_FILES.put(fileId, encryptedData, {
       customMetadata: {
-        originalName: file.name,
-        contentType: file.type,
+        originalName: sanitizeInput(sanitizedFilename),
+        contentType: sanitizeInput(file.type),
         uploadedBy: user.id,
         uploadedAt: new Date().toISOString(),
         encrypted: 'true',
+        fileSize: file.size.toString(),
       }
     });
     
-    // Store metadata in KV
+    // Store metadata in KV with sanitized data
     await env.MEDICAL_METADATA.put(fileId, JSON.stringify({
       id: fileId,
-      name: file.name,
-      type: file.type,
+      name: sanitizeInput(sanitizedFilename),
+      type: sanitizeInput(file.type),
       size: file.size,
       uploadedBy: user.id,
       uploadedAt: new Date().toISOString(),
@@ -349,107 +352,72 @@ async function handleMediVault(request: Request, env: Env, user: any): Promise<R
       complianceStatus: 'compliant',
     }));
 
-    // Log file upload
+    // Log file upload with enhanced audit details
     await logAuditEvent(env, {
       type: 'file_upload',
       severity: 'informational',
-      description: `File uploaded: ${file.name}`,
+      description: `File uploaded: ${sanitizedFilename} (${file.type}, ${file.size} bytes)`,
       userId: user.id,
       resourceId: fileId,
       timestamp: new Date(),
       resolved: true,
+      metadata: {
+        fileType: file.type,
+        fileSize: file.size,
+        sanitizedName: sanitizedFilename,
+        originalName: file.name
+      }
     });
 
-    return new Response(JSON.stringify({
-      success: true,
-      data: { fileId, message: 'File uploaded successfully' },
-      timestamp: new Date().toISOString(),
-      requestId: `req_${Date.now()}`,
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return successResponse(
+      { fileId, message: 'File uploaded successfully' },
+      'File uploaded and encrypted successfully'
+    );
   }
 
-  return new Response(JSON.stringify({
-    success: false,
-    error: { code: 'METHOD_NOT_ALLOWED', message: 'Method not allowed' },
-    timestamp: new Date().toISOString(),
-    requestId: `req_${Date.now()}`,
-  }), {
-    status: 405,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return errorResponse('METHOD_NOT_ALLOWED', 'Method not allowed', 405);
+}
 }
 
 // Placeholder handlers for other endpoints
 async function handleTriage(request: Request, env: Env, user: any): Promise<Response> {
-  const corsHeaders = createCors();
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'AI Triage endpoint - Implementation in progress',
-    timestamp: new Date().toISOString(),
-    requestId: `req_${Date.now()}`,
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return successResponse(
+    { message: 'AI Triage endpoint - Implementation in progress' },
+    'Triage service available'
+  );
 }
 
 async function handleDicomAgent(request: Request, env: Env, user: any): Promise<Response> {
-  const corsHeaders = createCors();
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'DICOM Analysis Agent endpoint - Implementation in progress',
-    timestamp: new Date().toISOString(),
-    requestId: `req_${Date.now()}`,
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return successResponse(
+    { message: 'DICOM Analysis Agent endpoint - Implementation in progress' },
+    'DICOM agent service available'
+  );
 }
 
 async function handleLabParser(request: Request, env: Env, user: any): Promise<Response> {
-  const corsHeaders = createCors();
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'Lab Parser Agent endpoint - Implementation in progress',
-    timestamp: new Date().toISOString(),
-    requestId: `req_${Date.now()}`,
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return successResponse(
+    { message: 'Lab Parser Agent endpoint - Implementation in progress' },
+    'Lab parser service available'
+  );
 }
 
 async function handleClinicalDecision(request: Request, env: Env, user: any): Promise<Response> {
-  const corsHeaders = createCors();
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'Clinical Decision Agent endpoint - Implementation in progress',
-    timestamp: new Date().toISOString(),
-    requestId: `req_${Date.now()}`,
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return successResponse(
+    { message: 'Clinical Decision Agent endpoint - Implementation in progress' },
+    'Clinical decision service available'
+  );
 }
 
 async function handleCompliance(request: Request, env: Env, user: any): Promise<Response> {
-  const corsHeaders = createCors();
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'Compliance Monitor endpoint - Implementation in progress',
-    timestamp: new Date().toISOString(),
-    requestId: `req_${Date.now()}`,
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return successResponse(
+    { message: 'Compliance Monitor endpoint - Implementation in progress' },
+    'Compliance monitoring service available'
+  );
 }
 
 async function handleAnalytics(request: Request, env: Env, user: any): Promise<Response> {
-  const corsHeaders = createCors();
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'Analytics endpoint - Implementation in progress',
-    timestamp: new Date().toISOString(),
-    requestId: `req_${Date.now()}`,
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return successResponse(
+    { message: 'Analytics endpoint - Implementation in progress' },
+    'Analytics service available'
+  );
 }
