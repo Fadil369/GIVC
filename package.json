@@ -52,7 +52,7 @@
     "vite": "^4.5.0",
     "vitest": "^0.34.6",
     "@vitest/coverage-v8": "^0.34.6",
-    "wrangler": "^3.15.0"
+    "wrangler": "^4.23.0"
   },
   "engines": {
     "node": ">=18.0.0"
