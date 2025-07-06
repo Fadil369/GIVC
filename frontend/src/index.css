@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+  
+  * {
+    @apply border-gray-200;
+  }
+}
+
+@layer components {
+  /* GIVC Button Styles */
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-600 hover:bg-secondary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2;
+  }
+  
+  .btn-outline {
+    @apply border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  /* Medical Priority Indicators */
+  .priority-critical {
+    @apply bg-medical-red text-white;
+  }
+  
+  .priority-high {
+    @apply bg-medical-orange text-white;
+  }
+  
+  .priority-medium {
+    @apply bg-medical-yellow text-gray-900;
+  }
+  
+  .priority-low {
+    @apply bg-medical-blue text-white;
+  }
+  
+  .priority-normal {
+    @apply bg-medical-green text-white;
+  }
+  
+  /* Compliance Status */
+  .compliance-secure {
+    @apply bg-compliance-secure text-white;
+  }
+  
+  .compliance-warning {
+    @apply bg-compliance-warning text-gray-900;
+  }
+  
+  .compliance-violation {
+    @apply bg-compliance-violation text-white;
+  }
+  
+  /* Card Styles */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  }
+  
+  .card-medical {
+    @apply bg-white rounded-lg shadow-medical border border-primary-200 p-6;
+  }
+  
+  .card-compliance {
+    @apply bg-white rounded-lg shadow-compliance border border-secondary-200 p-6;
+  }
+  
+  /* Form Styles */
+  .form-input {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+  }
+  
+  .form-textarea {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+  }
+  
+  .form-select {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+  }
+  
+  /* Loading States */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-4 border-gray-200 border-t-primary-600;
+  }
+  
+  /* GIVC Branding */
+  .givc-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #22c55e 100%);
+  }
+  
+  .givc-text-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #22c55e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
