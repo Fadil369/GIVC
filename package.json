@@ -1,0 +1,78 @@
+{
+  "name": "givc-healthcare-platform",
+  "version": "1.0.0",
+  "description": "GIVC (Global Integrated Virtual Care) Healthcare Platform - Full Stack Implementation with Cloudflare Integration",
+  "author": "Dr. Al Fadil (BRAINSAIT LTD)",
+  "license": "GPL-3.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "type-check": "tsc --noEmit",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy:workers": "cd workers && wrangler deploy",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.1",
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.294.0",
+    "framer-motion": "^10.16.5",
+    "react-dropzone": "^14.2.3",
+    "react-hook-form": "^7.48.2",
+    "axios": "^1.6.2",
+    "date-fns": "^2.30.0",
+    "uuid": "^9.0.1",
+    "jwt-decode": "^4.0.0",
+    "crypto-js": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@types/uuid": "^9.0.7",
+    "@types/crypto-js": "^4.2.1",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react": "^4.1.1",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.53.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0",
+    "vitest": "^0.34.6",
+    "@vitest/coverage-v8": "^0.34.6",
+    "wrangler": "^3.15.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fadil369/GIVC.git"
+  },
+  "homepage": "https://givc.thefadil.site",
+  "keywords": [
+    "healthcare",
+    "medical",
+    "ai",
+    "hipaa",
+    "rcm",
+    "cloudflare",
+    "workers",
+    "react",
+    "typescript",
+    "dicom",
+    "triage"
+  ]
+}

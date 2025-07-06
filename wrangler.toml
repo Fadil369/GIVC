@@ -1,0 +1,73 @@
+name = "givc-healthcare-platform"
+main = "workers/router.js"
+compatibility_date = "2023-11-01"
+
+[env.production]
+name = "givc-healthcare-platform"
+account_id = "your-cloudflare-account-id"
+workers_dev = false
+route = "givc.thefadil.site/*"
+
+[env.development]
+name = "givc-healthcare-platform-dev"
+workers_dev = true
+
+# KV Namespaces for medical metadata and audit logs
+[[kv_namespaces]]
+binding = "MEDICAL_METADATA"
+id = "your-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+[[kv_namespaces]]
+binding = "AUDIT_LOGS"
+id = "your-audit-kv-namespace-id"
+preview_id = "your-preview-audit-kv-namespace-id"
+
+# R2 Bucket for medical file storage
+[[r2_buckets]]
+binding = "MEDICAL_FILES"
+bucket_name = "givc-medical-data"
+
+# D1 Database for structured healthcare data
+[[d1_databases]]
+binding = "HEALTHCARE_DB"
+database_name = "givc_healthcare_db"
+database_id = "your-d1-database-id"
+
+# Queue for async processing
+[[queues]]
+binding = "PROCESSING_QUEUE"
+queue_name = "givc-processing"
+
+# Workers AI binding for ML processing
+[ai]
+binding = "AI"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+ENCRYPTION_KEY = "your-encryption-key"
+JWT_SECRET = "your-jwt-secret"
+HIPAA_COMPLIANCE_LEVEL = "strict"
+RCM_ACCREDITATION = "enabled"
+
+# Worker route configurations
+[[workers]]
+name = "dicom-agent"
+script = "workers/agents/dicom-agent.js"
+route = "givc.thefadil.site/api/agents/dicom/*"
+
+[[workers]]
+name = "lab-parser"
+script = "workers/agents/lab-parser.js"
+route = "givc.thefadil.site/api/agents/lab/*"
+
+[[workers]]
+name = "clinical-decision"
+script = "workers/agents/clinical-decision.js"
+route = "givc.thefadil.site/api/agents/clinical/*"
+
+[[workers]]
+name = "compliance-monitor"
+script = "workers/agents/compliance-monitor.js"
+route = "givc.thefadil.site/api/compliance/*"
