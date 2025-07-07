@@ -1,52 +1,98 @@
-/* GIVC-BRAINSAIT Landing Page - Main Styles */
-/* © Dr. Al Fadil (BRAINSAIT LTD) */
+/**
+ * GIVC-BRAINSAIT Landing Page - Main Styles
+ * © Dr. Al Fadil (BRAINSAIT LTD)
+ * 
+ * This file contains the core styling for the BRAINSAIT healthcare landing page.
+ * It implements a modern, professional design system with:
+ * - Brand-consistent color palette
+ * - Typography hierarchy optimized for readability
+ * - Responsive layout system
+ * - Accessibility-focused design patterns
+ * - Performance-optimized CSS organization
+ */
 
 :root {
-  /* BRAINSAIT Brand Colors */
-  --primary-50: #eff6ff;
-  --primary-100: #dbeafe;
-  --primary-200: #bfdbfe;
-  --primary-300: #93c5fd;
-  --primary-400: #60a5fa;
-  --primary-500: #3b82f6;
-  --primary-600: #2563eb;
-  --primary-700: #1d4ed8;
-  --primary-800: #1e40af;
-  --primary-900: #1e3a8a;
+  /* 
+   * BRAINSAIT Brand Color System
+   * Primary (Blue): Technology, trust, medical professionalism
+   * Secondary (Green): Healthcare, growth, positive outcomes
+   * Accent (Gray): Modern, professional, readable text
+   * 
+   * Color scale follows design system best practices:
+   * - 50-100: Very light tints for backgrounds
+   * - 200-300: Light tints for borders, disabled states
+   * - 400-500: Main brand colors for primary elements
+   * - 600-700: Darker variants for hover states
+   * - 800-900: Dark variants for text, high contrast
+   */
+  --primary-50: #eff6ff;    /* Light blue background */
+  --primary-100: #dbeafe;   /* Subtle blue tint */
+  --primary-200: #bfdbfe;   /* Light blue borders */
+  --primary-300: #93c5fd;   /* Medium blue accents */
+  --primary-400: #60a5fa;   /* Bright blue interactions */
+  --primary-500: #3b82f6;   /* Main brand blue */
+  --primary-600: #2563eb;   /* Darker blue for hover */
+  --primary-700: #1d4ed8;   /* Deep blue for active states */
+  --primary-800: #1e40af;   /* Primary brand color (logo) */
+  --primary-900: #1e3a8a;   /* Darkest blue for text */
   
-  --secondary-50: #f0fdf4;
-  --secondary-100: #dcfce7;
-  --secondary-200: #bbf7d0;
-  --secondary-300: #86efac;
-  --secondary-400: #4ade80;
-  --secondary-500: #22c55e;
-  --secondary-600: #059669;
-  --secondary-700: #047857;
-  --secondary-800: #065f46;
-  --secondary-900: #064e3b;
+  --secondary-50: #f0fdf4;   /* Light green background */
+  --secondary-100: #dcfce7;  /* Subtle green tint */
+  --secondary-200: #bbf7d0;  /* Light green borders */
+  --secondary-300: #86efac;  /* Medium green accents */
+  --secondary-400: #4ade80;  /* Bright green interactions */
+  --secondary-500: #22c55e;  /* Main brand green */
+  --secondary-600: #059669;  /* Healthcare green (logo) */
+  --secondary-700: #047857;  /* Deep green for active states */
+  --secondary-800: #065f46;  /* Darker green for text */
+  --secondary-900: #064e3b;  /* Darkest green for contrast */
   
-  --accent-500: #374151;
-  
-  /* Typography */
+  --accent-500: #374151;     /* Professional gray for text */
+
+  /* 
+   * Typography System
+   * Inter font provides excellent readability across all devices
+   * Fallback to system fonts for performance and compatibility
+   */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  
-  /* Spacing */
+
+  /* 
+   * Layout and Spacing
+   * Container max-width ensures optimal reading experience
+   * Section padding provides consistent vertical rhythm
+   */
   --container-max-width: 1200px;
   --section-padding: 5rem 0;
-  
-  /* Transitions */
+
+  /* 
+   * Transition System
+   * Standardized timing for consistent user experience
+   * - Fast: Quick feedback for button interactions
+   * - Normal: Standard UI transitions
+   * - Slow: Complex animations, state changes
+   */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
-  
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* 
+   * Shadow System
+   * Layered shadows create depth and hierarchy
+   * Based on Material Design elevation principles
+   */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);      /* Subtle depth */
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);  /* Card elevation */
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); /* Modal elevation */
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); /* Floating elements */
 }
 
-/* Reset & Base Styles */
+/* 
+ * Reset & Base Styles
+ * Modern CSS reset following best practices:
+ * - Border-box sizing for predictable layouts
+ * - Smooth scrolling for better UX
+ * - Base font size for consistent scaling
+ */
 * {
   margin: 0;
   padding: 0;
@@ -54,8 +100,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  font-size: 16px;
+  scroll-behavior: smooth;    /* Smooth anchor navigation */
+  font-size: 16px;           /* Base font size for rem calculations */
 }
 
 body {
