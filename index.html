@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BRAINSAIT LTD - Healthcare Technology Integration Experts. Automated, Integrated, Technology-driven healthcare solutions with GIVC platform.">
+    <meta name="keywords" content="healthcare technology, BRAINSAIT, GIVC, medical integration, healthcare automation, NPHIES, FHIR, telemedicine">
+    <meta name="author" content="Dr. Al Fadil - BRAINSAIT LTD">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="BRAINSAIT LTD - Healthcare Technology Integration">
+    <meta property="og:description" content="Automated, Integrated, Technology-driven healthcare solutions with GIVC platform">
+    <meta property="og:image" content="./assets/og-image.jpg">
+    <meta property="og:url" content="https://fadil369.github.io/GIVC">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BRAINSAIT LTD - Healthcare Technology Integration">
+    <meta name="twitter:description" content="Automated, Integrated, Technology-driven healthcare solutions">
+    <meta name="twitter:image" content="./assets/twitter-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./assets/brainsait-logo.svg">
+    <link rel="alternate icon" href="./assets/brainsait-favicon.ico">
+    
+    <!-- Preconnect to fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#1E40AF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BRAINSAIT">
+    
+    <title>BRAINSAIT LTD - Healthcare Technology Integration Experts | GIVC Platform</title>
+    
+    <!-- Critical CSS -->
+    <style>
+        /* Critical above-the-fold styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1E40AF 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./assets/css/glass.css">
+    <link rel="stylesheet" href="./assets/css/responsive.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loadingScreen">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="glass-header fixed top-0 left-0 right-0 z-50">
+        <nav class="nav-glass container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="logo-container flex items-center space-x-3">
+                    <div class="logo-icon">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="40" height="40" rx="8" fill="url(#logoGradient)"/>
+                            <path d="M12 20L18 26L28 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <defs>
+                                <linearGradient id="logoGradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1E40AF"/>
+                                    <stop offset="1" stop-color="#059669"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <div class="text-xl font-bold text-white">BRAINSAIT</div>
+                        <div class="text-xs text-white/70">Healthcare Technology</div>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <ul class="nav-menu hidden md:flex space-x-8">
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#services" class="nav-link">Services</a></li>
+                    <li><a href="#technology" class="nav-link">Technology</a></li>
+                    <li><a href="#team" class="nav-link">Team</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+                
+                <!-- CTA Button -->
+                <div class="hidden md:block">
+                    <a href="#contact" class="btn-primary glass-btn">Get Started</a>
+                </div>
+                
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle md:hidden" id="mobileMenuToggle" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div class="mobile-menu glass-card" id="mobileMenu">
+                <div class="mobile-menu-content">
+                    <a href="#home" class="mobile-nav-link">Home</a>
+                    <a href="#about" class="mobile-nav-link">About</a>
+                    <a href="#services" class="mobile-nav-link">Services</a>
+                    <a href="#technology" class="mobile-nav-link">Technology</a>
+                    <a href="#team" class="mobile-nav-link">Team</a>
+                    <a href="#contact" class="mobile-nav-link">Contact</a>
+                    <a href="#contact" class="btn-primary glass-btn mt-4">Get Started</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section min-h-screen flex items-center relative overflow-hidden">
+        <!-- Animated Background -->
+        <div class="hero-background absolute inset-0">
+            <div class="animated-shapes"></div>
+            <div class="gradient-overlay"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="hero-content max-w-6xl mx-auto">
+                <!-- Main Hero Card -->
+                <div class="hero-glass-card glass-card text-center mb-12 animate-fade-in-up">
+                    <h1 class="hero-title text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                        <span class="text-gradient">GIVC</span><br>
+                        Healthcare Technology Platform
+                    </h1>
+                    <p class="hero-subtitle text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                        Automated, Integrated, Technology-driven Healthcare Solutions
+                    </p>
+                    <div class="hero-buttons flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#services" class="btn-primary glass-btn btn-lg">Explore Platform</a>
+                        <a href="#about" class="btn-secondary glass-btn btn-lg">Watch Demo</a>
+                    </div>
+                </div>
+                
+                <!-- Hero Stats -->
+                <div class="hero-stats grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up animation-delay-300">
+                    <div class="stat-card glass-card text-center">
+                        <div class="stat-number text-3xl md:text-4xl font-bold text-white mb-2" data-count="1000">0</div>
+                        <div class="stat-label text-white/80">Healthcare Providers</div>
+                    </div>
+                    <div class="stat-card glass-card text-center">
+                        <div class="stat-number text-3xl md:text-4xl font-bold text-white mb-2" data-count="50000">0</div>
+                        <div class="stat-label text-white/80">Patients Served</div>
+                    </div>
+                    <div class="stat-card glass-card text-center">
+                        <div class="stat-number text-3xl md:text-4xl font-bold text-white mb-2" data-count="99.9">0</div>
+                        <div class="stat-label text-white/80">% Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <div class="scroll-mouse"></div>
+        </div>
+    </section>
+
+    <!-- About BRAINSAIT Section -->
+    <section id="about" class="about-section py-20 bg-white relative">
+        <div class="container mx-auto px-4">
+            <div class="section-header text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold text-gray-900 mb-4">About BRAINSAIT LTD</h2>
+                <p class="section-subtitle text-xl text-gray-600 max-w-2xl mx-auto">Healthcare Technology Integration Experts</p>
+            </div>
+            
+            <div class="about-grid grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Content -->
+                <div class="about-content glass-card animate-fade-in-left">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
+                    <p class="text-lg text-gray-700 mb-8">
+                        Harnessing collective brainpower to deliver healthcare solutions that are automated, integrated, and technology-driven.
+                    </p>
+                    
+                    <div class="mission-pillars grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="pillar text-center">
+                            <div class="pillar-icon text-4xl mb-3">🤖</div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Automated</h4>
+                            <p class="text-sm text-gray-600">Streamlined processes that reduce manual overhead</p>
+                        </div>
+                        <div class="pillar text-center">
+                            <div class="pillar-icon text-4xl mb-3">🔗</div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Integrated</h4>
+                            <p class="text-sm text-gray-600">Seamless connectivity across healthcare systems</p>
+                        </div>
+                        <div class="pillar text-center">
+                            <div class="pillar-icon text-4xl mb-3">💡</div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Technology-driven</h4>
+                            <p class="text-sm text-gray-600">Leveraging latest innovations for optimal outcomes</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Image -->
+                <div class="about-image animate-fade-in-right">
+                    <div class="image-container glass-frame rounded-lg overflow-hidden">
+                        <img src="./assets/images/brainsait-team.jpg" alt="BRAINSAIT Team" 
+                             class="w-full h-auto" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services & Technology Section -->
+    <section id="services" class="services-section py-20 bg-gray-50 relative">
+        <div class="container mx-auto px-4">
+            <div class="section-header text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold text-gray-900 mb-4">Healthcare Technology Services</h2>
+                <p class="section-subtitle text-xl text-gray-600 max-w-2xl mx-auto">Comprehensive solutions for modern healthcare</p>
+            </div>
+            
+            <div class="services-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Virtual Care Platform -->
+                <div class="service-card glass-card interactive-card animate-fade-in-up">
+                    <div class="service-icon text-5xl mb-4">🏥</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Virtual Care Platform</h3>
+                    <p class="text-gray-700 mb-4">Comprehensive telemedicine and remote patient monitoring solutions</p>
+                    <ul class="feature-list space-y-2 mb-6">
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                            Real-time video consultations
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                            Remote patient monitoring
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                            AI-powered diagnostics
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                            Electronic health records
+                        </li>
+                    </ul>
+                    <button class="learn-more-btn btn-outline w-full">Learn More</button>
+                </div>
+                
+                <!-- Workflow Automation -->
+                <div class="service-card glass-card interactive-card animate-fade-in-up animation-delay-200">
+                    <div class="service-icon text-5xl mb-4">⚙️</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Workflow Automation</h3>
+                    <p class="text-gray-700 mb-4">Intelligent process automation for healthcare operations</p>
+                    <ul class="feature-list space-y-2 mb-6">
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                            Appointment scheduling
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                            Patient data management
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                            Billing automation
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                            Compliance monitoring
+                        </li>
+                    </ul>
+                    <button class="learn-more-btn btn-outline w-full">Learn More</button>
+                </div>
+                
+                <!-- Analytics & Insights -->
+                <div class="service-card glass-card interactive-card animate-fade-in-up animation-delay-400">
+                    <div class="service-icon text-5xl mb-4">📊</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Analytics & Insights</h3>
+                    <p class="text-gray-700 mb-4">Data-driven insights for better healthcare decisions</p>
+                    <ul class="feature-list space-y-2 mb-6">
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                            Real-time dashboards
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                            Predictive analytics
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                            Performance metrics
+                        </li>
+                        <li class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                            Custom reporting
+                        </li>
+                    </ul>
+                    <button class="learn-more-btn btn-outline w-full">Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack Section -->
+    <section id="technology" class="technology-section py-20 bg-white relative">
+        <div class="container mx-auto px-4">
+            <div class="section-header text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold text-gray-900 mb-4">Cutting-Edge Technology Stack</h2>
+                <p class="section-subtitle text-xl text-gray-600 max-w-2xl mx-auto">Powered by modern, scalable technologies</p>
+            </div>
+            
+            <div class="tech-showcase">
+                <!-- Technology Categories -->
+                <div class="tech-categories flex flex-wrap justify-center gap-4 mb-12">
+                    <button class="tech-tab active" data-category="frontend">Frontend</button>
+                    <button class="tech-tab" data-category="backend">Backend</button>
+                    <button class="tech-tab" data-category="infrastructure">Infrastructure</button>
+                    <button class="tech-tab" data-category="ai">AI/ML</button>
+                </div>
+                
+                <!-- Technology Content -->
+                <div class="tech-content">
+                    <!-- Frontend Technologies -->
+                    <div class="tech-grid active" id="frontend">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="tech-item glass-card text-center animate-fade-in-up">
+                                <div class="tech-icon text-4xl mb-3">⚛️</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">React/TypeScript</h4>
+                                <p class="text-sm text-gray-600">Modern web development with type safety</p>
+                            </div>
+                            <div class="tech-item glass-card text-center animate-fade-in-up animation-delay-100">
+                                <div class="tech-icon text-4xl mb-3">🎨</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Tailwind CSS</h4>
+                                <p class="text-sm text-gray-600">Utility-first CSS framework</p>
+                            </div>
+                            <div class="tech-item glass-card text-center animate-fade-in-up animation-delay-200">
+                                <div class="tech-icon text-4xl mb-3">📱</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Progressive Web App</h4>
+                                <p class="text-sm text-gray-600">Native app-like experience</p>
+                            </div>
+                            <div class="tech-item glass-card text-center animate-fade-in-up animation-delay-300">
+                                <div class="tech-icon text-4xl mb-3">🔄</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Vite</h4>
+                                <p class="text-sm text-gray-600">Fast build tool and dev server</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Backend Technologies -->
+                    <div class="tech-grid" id="backend">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">☁️</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Cloudflare Workers</h4>
+                                <p class="text-sm text-gray-600">Serverless edge computing</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">🗄️</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">D1 Database</h4>
+                                <p class="text-sm text-gray-600">Serverless SQL database</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">📦</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">R2 Storage</h4>
+                                <p class="text-sm text-gray-600">Object storage for files</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">🔐</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">HIPAA Compliance</h4>
+                                <p class="text-sm text-gray-600">End-to-end encryption</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Infrastructure -->
+                    <div class="tech-grid" id="infrastructure">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">🌐</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Global CDN</h4>
+                                <p class="text-sm text-gray-600">Worldwide edge locations</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">🚀</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">GitHub Actions</h4>
+                                <p class="text-sm text-gray-600">CI/CD automation</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">📊</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Real-time Analytics</h4>
+                                <p class="text-sm text-gray-600">Performance monitoring</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">🔒</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">SSL/TLS 1.3</h4>
+                                <p class="text-sm text-gray-600">Military-grade security</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI/ML -->
+                    <div class="tech-grid" id="ai">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">🧠</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Workers AI</h4>
+                                <p class="text-sm text-gray-600">Edge-based AI processing</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">🖼️</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">DICOM Analysis</h4>
+                                <p class="text-sm text-gray-600">Medical imaging AI</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">🩺</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Clinical Decision Support</h4>
+                                <p class="text-sm text-gray-600">AI-powered recommendations</p>
+                            </div>
+                            <div class="tech-item glass-card text-center">
+                                <div class="tech-icon text-4xl mb-3">📋</div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Lab Results Parser</h4>
+                                <p class="text-sm text-gray-600">Automated analysis</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team & Leadership Section -->
+    <section id="team" class="team-section py-20 bg-gray-50 relative">
+        <div class="container mx-auto px-4">
+            <div class="section-header text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold text-gray-900 mb-4">Leadership Team</h2>
+                <p class="section-subtitle text-xl text-gray-600 max-w-2xl mx-auto">Meet the experts driving healthcare innovation</p>
+            </div>
+            
+            <div class="team-grid max-w-4xl mx-auto">
+                <div class="team-member glass-card text-center animate-fade-in-up">
+                    <div class="member-image mb-6">
+                        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-green-500 p-1">
+                            <div class="w-full h-full rounded-full bg-white flex items-center justify-center">
+                                <span class="text-4xl font-bold text-gray-600">DF</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Dr. Al Fadil</h3>
+                        <p class="member-title text-lg text-blue-600 font-semibold mb-3">Founder & CEO</p>
+                        <p class="member-bio text-gray-700 mb-6 max-w-md mx-auto">
+                            Physician & Tech Entrepreneur specializing in healthcare technology integration and digital transformation
+                        </p>
+                        <div class="member-social flex justify-center space-x-4">
+                            <a href="https://linkedin.com/in/fadil369" class="social-link">LinkedIn</a>
+                            <a href="https://github.com/fadil369" class="social-link">GitHub</a>
+                            <a href="mailto:github@brainsait.io" class="social-link">Email</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & CTA Section -->
+    <section id="contact" class="contact-section py-20 bg-white relative">
+        <div class="container mx-auto px-4">
+            <div class="section-header text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold text-gray-900 mb-4">Get In Touch</h2>
+                <p class="section-subtitle text-xl text-gray-600 max-w-2xl mx-auto">Ready to transform your healthcare technology? Let's discuss your needs.</p>
+            </div>
+            
+            <div class="contact-grid grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Information -->
+                <div class="contact-info glass-card animate-fade-in-left">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
+                    
+                    <div class="contact-methods space-y-6">
+                        <div class="contact-method flex items-center space-x-4">
+                            <div class="method-icon w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-xl">📧</div>
+                            <div class="method-info">
+                                <h4 class="font-semibold text-gray-900">Email</h4>
+                                <a href="mailto:github@brainsait.io" class="text-blue-600 hover:text-blue-700">github@brainsait.io</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method flex items-center space-x-4">
+                            <div class="method-icon w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-xl">📅</div>
+                            <div class="method-info">
+                                <h4 class="font-semibold text-gray-900">Schedule Meeting</h4>
+                                <a href="https://calendly.com/fadil369" class="text-blue-600 hover:text-blue-700">Book Consultation</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method flex items-center space-x-4">
+                            <div class="method-icon w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-xl">🌍</div>
+                            <div class="method-info">
+                                <h4 class="font-semibold text-gray-900">Location</h4>
+                                <span class="text-gray-600">United Kingdom</span>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method flex items-center space-x-4">
+                            <div class="method-icon w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center text-xl">🚀</div>
+                            <div class="method-info">
+                                <h4 class="font-semibold text-gray-900">GIVC Platform</h4>
+                                <a href="./frontend/" class="text-blue-600 hover:text-blue-700">Access Platform</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="contact-form glass-card animate-fade-in-right">
+                    <form id="contactForm" class="form-glass space-y-6">
+                        <div class="form-group">
+                            <label for="name" class="block text-sm font-semibold text-gray-900 mb-2">Full Name *</label>
+                            <input type="text" id="name" name="name" required 
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <span class="form-error text-red-500 text-sm hidden"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="block text-sm font-semibold text-gray-900 mb-2">Email Address *</label>
+                            <input type="email" id="email" name="email" required 
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <span class="form-error text-red-500 text-sm hidden"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="organization" class="block text-sm font-semibold text-gray-900 mb-2">Organization</label>
+                            <input type="text" id="organization" name="organization" 
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="service" class="block text-sm font-semibold text-gray-900 mb-2">Service Interest</label>
+                            <select id="service" name="service" 
+                                    class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select a service</option>
+                                <option value="virtual-care">Virtual Care Platform</option>
+                                <option value="automation">Workflow Automation</option>
+                                <option value="analytics">Analytics & Insights</option>
+                                <option value="consultation">Technology Consultation</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message" class="block text-sm font-semibold text-gray-900 mb-2">Message *</label>
+                            <textarea id="message" name="message" rows="4" required 
+                                      class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+                            <span class="form-error text-red-500 text-sm hidden"></span>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary glass-btn w-full py-3">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-loading hidden">Sending...</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer-section glass-footer bg-gray-900 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="footer-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <!-- Brand -->
+                <div class="footer-brand">
+                    <div class="footer-logo flex items-center space-x-3 mb-4">
+                        <div class="logo-icon">
+                            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="40" height="40" rx="8" fill="url(#footerLogoGradient)"/>
+                                <path d="M12 20L18 26L28 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <defs>
+                                    <linearGradient id="footerLogoGradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#1E40AF"/>
+                                        <stop offset="1" stop-color="#059669"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold">BRAINSAIT LTD</span>
+                    </div>
+                    <p class="text-gray-300 mb-2">Healthcare Technology Integration Experts</p>
+                    <p class="tagline text-sm text-gray-400">Automated, Integrated, Technology-driven</p>
+                </div>
+                
+                <!-- Services -->
+                <div class="footer-links">
+                    <h4 class="font-semibold text-white mb-4">Services</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Virtual Care</a></li>
+                        <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Automation</a></li>
+                        <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Analytics</a></li>
+                        <li><a href="#technology" class="text-gray-300 hover:text-white transition-colors">Technology</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Company -->
+                <div class="footer-links">
+                    <h4 class="font-semibold text-white mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#about" class="text-gray-300 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#team" class="text-gray-300 hover:text-white transition-colors">Team</a></li>
+                        <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="./frontend/" class="text-gray-300 hover:text-white transition-colors">GIVC Platform</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Connect -->
+                <div class="footer-links">
+                    <h4 class="font-semibold text-white mb-4">Connect</h4>
+                    <ul class="space-y-2">
+                        <li><a href="https://github.com/Fadil369/GIVC" class="text-gray-300 hover:text-white transition-colors">GitHub</a></li>
+                        <li><a href="https://linkedin.com/in/fadil369" class="text-gray-300 hover:text-white transition-colors">LinkedIn</a></li>
+                        <li><a href="mailto:github@brainsait.io" class="text-gray-300 hover:text-white transition-colors">Email</a></li>
+                        <li><a href="https://calendly.com/fadil369" class="text-gray-300 hover:text-white transition-colors">Schedule</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom border-t border-gray-800 pt-8 text-center">
+                <p class="text-gray-400 mb-2">&copy; 2025 BRAINSAIT LTD. All rights reserved.</p>
+                <p class="text-gray-500 text-sm">Healthcare Technology Solutions | United Kingdom</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top glass-btn" aria-label="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m18 15-6-6-6 6"/>
+        </svg>
+    </button>
+
+    <!-- JavaScript Files -->
+    <script src="./assets/js/main.js"></script>
+    <script src="./assets/js/animations.js"></script>
+    <script src="./assets/js/forms.js"></script>
+</body>
+</html>
