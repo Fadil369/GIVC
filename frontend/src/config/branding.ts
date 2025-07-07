@@ -173,7 +173,7 @@ export const GIVC_BRANDING = {
 
 // Environment-specific overrides
 export const getEnvironmentConfig = () => {
-  const env = process.env.NODE_ENV || 'development';
+  const env = 'development' as 'development' | 'production'; // Default for client-side usage
   
   return {
     ...GIVC_BRANDING,
