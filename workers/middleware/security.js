@@ -208,11 +208,16 @@ export function sanitizeInput(input) {
   }
   
   // Remove potentially dangerous characters
-  return input
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+  let sanitizedInput = input.trim();
+  let previousInput;
+  do {
+    previousInput = sanitizedInput;
+    sanitizedInput = sanitizedInput.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  } while (sanitizedInput !== previousInput);
+  
+  return sanitizedInput
     .replace(/javascript:/gi, '')
-    .replace(/on\w+\s*=/gi, '')
-    .trim();
+    .replace(/on\w+\s*=/gi, '');
 }
 
 // File type validation for medical files
