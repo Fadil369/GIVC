@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import Header from './HeaderEnhanced';
 import Sidebar from './Sidebar';
-import Header from './Header';
 
 const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -11,7 +11,7 @@ const Layout: React.FC = () => {
       {/* Sidebar */}
       <Sidebar 
         isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
+        onToggle={() => setSidebarOpen(false)} 
       />
 
       {/* Main content area */}

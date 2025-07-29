@@ -2,6 +2,9 @@ name = "givc-healthcare-platform"
 main = "workers/router.js"
 compatibility_date = "2023-11-01"
 
+# Pages configuration
+pages_build_output_dir = "dist"
+
 [env.production]
 name = "givc-healthcare-platform"
 account_id = "your-cloudflare-account-id"

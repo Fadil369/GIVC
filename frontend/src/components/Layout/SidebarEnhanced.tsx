@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/hooks/useAuth';
 import { GIVC_BRANDING } from '@/config/branding';
+import { useAuth } from '@/hooks/useAuth';
 import {
-  ChartBarIcon,
-  FolderOpenIcon,
-  UserGroupIcon,
-  CpuChipIcon,
-  ChatBubbleLeftRightIcon,
-  DocumentCheckIcon,
-  XMarkIcon,
-  ArrowLeftOnRectangleIcon,
-  CogIcon,
-  BellIcon,
-  QuestionMarkCircleIcon,
+    ArrowLeftOnRectangleIcon,
+    BellIcon,
+    ChartBarIcon,
+    ChatBubbleLeftRightIcon,
+    CogIcon,
+    CpuChipIcon,
+    DocumentCheckIcon,
+    FolderOpenIcon,
+    QuestionMarkCircleIcon,
+    UserGroupIcon,
+    XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { clsx } from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 interface SidebarProps {
   isOpen: boolean;
