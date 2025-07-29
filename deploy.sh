@@ -19,16 +19,7 @@ fi
 
 echo "✅ Build completed successfully!"
 
-# Deployment targets
-declare -A PROJECTS=(
-    ["main"]="givc"
-    ["static"]="givc-platform-static"
-    ["ui"]="givc-healthcare-ui"
-    ["platform"]="givc-healthcare-platform"
-    ["healthcare"]="givc-healthcare"
-)
-
-# Function to deploy to a project
+# Function to deploy to a specific project
 deploy_to_project() {
     local project_name=$1
     local description=$2
