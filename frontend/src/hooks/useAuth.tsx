@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType {
   user: User | null;
@@ -31,8 +31,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Check for existing authentication on app load
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('givc_token');
+        console.log('🔧 GIVC: Starting authentication check...');
+        let token = localStorage.getItem('givc_token');
+        
+        // For demo purposes - auto-create token if none exists
+        if (!token) {
+          console.log('🔧 GIVC Demo Mode: Auto-generating demo credentials');
+          token = 'demo_token_' + Date.now();
+          localStorage.setItem('givc_token', token);
+        }
+        
         if (token) {
+          console.log('🔧 GIVC: Token found, creating demo user...');
           // In a real app, verify token with backend
           // For demo purposes, create a mock user
           const mockUser: User = {
@@ -54,16 +64,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             lastLogin: new Date(),
           };
           setUser(mockUser);
+          console.log('🏥 GIVC: Demo user authenticated successfully', mockUser);
         }
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('givc_token');
       } finally {
+        console.log('🔧 GIVC: Setting loading to false');
         setIsLoading(false);
       }
     };
 
-    checkAuth();
+    // Add a small delay to ensure the component has mounted
+    const timer = setTimeout(() => {
+      checkAuth();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {

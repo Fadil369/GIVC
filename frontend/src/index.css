@@ -1,3 +1,6 @@
+/* Import Artistic Gradient Styles */
+@import './styles/artistic-gradients.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -67,77 +70,107 @@
     @apply transform scale-105;
   }
 
-  /* GIVC Button Styles */
+  /* Unified GIVC Button Styles */
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-sm hover:shadow-md active:scale-95;
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm hover:shadow-md active:scale-95;
   }
   
   .btn-secondary {
-    @apply bg-secondary-600 hover:bg-secondary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2 shadow-sm hover:shadow-md active:scale-95;
+    @apply bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 shadow-sm hover:shadow-md active:scale-95;
   }
   
   .btn-outline {
-    @apply border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-sm hover:shadow-md active:scale-95;
+    @apply border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm hover:shadow-md active:scale-95;
   }
 
   .btn-ghost {
-    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
   }
   
-  /* Medical Priority Indicators */
+  /* Healthcare Priority Indicators */
   .priority-critical {
-    @apply bg-medical-red text-white shadow-lg animate-pulse-slow;
+    @apply bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium shadow-lg animate-pulse-slow;
   }
   
   .priority-high {
-    @apply bg-medical-orange text-white shadow-md;
+    @apply bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-md;
   }
   
   .priority-medium {
-    @apply bg-medical-yellow text-gray-900 shadow-md;
+    @apply bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-md;
   }
   
   .priority-low {
-    @apply bg-medical-blue text-white shadow-sm;
+    @apply bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm;
   }
   
   .priority-normal {
-    @apply bg-medical-green text-white shadow-sm;
+    @apply bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm;
   }
   
-  /* Compliance Status */
-  .compliance-secure {
-    @apply bg-compliance-secure text-white shadow-md;
+  /* Status Indicators */
+  .status-success {
+    @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium shadow-md;
   }
   
-  .compliance-warning {
-    @apply bg-compliance-warning text-gray-900 shadow-md animate-pulse-slow;
+  .status-warning {
+    @apply bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium shadow-md animate-pulse-slow;
   }
   
-  .compliance-violation {
-    @apply bg-compliance-violation text-white shadow-lg animate-pulse-slow;
+  .status-error {
+    @apply bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium shadow-lg animate-pulse-slow;
   }
   
-  /* Card Styles with Enhanced Shadows */
+  /* Unified Card Styles */
   .card {
     @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 transition-all duration-200 hover:shadow-md;
   }
   
-  .card-medical {
-    @apply bg-white rounded-lg shadow-medical border border-primary-200 p-6 transition-all duration-200 hover:shadow-lg hover:border-primary-300;
+  .card-compact {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4 transition-all duration-200 hover:shadow-md;
   }
   
-  .card-compliance {
-    @apply bg-white rounded-lg shadow-compliance border border-secondary-200 p-6 transition-all duration-200 hover:shadow-lg hover:border-secondary-300;
-  }
-
   .card-interactive {
     @apply card cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-200;
+  }
+
+  /* Healthcare Metric Cards (matching target design) */
+  .metric-card {
+    @apply bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  .metric-title {
+    @apply text-sm font-medium text-gray-600 mb-2 flex items-center gap-2;
+  }
+  
+  .metric-value {
+    @apply text-2xl font-bold text-gray-900 mb-1;
+  }
+  
+  .metric-change {
+    @apply text-sm font-medium;
+  }
+  
+  .metric-change-positive {
+    @apply text-green-600;
+  }
+  
+  .metric-change-negative {
+    @apply text-red-600;
+  }
+  
+  /* Quick Actions (matching target design) */
+  .quick-action {
+    @apply bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-200 cursor-pointer flex items-center gap-3 text-gray-700 font-medium;
+  }
+  
+  .quick-action-icon {
+    @apply text-2xl;
   }
   
   /* Enhanced Form Styles */
   .form-input {
-    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition-all duration-200 placeholder-gray-400;
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm transition-all duration-200 placeholder-gray-400;
   }
 
   .form-input:focus {
@@ -145,7 +178,7 @@
   }
   
   .form-textarea {
-    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition-all duration-200 placeholder-gray-400;
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm transition-all duration-200 placeholder-gray-400;
   }
 
   .form-textarea:focus {
@@ -153,7 +186,7 @@
   }
   
   .form-select {
-    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition-all duration-200;
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm transition-all duration-200;
   }
 
   .form-select:focus {
@@ -170,7 +203,7 @@
   
   /* Enhanced Loading States */
   .loading-spinner {
-    @apply animate-spin rounded-full border-4 border-gray-200 border-t-primary-600;
+    @apply animate-spin rounded-full border-4 border-gray-200 border-t-blue-600;
   }
 
   .loading-dots {
@@ -178,7 +211,7 @@
   }
 
   .loading-dots > div {
-    @apply w-2 h-2 bg-primary-600 rounded-full animate-bounce;
+    @apply w-2 h-2 bg-blue-600 rounded-full animate-bounce;
   }
 
   .loading-dots > div:nth-child(1) {
@@ -199,7 +232,7 @@
   }
 
   .nav-link-active {
-    @apply bg-primary-100 text-primary-900 shadow-sm;
+    @apply bg-blue-100 text-blue-900 shadow-sm;
   }
 
   .nav-link-inactive {
@@ -221,7 +254,7 @@
   }
 
   .progress-fill {
-    @apply h-full bg-primary-600 rounded-full transition-all duration-300 ease-out;
+    @apply h-full bg-blue-600 rounded-full transition-all duration-300 ease-out;
   }
   
   /* GIVC Branding with Enhanced Gradients */
@@ -248,7 +281,7 @@
 
   /* Focus Ring Enhancements */
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200;
   }
 
   /* Notification Badges */
