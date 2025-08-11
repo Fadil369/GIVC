@@ -202,22 +202,15 @@ export class RateLimiter {
 }
 
 // Input validation and sanitization
+import DOMPurify from 'dompurify';
+
 export function sanitizeInput(input) {
   if (typeof input !== 'string') {
     return input;
   }
   
-  // Remove potentially dangerous characters
-  let sanitizedInput = input.trim();
-  let previousInput;
-  do {
-    previousInput = sanitizedInput;
-    sanitizedInput = sanitizedInput.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-  } while (sanitizedInput !== previousInput);
-  
-  return sanitizedInput
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+\s*=/gi, '');
+  // Use DOMPurify to sanitize input
+  return DOMPurify.sanitize(input);
 }
 
 // File type validation for medical files
