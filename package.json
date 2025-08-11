@@ -16,8 +16,8 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-router-dom": "^6.20.1",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
@@ -34,7 +34,7 @@
     "dompurify": "^3.2.6"
   },
   "devDependencies": {
-    "@types/react": "^18.2.37",
+    "@types/react": "^19.1.8",
     "@types/react-dom": "^18.2.15",
     "@types/uuid": "^9.0.7",
     "@types/crypto-js": "^4.2.1",
