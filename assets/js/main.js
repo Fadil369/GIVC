@@ -375,45 +375,208 @@ function initializeParticleEffects() {
  * Performance optimizations
  */
 function optimizePerformance() {
-    // Throttle scroll events
+    // Enhanced scroll throttling with passive listeners
     let scrollThrottled = false;
+    let lastScrollTime = 0;
+    const scrollThreshold = 16; // ~60fps
     const originalScrollHandler = window.onscroll;
     
-    window.addEventListener('scroll', () => {
+    const optimizedScrollHandler = () => {
+        const now = performance.now();
+        if (now - lastScrollTime < scrollThreshold) return;
+        
         if (!scrollThrottled) {
             requestAnimationFrame(() => {
-                if (originalScrollHandler) originalScrollHandler();
+                try {
+                    if (originalScrollHandler && typeof originalScrollHandler === 'function') {
+                        originalScrollHandler();
+                    }
+                    
+                    // Update scroll position for other components
+                    document.dispatchEvent(new CustomEvent('optimizedScroll', {
+                        detail: { 
+                            scrollY: window.scrollY,
+                            scrollPercent: (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100
+                        }
+                    }));
+                } catch (error) {
+                    console.error('Scroll handler error:', error);
+                }
                 scrollThrottled = false;
             });
             scrollThrottled = true;
+            lastScrollTime = now;
         }
-    });
+    };
     
-    // Preload critical images
+    // Use passive listener for better performance
+    window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
+    
+    // Preload critical images with error handling
     const criticalImages = [
-        './assets/images/brainsait-team.jpg'
+        './assets/images/brainsait-team.jpg',
+        './assets/images/hero-background.jpg'
     ];
     
-    criticalImages.forEach(src => {
-        const img = new Image();
-        img.src = src;
+    const imageLoadPromises = criticalImages.map(src => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                console.log(`✅ Preloaded: ${src}`);
+                resolve(src);
+            };
+            img.onerror = () => {
+                console.warn(`⚠️ Failed to preload: ${src}`);
+                reject(new Error(`Failed to load ${src}`));
+            };
+            img.src = src;
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                if (!img.complete) {
+                    reject(new Error(`Timeout loading ${src}`));
+                }
+            }, 10000);
+        });
     });
+    
+    // Log preload results
+    Promise.allSettled(imageLoadPromises).then(results => {
+        const successful = results.filter(r => r.status === 'fulfilled').length;
+        const failed = results.filter(r => r.status === 'rejected').length;
+        console.log(`📊 Image preload complete: ${successful} successful, ${failed} failed`);
+    });
+    
+    // Intersection Observer for performance-aware animations
+    if ('IntersectionObserver' in window) {
+        const performanceObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const element = entry.target;
+                if (entry.isIntersecting) {
+                    element.classList.add('in-viewport');
+                } else {
+                    element.classList.remove('in-viewport');
+                }
+            });
+        }, {
+            threshold: [0, 0.25, 0.5, 0.75, 1],
+            rootMargin: '50px'
+        });
+        
+        // Observe elements that need performance-aware animations
+        document.querySelectorAll('[data-performance-observe]').forEach(el => {
+            performanceObserver.observe(el);
+        });
+    }
+    
+    // Memory cleanup for older browsers
+    if ('memory' in performance) {
+        setInterval(() => {
+            const memoryUsage = performance.memory.usedJSHeapSize / 1024 / 1024;
+            if (memoryUsage > 100) { // 100MB threshold
+                console.warn(`⚠️ High memory usage: ${memoryUsage.toFixed(2)}MB`);
+            }
+        }, 30000); // Check every 30 seconds
+    }
 }
 
 /**
- * Error handling and logging
+ * Enhanced error handling and logging
  */
 function initializeErrorHandling() {
+    // Global error handler with enhanced logging
     window.addEventListener('error', (e) => {
-        console.error('🚨 BRAINSAIT Landing Page Error:', e.error);
+        const errorInfo = {
+            message: e.error?.message || e.message || 'Unknown error',
+            stack: e.error?.stack || '',
+            filename: e.filename || '',
+            lineno: e.lineno || 0,
+            colno: e.colno || 0,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            url: window.location.href
+        };
+        
+        console.error('🚨 BRAINSAIT Landing Page Error:', errorInfo);
+        
+        // Store error in localStorage for debugging (limit to last 10 errors)
+        try {
+            const storedErrors = JSON.parse(localStorage.getItem('brainsait_errors') || '[]');
+            storedErrors.push(errorInfo);
+            if (storedErrors.length > 10) {
+                storedErrors.shift(); // Remove oldest error
+            }
+            localStorage.setItem('brainsait_errors', JSON.stringify(storedErrors));
+        } catch (storageError) {
+            console.warn('Could not store error in localStorage:', storageError);
+        }
+        
+        // Attempt graceful recovery for known issues
+        if (errorInfo.message.includes('animation') || errorInfo.message.includes('scroll')) {
+            console.log('🔄 Attempting to recover from animation/scroll error...');
+            document.body.classList.add('reduced-motion');
+        }
         
         // In production, you might want to send this to an error tracking service
-        // analytics.track('error', { message: e.error.message, stack: e.error.stack });
+        // analytics.track('error', errorInfo);
     });
     
+    // Enhanced unhandled promise rejection handler
     window.addEventListener('unhandledrejection', (e) => {
-        console.error('🚨 BRAINSAIT Unhandled Promise Rejection:', e.reason);
+        const rejectionInfo = {
+            reason: e.reason?.toString() || 'Unknown rejection',
+            stack: e.reason?.stack || '',
+            timestamp: new Date().toISOString(),
+            url: window.location.href
+        };
+        
+        console.error('🚨 BRAINSAIT Unhandled Promise Rejection:', rejectionInfo);
+        
+        // Store rejection info
+        try {
+            const storedRejections = JSON.parse(localStorage.getItem('brainsait_rejections') || '[]');
+            storedRejections.push(rejectionInfo);
+            if (storedRejections.length > 10) {
+                storedRejections.shift();
+            }
+            localStorage.setItem('brainsait_rejections', JSON.stringify(storedRejections));
+        } catch (storageError) {
+            console.warn('Could not store rejection in localStorage:', storageError);
+        }
+        
+        // Prevent the default browser behavior
+        e.preventDefault();
     });
+    
+    // Network error detection
+    window.addEventListener('online', () => {
+        console.log('🌐 Network connection restored');
+        document.body.classList.remove('offline');
+    });
+    
+    window.addEventListener('offline', () => {
+        console.warn('📡 Network connection lost');
+        document.body.classList.add('offline');
+    });
+    
+    // Performance observer for critical rendering issues
+    if ('PerformanceObserver' in window) {
+        try {
+            const observer = new PerformanceObserver((list) => {
+                const entries = list.getEntries();
+                entries.forEach(entry => {
+                    if (entry.entryType === 'long-task' && entry.duration > 50) {
+                        console.warn(`⚠️ Long task detected: ${entry.duration}ms`);
+                    }
+                });
+            });
+            observer.observe({ entryTypes: ['long-task'] });
+        } catch (error) {
+            console.log('PerformanceObserver not fully supported');
+        }
+    }
+    
+    console.log('✅ Enhanced error handling initialized');
 }
 
 /**

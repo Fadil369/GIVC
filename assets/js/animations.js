@@ -614,24 +614,61 @@ class AnimationPerformance {
         this.frameCount = 0;
         this.lastTime = performance.now();
         this.fps = 60;
+        this.isMonitoring = false;
+        this.rafId = null;
+        this.performanceHistory = [];
+        this.maxHistoryLength = 10;
     }
     
     /**
      * Monitor frame rate and adjust animations accordingly
      */
     monitor() {
-        const now = performance.now();
-        this.frameCount++;
+        if (!this.isMonitoring) return;
         
-        if (now - this.lastTime >= 1000) {
-            this.fps = this.frameCount;
-            this.frameCount = 0;
-            this.lastTime = now;
+        try {
+            const now = performance.now();
+            this.frameCount++;
             
-            this.adjustAnimationQuality();
+            if (now - this.lastTime >= 1000) {
+                this.fps = this.frameCount;
+                this.frameCount = 0;
+                this.lastTime = now;
+                
+                // Store performance history
+                this.performanceHistory.push({
+                    fps: this.fps,
+                    timestamp: now,
+                    memoryUsage: this.getMemoryUsage()
+                });
+                
+                // Keep history limited
+                if (this.performanceHistory.length > this.maxHistoryLength) {
+                    this.performanceHistory.shift();
+                }
+                
+                this.adjustAnimationQuality();
+            }
+            
+            this.rafId = requestAnimationFrame(() => this.monitor());
+        } catch (error) {
+            console.error('Animation performance monitoring error:', error);
+            this.stop();
         }
-        
-        requestAnimationFrame(() => this.monitor());
+    }
+    
+    /**
+     * Get memory usage if available
+     */
+    getMemoryUsage() {
+        if ('memory' in performance) {
+            return {
+                used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
+                total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024),
+                limit: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)
+            };
+        }
+        return null;
     }
     
     /**
@@ -640,11 +677,32 @@ class AnimationPerformance {
     adjustAnimationQuality() {
         const body = document.body;
         
-        if (this.fps < 30) {
+        // Check for consistent low performance
+        const recentLowFps = this.performanceHistory
+            .slice(-3)
+            .every(entry => entry.fps < 30);
+        
+        if (this.fps < 30 || recentLowFps) {
             body.classList.add('reduced-motion');
-            console.warn('🐌 Reduced animation quality due to low FPS');
+            console.warn(`🐌 Reduced animation quality due to low FPS: ${this.fps}`);
+            
+            // Dispatch custom event for other components to react
+            document.dispatchEvent(new CustomEvent('animationQualityChanged', {
+                detail: { quality: 'low', fps: this.fps }
+            }));
         } else if (this.fps > 45) {
             body.classList.remove('reduced-motion');
+            
+            document.dispatchEvent(new CustomEvent('animationQualityChanged', {
+                detail: { quality: 'high', fps: this.fps }
+            }));
+        }
+        
+        // Check memory usage
+        const memoryUsage = this.getMemoryUsage();
+        if (memoryUsage && memoryUsage.used > memoryUsage.limit * 0.8) {
+            console.warn('⚠️ High memory usage detected:', memoryUsage);
+            body.classList.add('reduced-motion');
         }
     }
     
@@ -652,7 +710,37 @@ class AnimationPerformance {
      * Start monitoring
      */
     start() {
-        requestAnimationFrame(() => this.monitor());
+        if (this.isMonitoring) return;
+        
+        this.isMonitoring = true;
+        this.rafId = requestAnimationFrame(() => this.monitor());
+        console.log('🔍 Animation performance monitoring started');
+    }
+    
+    /**
+     * Stop monitoring
+     */
+    stop() {
+        this.isMonitoring = false;
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = null;
+        }
+        console.log('⏹️ Animation performance monitoring stopped');
+    }
+    
+    /**
+     * Get performance report
+     */
+    getPerformanceReport() {
+        return {
+            currentFps: this.fps,
+            averageFps: this.performanceHistory.length > 0 
+                ? this.performanceHistory.reduce((sum, entry) => sum + entry.fps, 0) / this.performanceHistory.length 
+                : this.fps,
+            history: this.performanceHistory,
+            isReducedMotion: document.body.classList.contains('reduced-motion')
+        };
     }
 }
 
