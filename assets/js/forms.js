@@ -294,7 +294,7 @@ class ContactFormHandler {
     }
     
     /**
-     * Handle form submission
+     * Enhanced form submission with better accessibility
      */
     async handleSubmit() {
         if (this.isSubmitting) return;
@@ -307,6 +307,16 @@ class ContactFormHandler {
         
         if (!isValid) {
             this.showValidationSummary();
+            // Focus on first error field for accessibility
+            const firstErrorField = this.form.querySelector('.form-error:not(.hidden)');
+            if (firstErrorField) {
+                const fieldId = firstErrorField.getAttribute('id').replace('-error', '');
+                const field = this.form.querySelector(`[name="${fieldId}"]`);
+                if (field) {
+                    field.focus();
+                    field.setAttribute('aria-invalid', 'true');
+                }
+            }
             return;
         }
         
@@ -316,6 +326,12 @@ class ContactFormHandler {
         
         try {
             const formData = this.getFormData();
+            
+            // Basic input validation for security
+            if (this.containsUnsafeContent(formData)) {
+                throw new Error('Invalid content detected in form data');
+            }
+            
             const result = await this.submitForm(formData);
             
             if (result.success) {
@@ -330,6 +346,30 @@ class ContactFormHandler {
         } finally {
             this.isSubmitting = false;
         }
+    }
+    
+    /**
+     * Check for potentially unsafe content
+     */
+    containsUnsafeContent(formData) {
+        const unsafePatterns = [
+            /<script/i,
+            /javascript:/i,
+            /<iframe/i,
+            /on\w+\s*=/i
+        ];
+        
+        for (const value of Object.values(formData)) {
+            if (typeof value === 'string') {
+                for (const pattern of unsafePatterns) {
+                    if (pattern.test(value)) {
+                        console.warn('Unsafe content detected:', value);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     
     /**
