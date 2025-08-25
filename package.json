@@ -1,6 +1,7 @@
 {
   "name": "givc-healthcare-platform",
   "version": "1.0.0",
+  "type": "module",
   "description": "GIVC (Global Integrated Virtual Care) Healthcare Platform - Full Stack Implementation with Cloudflare Integration",
   "author": "Dr. Al Fadil (BRAINSAIT LTD)",
   "license": "GPL-3.0",
