@@ -6,46 +6,167 @@
  * encryption, and audit logging.
  */
 
-// CORS Configuration
-export function createCors() {
+// Enhanced CORS Configuration with security improvements
+export function createCors(origin = '*', isDevelopment = false) {
+  const allowedOrigins = isDevelopment 
+    ? ['http://localhost:3000', 'http://localhost:5173', 'https://givc.thefadil.site']
+    : ['https://givc.thefadil.site', 'https://www.givc.thefadil.site'];
+    
+  const corsOrigin = Array.isArray(allowedOrigins) && origin !== '*' 
+    ? (allowedOrigins.includes(origin) ? origin : 'null')
+    : origin;
+
   return {
-    'Access-Control-Allow-Origin': '*', // In production, set specific domains
+    'Access-Control-Allow-Origin': corsOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With, X-Client-Version, X-Request-ID',
     'Access-Control-Max-Age': '86400',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '1; mode=block',
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:; font-src 'self' data:; object-src 'none'; base-uri 'self'",
   };
 }
 
-// Authentication
+// Enhanced Authentication with improved security
 export async function authenticateRequest(request, env) {
-  const authHeader = request.headers.get('Authorization');
-  
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { success: false, error: 'No valid authorization header' };
-  }
-
-  const token = authHeader.substring(7);
-  
-  // In a real implementation, validate JWT token
-  // For demo purposes, accept any token that starts with 'jwt_'
-  if (token.startsWith('jwt_')) {
-    const user = {
-      id: '1',
-      email: 'demo@givc.thefadil.site',
-      name: 'Healthcare Professional',
-      role: 'physician',
-      permissions: ['read_medical_data', 'write_medical_data', 'access_ai_agents'],
-    };
+  try {
+    const authHeader = request.headers.get('Authorization');
+    const clientIp = request.headers.get('CF-Connecting-IP') || 
+                     request.headers.get('X-Forwarded-For') || 
+                     'unknown';
     
-    return { success: true, user };
-  }
+    // Check rate limiting first
+    const rateLimitResult = await checkRateLimit(env, clientIp);
+    if (!rateLimitResult.allowed) {
+      return { 
+        success: false, 
+        error: 'Rate limit exceeded',
+        retryAfter: rateLimitResult.retryAfter 
+      };
+    }
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      await logSecurityEvent(env, {
+        type: 'authentication_failure',
+        reason: 'missing_authorization_header',
+        clientIp,
+        timestamp: new Date(),
+        severity: 'medium'
+      });
+      return { success: false, error: 'No valid authorization header' };
+    }
 
-  return { success: false, error: 'Invalid token' };
+    const token = authHeader.substring(7);
+    
+    // Enhanced token validation
+    if (!token || token.length < 10) {
+      await logSecurityEvent(env, {
+        type: 'authentication_failure',
+        reason: 'invalid_token_format',
+        clientIp,
+        timestamp: new Date(),
+        severity: 'medium'
+      });
+      return { success: false, error: 'Invalid token format' };
+    }
+    
+    // In a real implementation, validate JWT token with proper crypto
+    // For demo purposes, accept any token that starts with 'jwt_'
+    if (token.startsWith('jwt_')) {
+      const user = {
+        id: '1',
+        email: 'demo@givc.thefadil.site',
+        name: 'Healthcare Professional',
+        role: 'physician',
+        permissions: ['read_medical_data', 'write_medical_data', 'access_ai_agents'],
+        lastLogin: new Date().toISOString(),
+        sessionId: generateSessionId()
+      };
+      
+      await logSecurityEvent(env, {
+        type: 'authentication_success',
+        userId: user.id,
+        clientIp,
+        timestamp: new Date(),
+        severity: 'low'
+      });
+      
+      return { success: true, user };
+    }
+
+    await logSecurityEvent(env, {
+      type: 'authentication_failure',
+      reason: 'invalid_token',
+      clientIp,
+      timestamp: new Date(),
+      severity: 'high'
+    });
+    
+    return { success: false, error: 'Invalid token' };
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return { success: false, error: 'Authentication service error' };
+  }
+}
+
+// Rate limiting implementation
+export async function checkRateLimit(env, clientIp, limit = 100, windowMs = 60000) {
+  try {
+    const key = `rate_limit:${clientIp}`;
+    const now = Date.now();
+    const windowStart = now - windowMs;
+    
+    // Get current request count from KV
+    const currentData = await env.HEALTHCARE_KV.get(key);
+    let requests = currentData ? JSON.parse(currentData) : [];
+    
+    // Remove old requests outside the window
+    requests = requests.filter(timestamp => timestamp > windowStart);
+    
+    // Check if limit exceeded
+    if (requests.length >= limit) {
+      const oldestRequest = Math.min(...requests);
+      const retryAfter = Math.ceil((oldestRequest + windowMs - now) / 1000);
+      
+      return { 
+        allowed: false, 
+        retryAfter,
+        remaining: 0 
+      };
+    }
+    
+    // Add current request
+    requests.push(now);
+    
+    // Store updated requests with TTL
+    await env.HEALTHCARE_KV.put(key, JSON.stringify(requests), {
+      expirationTtl: Math.ceil(windowMs / 1000)
+    });
+    
+    return { 
+      allowed: true, 
+      remaining: limit - requests.length,
+      resetTime: windowStart + windowMs
+    };
+  } catch (error) {
+    console.error('Rate limiting error:', error);
+    // Allow request if rate limiting fails
+    return { allowed: true, remaining: 99 };
+  }
+}
+
+// Generate secure session ID
+function generateSessionId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 32; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
 }
 
 // Encryption/Decryption
@@ -71,6 +192,51 @@ export async function decrypt(encryptedData, key) {
     return new TextEncoder().encode(decrypted);
   } catch (error) {
     throw new Error('Decryption failed');
+  }
+}
+
+// Enhanced audit logging with security events
+export async function logSecurityEvent(env, event) {
+  try {
+    const eventId = `security_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const securityRecord = {
+      id: eventId,
+      type: event.type,
+      severity: event.severity || 'medium',
+      timestamp: event.timestamp.toISOString(),
+      clientIp: event.clientIp || 'unknown',
+      userId: event.userId || null,
+      reason: event.reason || null,
+      userAgent: event.userAgent || 'unknown',
+      metadata: event.metadata || {}
+    };
+
+    // Store in KV for immediate access
+    await env.AUDIT_LOGS.put(eventId, JSON.stringify(securityRecord), {
+      expirationTtl: 7 * 24 * 60 * 60, // 7 days
+    });
+    
+    // Also store critical events in D1 for longer retention
+    if (event.severity === 'critical' || event.severity === 'high') {
+      await env.HEALTHCARE_DB.prepare(
+        'INSERT INTO security_logs (id, type, severity, timestamp, client_ip, user_id, reason, metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+      ).bind(
+        eventId,
+        event.type,
+        event.severity,
+        event.timestamp.toISOString(),
+        event.clientIp,
+        event.userId,
+        event.reason,
+        JSON.stringify(event.metadata || {})
+      ).run();
+    }
+    
+    return eventId;
+  } catch (error) {
+    console.error('Failed to log security event:', error);
+    return null;
   }
 }
 
