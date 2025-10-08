@@ -13,6 +13,8 @@ import { encrypt, decrypt } from './middleware/encryption';
 import { validateMedicalFile, sanitizeInput, RateLimiter } from './middleware/security';
 import { errorResponse, successResponse, isValidFile, sanitizeFilename } from './utils/responses';
 
+import logger from './services/logger';
+
 // GIVC API Routes
 const API_ROUTES = {
   '/api/v1/auth': 'authentication',
@@ -140,7 +142,7 @@ export default {
       return errorResponse('NOT_FOUND', 'API endpoint not found', 404);
 
     } catch (error) {
-      console.error('GIVC API Error:', error);
+      logger.error('GIVC API Error:', error);
       
       // Log system error with enhanced details
       await logAuditEvent(env, {

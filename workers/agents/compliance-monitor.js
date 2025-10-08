@@ -10,6 +10,8 @@ import { createCors } from '../middleware/cors';
 import { authenticateRequest } from '../middleware/auth';
 import { logAuditEvent } from '../middleware/audit';
 
+import logger from './services/logger';
+
 export default {
   async fetch(request, env, ctx) {
     const corsHeaders = createCors();
@@ -54,7 +56,7 @@ export default {
       });
 
     } catch (error) {
-      console.error('Compliance Monitor Agent Error:', error);
+      logger.error('Compliance Monitor Agent Error:', error);
       return new Response(JSON.stringify({
         success: false,
         error: { code: 'INTERNAL_ERROR', message: 'Agent processing failed' }
@@ -207,7 +209,7 @@ async function getAuditLogs(request, env, user) {
           logs.push(log);
         }
       } catch (error) {
-        console.error('Error parsing audit log:', error);
+        logger.error('Error parsing audit log:', error);
       }
     }
 

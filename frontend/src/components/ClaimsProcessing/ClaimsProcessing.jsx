@@ -16,6 +16,8 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 
+import logger from '@/services/logger';
+
 interface ClaimsProcessingProps {
   className?: string;
 }
@@ -66,7 +68,7 @@ const ClaimsProcessing= '' }) => {
         setClaims(response.data.data);
       }
     } catch (error) {
-      console.error('Failed to load claims:', error);
+      logger.error('Failed to load claims:', error);
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +86,7 @@ const ClaimsProcessing= '' }) => {
         setFraudAlerts(response.data.data);
       }
     } catch (error) {
-      console.error('Failed to load fraud alerts:', error);
+      logger.error('Failed to load fraud alerts:', error);
     }
   };
 
@@ -106,7 +108,7 @@ const ClaimsProcessing= '' }) => {
         }
       }
     } catch (error) {
-      console.error('Failed to process claim with AI:', error);
+      logger.error('Failed to process claim with AI:', error);
     } finally {
       setIsLoading(false);
     }
@@ -122,7 +124,7 @@ const ClaimsProcessing= '' }) => {
         setFraudAlerts(prev => [...response.data!, ...prev]);
       }
     } catch (error) {
-      console.error('Failed to run fraud detection:', error);
+      logger.error('Failed to run fraud detection:', error);
     } finally {
       setIsLoading(false);
     }
@@ -149,7 +151,7 @@ const ClaimsProcessing= '' }) => {
         }
       }
     } catch (error) {
-      console.error('Failed to upload document:', error);
+      logger.error('Failed to upload document:', error);
     } finally {
       setUploadingDocument(false);
     }
@@ -460,7 +462,7 @@ const ClaimsProcessing= '' }) => {
               </select>
 
               <button
-                onClick={() => console.log('New claim form - TODO')}
+                onClick={() => logger.info('New claim form - TODO')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
               >
                 New Claim
@@ -553,7 +555,7 @@ const ClaimsProcessing= '' }) => {
             </p>
             {!searchTerm && statusFilter === 'all' && (
               <button
-                onClick={() => console.log('Submit first claim - TODO')}
+                onClick={() => logger.info('Submit first claim - TODO')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
               >
                 Submit Your First Claim

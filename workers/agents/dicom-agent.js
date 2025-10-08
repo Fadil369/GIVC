@@ -12,6 +12,8 @@ import { authenticateRequest } from '../middleware/auth';
 import { logAuditEvent } from '../middleware/audit';
 import { decrypt } from '../middleware/encryption';
 
+import logger from './services/logger';
+
 interface Env {
   MEDICAL_METADATA: KVNamespace;
   AUDIT_LOGS: KVNamespace;
@@ -119,7 +121,7 @@ export default {
       });
 
     } catch (error) {
-      console.error('DICOM Agent Error:', error);
+      logger.error('DICOM Agent Error:', error);
       
       await logAuditEvent(env, {
         type: 'agent_error',
@@ -256,7 +258,7 @@ async function handleDicomAnalysis(request: Request, env: Env, user: any): Promi
     });
 
   } catch (error) {
-    console.error('DICOM analysis error:', error);
+    logger.error('DICOM analysis error:', error);
     
     return new Response(JSON.stringify({
       success: false,

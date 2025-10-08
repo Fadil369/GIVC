@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.jsx';
 
+import logger from '@/services/logger';
+
 // 🔧 ENHANCED DEBUG SYSTEM
 const DEBUG_LEVELS = {
   DEBUG: 'DEBUG',
@@ -44,7 +46,7 @@ class DebugLogger {
     }
 
     const style = this.getConsoleStyle(level);
-    console.log(`%c[${level}] ${message}`, style, data || '');
+    logger.info(`%c[${level}] ${message}`, style, data || '');
 
     if (level === DEBUG_LEVELS.CRITICAL) {
       this.sendToMonitoring(log);
@@ -64,7 +66,7 @@ class DebugLogger {
 
   private sendToMonitoring(log: DebugLog) {
     if (process.env.NODE_ENV === 'production') {
-      console.error('CRITICAL ERROR - Sending to monitoring:', log);
+      logger.error('CRITICAL ERROR - Sending to monitoring:', log);
     }
   }
 
@@ -889,7 +891,7 @@ const DashboardEnhanced= () => {
               Shortcuts: Ctrl+R (refresh) | Ctrl+Shift+D (debug) | Ctrl+1 (eligibility) | Ctrl+2 (claims)
             </div>
             <button
-              onClick={() => console.log('Debug logs:', debugLogger.getLogs())}
+              onClick={() => logger.info('Debug logs:', debugLogger.getLogs())}
               className="mt-2 px-3 py-1 bg-green-800 text-green-100 rounded text-xs hover:bg-green-700"
             >
               Export Debug Logs

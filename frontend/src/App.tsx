@@ -1,85 +1,81 @@
-import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+﻿/**
+ * GIVC Healthcare Platform - Main Application Component
+ *  Dr. Al Fadil (BRAINSAIT LTD) - RCM Accredited
+ * 
+ * Consolidated App component with TypeScript, enhanced routing,
+ * lazy loading, and comprehensive error handling
+ */
 
-import AITriage from '@/components/AITriage/AITriage';
-import Login from '@/components/Auth/Login';
-import ProtectedRoute from '@/components/Auth/ProtectedRoute';
-import ClaimsProcessing from '@/components/ClaimsProcessing/ClaimsProcessing';
-import CustomerSupport from '@/components/CustomerSupport/CustomerSupport';
-import Dashboard from '@/components/Dashboard/DashboardEnhanced';
+import { Suspense, lazy } from 'react';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary';
-import LandingPage from '@/components/LandingPage';
-import Layout from '@/components/Layout/Layout';
-import MedicalAgents from '@/components/MedicalAgents/MedicalAgents';
-import MediVault from '@/components/MediVault/MediVault';
 import { ToastProvider } from '@/components/UI/Toast';
 import { AuthProvider } from '@/hooks/useAuth';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+
+// Loading Component with beautiful skeleton UI
+import LoadingFallback from '@/components/UI/LoadingFallback';
+
+// Critical components - load immediately (no lazy loading)
+import Login from '@/components/Auth/Login';
+import ProtectedRoute from '@/components/Auth/ProtectedRoute';
+import Layout from '@/components/Layout/Layout';
+
+// Lazy-loaded components for better initial load performance
+const Dashboard = lazy(() => import('@/components/Dashboard/DashboardEnhanced'));
+const MediVault = lazy(() => import('@/components/MediVault/MediVault'));
+const AITriage = lazy(() => import('@/components/AITriage/AITriage'));
+const MedicalAgents = lazy(() => import('@/components/MedicalAgents/MedicalAgents'));
+const CustomerSupport = lazy(() => import('@/components/CustomerSupport/CustomerSupport'));
+const CustomerSupportHub = lazy(() => import('@/components/CustomerSupport/CustomerSupportHub'));
+const ClaimsProcessing = lazy(() => import('@/components/ClaimsProcessing/ClaimsProcessing'));
+const ClaimsProcessingCenter = lazy(() => import('@/components/ClaimsProcessing/ClaimsProcessingCenter'));
+const RiskAssessmentEngine = lazy(() => import('@/components/RiskAssessment/RiskAssessmentEngine'));
+const LandingPage = lazy(() => import('@/components/LandingPage'));
 
 function App() {
   return (
     <ErrorBoundary>
-      <ToastProvider>
-        <Router>
-          <AuthProvider>
-            <div className="min-h-screen bg-gray-50">
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/landing" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
-                
-                {/* Root redirect */}
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                
-                {/* Direct Dashboard Test Route */}
-                <Route path="/dashboard-direct" element={<Dashboard />} />
-                
-                {/* Protected Routes with Layout */}
-                <Route path="/" element={
-                  <ProtectedRoute>
-                    <ErrorBoundary>
-                      <Layout />
-                    </ErrorBoundary>
-                  </ProtectedRoute>
-                }>
-                  {/* Main Application Routes - Direct Access */}
-                  <Route path="dashboard" element={
-                    <ErrorBoundary>
-                      <Dashboard />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="medivault" element={
-                    <ErrorBoundary>
-                      <MediVault />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="triage" element={
-                    <ErrorBoundary>
-                      <AITriage />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="agents" element={
-                    <ErrorBoundary>
-                      <MedicalAgents />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="support" element={
-                    <ErrorBoundary>
-                      <CustomerSupport />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="claims" element={
-                    <ErrorBoundary>
-                      <ClaimsProcessing />
-                    </ErrorBoundary>
-                  } />
-                </Route>
-                
-                {/* Catch-all redirect */}
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
-            </div>
-          </AuthProvider>
-        </Router>
-      </ToastProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <ToastProvider>
+            <Router>
+              <AuthProvider>
+                <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+                  <Suspense fallback={<LoadingFallback />}>
+                    <Routes>
+                      <Route path="/landing" element={<LandingPage />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                      <Route path="/dashboard-direct" element={<Dashboard />} />
+                      <Route
+                        path="/"
+                        element={
+                          <ProtectedRoute>
+                            <ErrorBoundary>
+                              <Layout />
+                            </ErrorBoundary>
+                          </ProtectedRoute>
+                        }
+                      >
+                        <Route path="dashboard" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
+                        <Route path="medivault" element={<ErrorBoundary><MediVault /></ErrorBoundary>} />
+                        <Route path="triage" element={<ErrorBoundary><AITriage /></ErrorBoundary>} />
+                        <Route path="agents" element={<ErrorBoundary><MedicalAgents /></ErrorBoundary>} />
+                        <Route path="support" element={<ErrorBoundary><CustomerSupportHub /></ErrorBoundary>} />
+                        <Route path="claims" element={<ErrorBoundary><ClaimsProcessingCenter /></ErrorBoundary>} />
+                        <Route path="risk-assessment" element={<ErrorBoundary><RiskAssessmentEngine /></ErrorBoundary>} />
+                      </Route>
+                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                    </Routes>
+                  </Suspense>
+                </div>
+              </AuthProvider>
+            </Router>
+          </ToastProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

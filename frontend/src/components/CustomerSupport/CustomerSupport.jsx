@@ -14,6 +14,8 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useRef, useState } from 'react';
 
+import logger from '@/services/logger';
+
 interface CustomerSupportProps {
   className?: string;
 }
@@ -72,7 +74,7 @@ const CustomerSupport= '' }) => {
         setSessionHistory(response.data.data);
       }
     } catch (error) {
-      console.error('Failed to load session history:', error);
+      logger.error('Failed to load session history:', error);
     }
   };
 
@@ -93,7 +95,7 @@ const CustomerSupport= '' }) => {
         }, 500);
       }
     } catch (error) {
-      console.error('Failed to start new session:', error);
+      logger.error('Failed to start new session:', error);
     } finally {
       setIsLoading(false);
     }
@@ -155,7 +157,7 @@ const CustomerSupport= '' }) => {
         }, 1500); // Simulate AI thinking time
       }
     } catch (error) {
-      console.error('Failed to send message:', error);
+      logger.error('Failed to send message:', error);
       setIsTyping(false);
     } finally {
       setIsLoading(false);
@@ -190,7 +192,7 @@ const CustomerSupport= '' }) => {
         setMessages(prev => [...prev, escalationMessage]);
       }
     } catch (error) {
-      console.error('Failed to escalate to human:', error);
+      logger.error('Failed to escalate to human:', error);
     }
   };
 
@@ -204,7 +206,7 @@ const CustomerSupport= '' }) => {
         setMessages(response.data.messages || []);
       }
     } catch (error) {
-      console.error('Failed to load previous session:', error);
+      logger.error('Failed to load previous session:', error);
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,8 @@
 import { User } from '@/types';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
+import logger from '@/services/logger';
+
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
@@ -31,18 +33,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Check for existing authentication on app load
     const checkAuth = async () => {
       try {
-        console.log('🔧 GIVC: Starting authentication check...');
+        logger.info('🔧 GIVC: Starting authentication check...');
         let token = localStorage.getItem('givc_token');
         
         // For demo purposes - auto-create token if none exists
         if (!token) {
-          console.log('🔧 GIVC Demo Mode: Auto-generating demo credentials');
+          logger.info('🔧 GIVC Demo Mode: Auto-generating demo credentials');
           token = 'demo_token_' + Date.now();
           localStorage.setItem('givc_token', token);
         }
         
         if (token) {
-          console.log('🔧 GIVC: Token found, creating demo user...');
+          logger.info('🔧 GIVC: Token found, creating demo user...');
           // In a real app, verify token with backend
           // For demo purposes, create a mock user
           const mockUser: User = {
@@ -64,13 +66,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             lastLogin: new Date(),
           };
           setUser(mockUser);
-          console.log('🏥 GIVC: Demo user authenticated successfully', mockUser);
+          logger.info('🏥 GIVC: Demo user authenticated successfully', mockUser);
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
+        logger.error('Auth check failed:', error);
         localStorage.removeItem('givc_token');
       } finally {
-        console.log('🔧 GIVC: Setting loading to false');
+        logger.info('🔧 GIVC: Setting loading to false');
         setIsLoading(false);
       }
     };
@@ -112,7 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       return false;
     } catch (error) {
-      console.error('Login failed:', error);
+      logger.error('Login failed:', error);
       return false;
     } finally {
       setIsLoading(false);

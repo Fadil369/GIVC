@@ -108,7 +108,7 @@ export async function authenticateRequest(request, env) {
     
     return { success: false, error: 'Invalid token' };
   } catch (error) {
-    console.error('Authentication error:', error);
+    logger.error('Authentication error:', error);
     return { success: false, error: 'Authentication service error' };
   }
 }
@@ -153,7 +153,7 @@ export async function checkRateLimit(env, clientIp, limit = 100, windowMs = 6000
       resetTime: windowStart + windowMs
     };
   } catch (error) {
-    console.error('Rate limiting error:', error);
+    logger.error('Rate limiting error:', error);
     // Allow request if rate limiting fails
     return { allowed: true, remaining: 99 };
   }
@@ -235,7 +235,7 @@ export async function logSecurityEvent(env, event) {
     
     return eventId;
   } catch (error) {
-    console.error('Failed to log security event:', error);
+    logger.error('Failed to log security event:', error);
     return null;
   }
 }
@@ -285,7 +285,7 @@ export async function logAuditEvent(env, event) {
     
     return auditId;
   } catch (error) {
-    console.error('Failed to log audit event:', error);
+    logger.error('Failed to log audit event:', error);
     return null;
   }
 }
@@ -361,7 +361,7 @@ export class RateLimiter {
       
       return true;
     } catch (error) {
-      console.error('Rate limiting error:', error);
+      logger.error('Rate limiting error:', error);
       return true; // Allow request if rate limiting fails
     }
   }
@@ -369,6 +369,8 @@ export class RateLimiter {
 
 // Input validation and sanitization
 import DOMPurify from 'dompurify';
+
+import logger from './services/logger';
 
 export function sanitizeInput(input) {
   if (typeof input !== 'string') {

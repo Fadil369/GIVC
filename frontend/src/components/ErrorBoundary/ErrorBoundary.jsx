@@ -1,5 +1,7 @@
 import React from 'react';
 
+import logger from '@/services/logger';
+
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +15,7 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     // Log the error to console for debugging
-    console.error('GIVC Error Boundary caught an error:', error, errorInfo);
+    logger.error('GIVC Error Boundary caught an error:', error, errorInfo);
     
     // In production, you could send this to an error reporting service
     if (this.props.onError) {

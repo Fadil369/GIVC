@@ -11,6 +11,8 @@ import { createCors } from '../middleware/cors';
 import { authenticateRequest } from '../middleware/auth';
 import { logAuditEvent } from '../middleware/audit';
 
+import logger from './services/logger';
+
 export default {
   async fetch(request, env, ctx) {
     const corsHeaders = createCors();
@@ -51,7 +53,7 @@ export default {
       });
 
     } catch (error) {
-      console.error('Lab Parser Agent Error:', error);
+      logger.error('Lab Parser Agent Error:', error);
       return new Response(JSON.stringify({
         success: false,
         error: { code: 'INTERNAL_ERROR', message: 'Agent processing failed' }

@@ -29,7 +29,7 @@ export async function logAuditEvent(env, event) {
     
     return auditId;
   } catch (error) {
-    console.error('Failed to log audit event:', error);
+    logger.error('Failed to log audit event:', error);
     return null;
   }
 }
