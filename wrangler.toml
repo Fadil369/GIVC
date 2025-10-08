@@ -1,7 +1,7 @@
 name = "givc"
 compatibility_date = "2023-11-01"
 
-# Pages configuration
+# Pages configuration - Building frontend with Vite
 pages_build_output_dir = "dist"
 pages_build_command = "npm run build"
 
