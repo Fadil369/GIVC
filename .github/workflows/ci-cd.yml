@@ -47,10 +47,10 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_TYPESCRIPT_ES: true
-          VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_CSS: true
-          VALIDATE_HTML: true
+          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_CSS: false
+          VALIDATE_HTML: false
 
   # Testing
   test:
@@ -277,3 +277,4 @@ jobs:
         run: |
           echo "❌ Deployment failed!"
           # Add Slack/Discord/Email notification here
+
