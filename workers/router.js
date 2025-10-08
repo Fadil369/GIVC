@@ -377,7 +377,6 @@ async function handleMediVault(request: Request, env: Env, user: any): Promise<R
 
   return errorResponse('METHOD_NOT_ALLOWED', 'Method not allowed', 405);
 }
-}
 
 // Placeholder handlers for other endpoints
 async function handleTriage(request: Request, env: Env, user: any): Promise<Response> {

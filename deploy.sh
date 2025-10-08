@@ -19,6 +19,17 @@ fi
 
 echo "✅ Build completed successfully!"
 
+# Validate build output
+echo "🔍 Validating build output..."
+npm run validate-build
+
+if [ $? -ne 0 ]; then
+    echo "❌ Build validation failed. Exiting..."
+    exit 1
+fi
+
+echo "✅ Build validation passed!"
+
 # Function to deploy to a specific project
 deploy_to_project() {
     local project_name=$1
