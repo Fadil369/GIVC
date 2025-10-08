@@ -1,8 +1,12 @@
 name = "givc"
 compatibility_date = "2023-11-01"
 
-# Pages configuration
-pages_build_output_dir = "dist"
+# Pages configuration - Use root directory for static HTML site
+pages_build_output_dir = "."
+
+# If you want to build the frontend subdirectory instead, use:
+# pages_build_output_dir = "dist"
+# pages_build_command = "npm run build"
 
 # Environment variables for Pages
 [vars]
