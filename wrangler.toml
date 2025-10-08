@@ -2,7 +2,18 @@ name = "givc"
 compatibility_date = "2023-11-01"
 
 # Pages configuration
+pages_build_command = "npm run build"
 pages_build_output_dir = "dist"
+
+# Build optimization settings
+[build]
+command = "npm run build"
+publish = "dist"
+
+# Node.js configuration for consistent builds
+[build.environment]
+NODE_VERSION = "20"
+NPM_VERSION = "10"
 
 # Environment variables for Pages
 [vars]
