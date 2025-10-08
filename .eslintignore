@@ -1,0 +1,15 @@
+# Build outputs
+dist/
+build/
+*.min.js
+
+# Dependencies
+node_modules/
+vendor/
+
+# Files with TypeScript syntax that need conversion
+workers/router.js
+
+# Generated files
+coverage/
+.next/
