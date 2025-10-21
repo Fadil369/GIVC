@@ -6,9 +6,17 @@
  * smooth scrolling, statistics counter, and interactive elements.
  */
 
+// Debug logging utility (only in development)
+const DEBUG = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const log = {
+    info: (...args) => DEBUG && console.log(...args),
+    warn: (...args) => console.warn(...args), // Always show warnings
+    error: (...args) => console.error(...args) // Always show errors
+};
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏥 BRAINSAIT Landing Page - Initializing...');
+    log.info('🏥 BRAINSAIT Landing Page - Initializing...');
     
     // Initialize all components
     initializeNavigation();
@@ -19,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeBackToTop();
     hideLoadingScreen();
     
-    console.log('✅ BRAINSAIT Landing Page - Fully loaded!');
+    log.info('✅ BRAINSAIT Landing Page - Fully loaded!');
 });
 
 /**
@@ -77,7 +85,10 @@ function initializeNavigation() {
     // Update active navigation link on scroll
     window.addEventListener('scroll', updateActiveNavLink);
     
-    console.log('✅ Navigation initialized');
+    }
+    
+    log.info('✅ Navigation initialized');
+}
 }
 
 /**
@@ -139,7 +150,10 @@ function initializeHeroAnimations() {
         }
     });
     
-    console.log('✅ Hero animations initialized');
+    }
+    
+    log.info('✅ Hero animations initialized');
+}
 }
 
 /**
@@ -189,7 +203,7 @@ function initializeStatCounters() {
     
     statNumbers.forEach(stat => observer.observe(stat));
     
-    console.log('✅ Stat counters initialized');
+    log.info('✅ Stat counters initialized');
 }
 
 /**
@@ -216,7 +230,10 @@ function initializeTechnologyTabs() {
         });
     });
     
-    console.log('✅ Technology tabs initialized');
+    }
+    
+    log.info('✅ Technology tabs initialized');
+}
 }
 
 /**
@@ -248,7 +265,7 @@ function initializeScrollAnimations() {
         observer.observe(element);
     });
     
-    console.log('✅ Scroll animations initialized');
+    log.info('✅ Scroll animations initialized');
 }
 
 /**
@@ -290,7 +307,7 @@ function initializeBackToTop() {
         });
     }
     
-    console.log('✅ Back to top button initialized');
+    log.info('✅ Back to top button initialized');
 }
 
 /**
@@ -400,7 +417,7 @@ function optimizePerformance() {
                         }
                     }));
                 } catch (error) {
-                    console.error('Scroll handler error:', error);
+                    log.error('Scroll handler error:', error);
                 }
                 scrollThrottled = false;
             });
@@ -422,11 +439,11 @@ function optimizePerformance() {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => {
-                console.log(`✅ Preloaded: ${src}`);
+                log.info(`✅ Preloaded: ${src}`);
                 resolve(src);
             };
             img.onerror = () => {
-                console.warn(`⚠️ Failed to preload: ${src}`);
+                log.warn(`⚠️ Failed to preload: ${src}`);
                 reject(new Error(`Failed to load ${src}`));
             };
             img.src = src;
@@ -444,7 +461,10 @@ function optimizePerformance() {
     Promise.allSettled(imageLoadPromises).then(results => {
         const successful = results.filter(r => r.status === 'fulfilled').length;
         const failed = results.filter(r => r.status === 'rejected').length;
-        console.log(`📊 Image preload complete: ${successful} successful, ${failed} failed`);
+        });
+        
+        log.info(`📊 Image preload complete: ${successful} successful, ${failed} failed`);
+    }
     });
     
     // Intersection Observer for performance-aware animations
@@ -474,7 +494,7 @@ function optimizePerformance() {
         setInterval(() => {
             const memoryUsage = performance.memory.usedJSHeapSize / 1024 / 1024;
             if (memoryUsage > 100) { // 100MB threshold
-                console.warn(`⚠️ High memory usage: ${memoryUsage.toFixed(2)}MB`);
+                log.warn(`⚠️ High memory usage: ${memoryUsage.toFixed(2)}MB`);
             }
         }, 30000); // Check every 30 seconds
     }
@@ -497,7 +517,7 @@ function initializeErrorHandling() {
             url: window.location.href
         };
         
-        console.error('🚨 BRAINSAIT Landing Page Error:', errorInfo);
+        log.error('🚨 BRAINSAIT Landing Page Error:', errorInfo);
         
         // Store error in localStorage for debugging (limit to last 10 errors)
         try {
@@ -507,11 +527,9 @@ function initializeErrorHandling() {
                 storedErrors.shift(); // Remove oldest error
             }
             localStorage.setItem('brainsait_errors', JSON.stringify(storedErrors));
-        } catch (storageError) {
-            console.warn('Could not store error in localStorage:', storageError);
-        }
-        
-        // Attempt graceful recovery for known issues
+            } catch (storageError) {
+                log.warn('Could not store error in localStorage:', storageError);
+            }        // Attempt graceful recovery for known issues
         if (errorInfo.message.includes('animation') || errorInfo.message.includes('scroll')) {
             console.log('🔄 Attempting to recover from animation/scroll error...');
             document.body.classList.add('reduced-motion');
@@ -540,22 +558,20 @@ function initializeErrorHandling() {
                 storedRejections.shift();
             }
             localStorage.setItem('brainsait_rejections', JSON.stringify(storedRejections));
-        } catch (storageError) {
-            console.warn('Could not store rejection in localStorage:', storageError);
-        }
-        
-        // Prevent the default browser behavior
+            } catch (storageError) {
+                log.warn('Could not store rejection in localStorage:', storageError);
+            }        // Prevent the default browser behavior
         e.preventDefault();
     });
     
     // Network error detection
     window.addEventListener('online', () => {
-        console.log('🌐 Network connection restored');
+        log.info('🌐 Network connection restored');
         document.body.classList.remove('offline');
     });
     
     window.addEventListener('offline', () => {
-        console.warn('📡 Network connection lost');
+        log.warn('📡 Network connection lost');
         document.body.classList.add('offline');
     });
     
@@ -572,7 +588,7 @@ function initializeErrorHandling() {
             });
             observer.observe({ entryTypes: ['long-task'] });
         } catch (error) {
-            console.log('PerformanceObserver not fully supported');
+            log.info('PerformanceObserver not fully supported');
         }
     }
     

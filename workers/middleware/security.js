@@ -74,18 +74,34 @@ export async function authenticateRequest(request, env) {
       return { success: false, error: 'Invalid token format' };
     }
     
-    // In a real implementation, validate JWT token with proper crypto
-    // For demo purposes, accept any token that starts with 'jwt_'
-    if (token.startsWith('jwt_')) {
-      const user = {
-        id: '1',
-        email: 'demo@givc.thefadil.site',
-        name: 'Healthcare Professional',
-        role: 'physician',
-        permissions: ['read_medical_data', 'write_medical_data', 'access_ai_agents'],
-        lastLogin: new Date().toISOString(),
-        sessionId: generateSessionId()
-      };
+    // PRODUCTION: Use real JWT validation from auth.js
+    // This function is deprecated - use authenticateRequest from auth.js instead
+    try {
+      const { verifyJWT } = await import('../utils/jwt.js');
+      const payload = await verifyJWT(token, env.JWT_SECRET);
+      
+      if (!payload) {
+        await logSecurityEvent(env, {
+          type: 'authentication_failure',
+          reason: 'invalid_jwt',
+          clientIp,
+          timestamp: new Date(),
+          severity: 'high'
+        });
+        return { success: false, error: 'Invalid or expired token' };
+      }
+
+      // Fetch user from database
+      const user = await env.DB.prepare(
+        'SELECT id, email, name, role, permissions FROM users WHERE id = ? AND active = 1'
+      ).bind(payload.sub).first();
+
+      if (!user) {
+        return { success: false, error: 'User not found' };
+      }
+
+      user.permissions = user.permissions ? JSON.parse(user.permissions) : [];
+      user.sessionId = generateSessionId();
       
       await logSecurityEvent(env, {
         type: 'authentication_success',
@@ -96,17 +112,18 @@ export async function authenticateRequest(request, env) {
       });
       
       return { success: true, user };
+
+    } catch (jwtError) {
+      await logSecurityEvent(env, {
+        type: 'authentication_failure',
+        reason: 'jwt_verification_failed',
+        clientIp,
+        timestamp: new Date(),
+        severity: 'high'
+      });
+      return { success: false, error: 'Invalid token' };
     }
 
-    await logSecurityEvent(env, {
-      type: 'authentication_failure',
-      reason: 'invalid_token',
-      clientIp,
-      timestamp: new Date(),
-      severity: 'high'
-    });
-    
-    return { success: false, error: 'Invalid token' };
   } catch (error) {
     logger.error('Authentication error:', error);
     return { success: false, error: 'Authentication service error' };
@@ -169,30 +186,19 @@ function generateSessionId() {
   return result;
 }
 
-// Encryption/Decryption
+// Encryption/Decryption (DEPRECATED - use encryption.js instead)
 export async function encrypt(data, key) {
-  // Simple encryption for demo - in production use proper crypto
-  const encoder = new TextEncoder();
-  const keyData = encoder.encode(key);
-  
-  // For demo purposes, just base64 encode
-  // In production, use Web Crypto API with AES-256-GCM
-  if (data instanceof ArrayBuffer) {
-    const bytes = new Uint8Array(data);
-    return btoa(String.fromCharCode(...bytes));
-  }
-  
-  return btoa(data);
+  // DEPRECATED: Use workers/middleware/encryption.js instead
+  // This function is maintained for backwards compatibility only
+  const { encrypt: encryptProd } = await import('./encryption.js');
+  return await encryptProd(data, key);
 }
 
 export async function decrypt(encryptedData, key) {
-  // Simple decryption for demo - in production use proper crypto
-  try {
-    const decrypted = atob(encryptedData);
-    return new TextEncoder().encode(decrypted);
-  } catch (error) {
-    throw new Error('Decryption failed');
-  }
+  // DEPRECATED: Use workers/middleware/encryption.js instead
+  // This function is maintained for backwards compatibility only
+  const { decrypt: decryptProd } = await import('./encryption.js');
+  return await decryptProd(encryptedData, key);
 }
 
 // Enhanced audit logging with security events
@@ -325,8 +331,12 @@ export function validateHIPAACompliance(request, data) {
 
 // Helper function to check if data is encrypted
 function isEncrypted(data) {
-  // Simple check for demo - in production use proper encryption markers
-  return typeof data === 'string' && (data.startsWith('enc_') || data.length > 100);
+  // PRODUCTION: Check for AES-256-GCM format (iv:authTag:ciphertext)
+  if (typeof data !== 'string') return false;
+  const parts = data.split(':');
+  if (parts.length !== 3) return false;
+  const hexPattern = /^[0-9a-f]+$/i;
+  return hexPattern.test(parts[0]) && hexPattern.test(parts[1]);
 }
 
 // Rate limiting

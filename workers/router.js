@@ -207,7 +207,7 @@ async function handleAuthentication(request: Request, env: Env): Promise<Respons
         await logAuditEvent(env, {
           type: 'failed_authentication',
           severity: 'medium',
-          description: `Failed login attempt: invalid format`,
+          description: 'Failed login attempt: invalid format',
           userId: 'unknown',
           timestamp: new Date(),
           resolved: true,
@@ -224,38 +224,20 @@ async function handleAuthentication(request: Request, env: Env): Promise<Respons
         return errorResponse('INVALID_EMAIL_FORMAT', 'Invalid email format', 400);
       }
       
-      // In a real implementation, validate against database with proper password hashing
-      // For demo purposes, accept valid email/password combinations
-      const user = {
-        id: email.includes('fadil') ? 'admin_1' : `user_${Date.now()}`,
-        email: email,
-        name: email.includes('fadil') ? 'Dr. Al Fadil' : 'Healthcare Professional',
-        role: email.includes('fadil') ? 'admin' : 'physician',
-        permissions: ['read_medical_data', 'write_medical_data', 'access_ai_agents'],
-        organization: 'BRAINSAIT LTD',
-      };
+      // PRODUCTION: Use real authentication with PBKDF2 + JWT
+      const { loginUser } = await import('./middleware/auth.js');
+      const loginResult = await loginUser(email, password, env, request);
 
-      // Generate enhanced JWT token with expiration (still demo-level but more secure)
-      const expirationTime = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours
-      const token = `jwt_${Date.now()}_${user.id}_${expirationTime}`;
-      
-      // Log successful login
-      await logAuditEvent(env, {
-        type: 'successful_login',
-        severity: 'informational',
-        description: `User login: ${email}`,
-        userId: user.id,
-        timestamp: new Date(),
-        resolved: true,
-        metadata: {
-          email: email,
-          role: user.role,
-          tokenExpiration: expirationTime
-        }
-      });
+      if (!loginResult.success) {
+        return errorResponse('AUTH_FAILED', loginResult.error, 401);
+      }
 
       return successResponse(
-        { user, token, expiresAt: new Date(expirationTime * 1000).toISOString() },
+        { 
+          user: loginResult.user, 
+          token: loginResult.token,
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        },
         'Authentication successful'
       );
 
@@ -271,6 +253,29 @@ async function handleAuthentication(request: Request, env: Env): Promise<Respons
       });
       
       return errorResponse('AUTH_ERROR', 'Authentication failed', 500);
+    }
+  }
+
+  // Logout endpoint
+  if (request.method === 'POST' && url.pathname === '/api/v1/auth/logout') {
+    try {
+      const authHeader = request.headers.get('Authorization');
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return errorResponse('INVALID_TOKEN', 'No token provided', 400);
+      }
+
+      const token = authHeader.substring(7);
+      const { logoutUser } = await import('./middleware/auth.js');
+      const logoutResult = await logoutUser(token, env);
+
+      if (!logoutResult.success) {
+        return errorResponse('LOGOUT_FAILED', logoutResult.error, 500);
+      }
+
+      return successResponse(null, 'Logged out successfully');
+
+    } catch (error) {
+      return errorResponse('LOGOUT_ERROR', 'Logout failed', 500);
     }
   }
 
