@@ -18,6 +18,8 @@ from services.claims import ClaimsService
 from services.prior_authorization import PriorAuthorizationService
 from services.communication import CommunicationService
 from services.analytics import NPHIESAnalytics
+from services.platform_integration import PlatformIntegrationService
+from config.platform_config import GIVCPlatformConfig
 from utils.logger import setup_logger, get_logger
 
 # Setup enhanced logging
