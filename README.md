@@ -1,128 +1,135 @@
-# GIVC Healthcare Platform
+# NPHIES API Integration Platform
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![HIPAA Compliant](https://img.shields.io/badge/HIPAA-Compliant-green.svg)](https://www.hhs.gov/hipaa/index.html)
-[![RCM Accredited](https://img.shields.io/badge/RCM-Accredited-brightgreen.svg)](https://www.cms.gov/medicare/provider-enrollment-and-certification)
+Complete Python integration solution for Saudi Arabia's National Platform for Health Insurance Electronic Services (NPHIES).
 
-## 🏥 GIVC - Global Integrated Virtual Care
+## 🌟 Features
 
-**Advanced HIPAA-compliant healthcare technology platform with AI-powered medical analysis**
+- **Authentication & Security**: Certificate-based authentication with encrypted communications
+- **Eligibility Verification**: Real-time patient insurance eligibility checks
+- **Prior Authorization**: Submit and track prior authorization requests
+- **Claims Management**: Submit, query, and track healthcare claims
+- **Communication Polling**: Retrieve and process NPHIES communications
+- **Data Pipeline**: Automated data extraction and processing workflows
+- **Error Handling**: Comprehensive error handling and retry mechanisms
+- **Logging**: Detailed logging for debugging and monitoring
 
-- **Project Owner**: Dr. Al Fadil (BRAINSAIT LTD)  
-- **Domain**: [givc.thefadil.site](https://givc.thefadil.site)  
-- **Tech Stack**: React + TypeScript + Cloudflare Workers + Workers AI  
-- **Compliance**: HIPAA, RCM Accredited, ISO 27001
+## 📋 Requirements
 
-## ✨ Features
-
-### 🤖 AI-Powered Medical Agents
-- **DICOM Analysis Agent** - ResNet-50 neural network for medical imaging analysis
-- **Lab Results Parser** - OCR and intelligent parsing of laboratory results
-- **Clinical Decision Support** - Evidence-based diagnosis and treatment recommendations
-- **Compliance Monitor** - Real-time HIPAA compliance and audit monitoring
-
-### 🔐 MediVault - Secure File Management
-- HIPAA-compliant file storage with AES-256 encryption
-- Support for DICOM, PDF, HL7, and medical image formats
-- Drag-and-drop upload with real-time processing status
-- Secure URL generation with expiration timestamps
-
-### 🩺 AI Triage Assessment
-- Intelligent symptom analysis and urgency determination
-- Evidence-based triage recommendations
-- Emergency detection and routing
-- Clinical guideline integration
-
-### 📊 Real-time Analytics Dashboard
-- System performance and uptime monitoring
-- Compliance score tracking
-- AI agent performance metrics
-- Audit trail visualization
+- Python 3.8+
+- Valid NPHIES credentials (License, NPHIES ID)
+- SSL/TLS certificates for production environment
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Node.js 18+ 
-- Cloudflare account with Workers, R2, KV, and D1 access
-- Git
+1. **Install Dependencies**:
+```bash
+pip install -r requirements.txt
+```
 
-### Installation
+2. **Configure Environment**:
+   - Copy `.env.example` to `.env`
+   - Update credentials and endpoints
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Fadil369/GIVC.git
-   cd GIVC
-   ```
+3. **Run Data Extraction**:
+```bash
+python main.py
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+## 📁 Project Structure
 
-3. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Cloudflare credentials and configuration
-   ```
+```
+nphies-integration/
+├── config/              # Configuration files
+│   ├── settings.py      # Application settings
+│   └── endpoints.py     # API endpoints
+├── auth/                # Authentication modules
+│   ├── auth_manager.py  # Authentication handler
+│   └── cert_manager.py  # Certificate management
+├── services/            # API service modules
+│   ├── eligibility.py   # Eligibility verification
+│   ├── authorization.py # Prior authorization
+│   ├── claims.py        # Claims management
+│   └── communication.py # Communication polling
+├── models/              # Data models
+│   ├── request.py       # Request models
+│   └── response.py      # Response models
+├── pipeline/            # Data pipeline
+│   ├── extractor.py     # Data extraction
+│   └── processor.py     # Data processing
+├── utils/               # Utility functions
+│   ├── logger.py        # Logging utilities
+│   ├── validators.py    # Data validators
+│   └── helpers.py       # Helper functions
+├── tests/               # Unit tests
+├── main.py             # Main application entry
+├── requirements.txt    # Python dependencies
+└── .env.example        # Environment template
+```
 
-4. **Start development server**
-   ```bash
-   npm run dev
-   ```
+## 🔐 Environment Variables
 
-## 🏗️ Architecture
+```
+NPHIES_BASE_URL=https://NPHIES.sa/api/fs/fhir
+NPHIES_LICENSE=your_license_number
+NPHIES_ORGANIZATION_ID=your_organization_id
+NPHIES_PROVIDER_ID=your_provider_id
+CERT_FILE_PATH=path/to/certificate.pem
+CERT_KEY_PATH=path/to/private_key.pem
+ENVIRONMENT=production  # or sandbox
+LOG_LEVEL=INFO
+```
 
-The GIVC platform is built on a modern, serverless architecture using Cloudflare's edge computing platform:
+## 📊 Usage Examples
 
-- **Frontend**: React 18 + TypeScript + Tailwind CSS
-- **Backend**: Cloudflare Workers (serverless)
-- **AI Processing**: Workers AI with ResNet-50
-- **Storage**: R2 (files), KV (metadata), D1 (structured data)
-- **Security**: End-to-end encryption, HIPAA compliance
+### Eligibility Check
+```python
+from services.eligibility import EligibilityService
 
-## 🔒 Security & Compliance
+service = EligibilityService()
+result = service.check_eligibility(
+    member_id="123456789",
+    payer_id="7000911508",
+    service_date="2025-10-22"
+)
+```
 
-### HIPAA Compliance
-- ✅ End-to-end encryption (AES-256-GCM)
-- ✅ Audit logging with 7-year retention
-- ✅ Role-based access control (RBAC)
-- ✅ Secure data transmission (TLS 1.3)
+### Submit Claim
+```python
+from services.claims import ClaimsService
 
-### RCM Accreditation
-- ✅ Billing code extraction and validation
-- ✅ Claims processing workflow
-- ✅ Revenue cycle analytics
+service = ClaimsService()
+claim = service.submit_claim(claim_data)
+```
 
-## 📖 Demo Usage
+## 🏥 Supported Operations
 
-The platform includes demo functionality for testing:
+- ✅ Eligibility Verification
+- 📋 Prior Authorization Request
+- 💰 Claim Submission
+- 🔍 Claim Status Inquiry
+- 💬 Communication Polling
+- 📝 Authorization Status Check
+- 🔄 Batch Processing
 
-1. **Login**: Use any email/password combination
-2. **Upload Files**: Drag and drop medical files in MediVault
-3. **Run AI Analysis**: Test DICOM, Lab, and Clinical agents
-4. **Triage Assessment**: Complete symptom questionnaires
-5. **View Compliance**: Monitor HIPAA compliance status
+## 📖 API Documentation
 
-## 🤝 Contributing
+For detailed NPHIES API documentation, visit:
+- Portal: https://portal.nphies.sa
+- FHIR Implementation Guide: https://portal.nphies.sa/ig/
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## 🛡️ Security
 
-## 📄 License
+- All communications use TLS 1.2+
+- Certificate-based authentication
+- Sensitive data encryption
+- Audit logging enabled
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+## 📝 License
 
-## 🏢 Organization
+MIT License - See LICENSE file for details
 
-**BRAINSAIT LTD**  
-**Dr. Al Fadil, MD**  
-Healthcare Technology Innovation  
-RCM Accredited Provider  
+## 🤝 Support
 
----
-
-**© 2024 Dr. Al Fadil - BRAINSAIT LTD. All rights reserved.**  
-**GIVC - Transforming Healthcare Through Technology** 🏥✨
+For issues and questions:
+- NPHIES Support: Via portal
+- Project Issues: GitHub Issues

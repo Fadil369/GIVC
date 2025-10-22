@@ -1,475 +1,485 @@
-# 🚀 GIVC Healthcare Platform - Enhanced Deployment Guide
+# NPHIES Integration Platform - Complete Setup & Deployment Guide
 
-## 📋 Overview
+## 📋 Table of Contents
 
-This guide covers the complete deployment workflow for the GIVC Healthcare Platform with:
-- ✅ Automated Cloudflare Pages deployment
-- ✅ Cloudflare Workers deployment
-- ✅ DNS management and configuration
-- ✅ Google Tag Manager Gateway integration
-- ✅ Cloudflare Access JWT validation
-- ✅ HIPAA-compliant security features
+1. [System Requirements](#system-requirements)
+2. [Installation](#installation)
+3. [Configuration](#configuration)
+4. [API Integration](#api-integration)
+5. [Data Extraction](#data-extraction)
+6. [Production Deployment](#production-deployment)
+7. [Troubleshooting](#troubleshooting)
 
-## 🔑 Prerequisites
+## 🔧 System Requirements
 
-### Required Accounts & Tokens
+- Python 3.8 or higher
+- Windows 10/11 or Windows Server 2016+
+- Network access to NPHIES portal (https://nphies.sa)
+- Valid NPHIES credentials (License, Organization ID)
+- SSL certificates (for production environment)
 
-1. **GitHub Repository**
-   - Repository: `Fadil369/GIVC`
-   - Branch: `main` (default)
+## 📦 Installation
 
-2. **Cloudflare Account**
-   - Account ID: Required for API calls
-   - API Token with permissions:
-     - DNS: Edit
-     - Workers: Edit
-     - Pages: Edit
-     - Zone: Read
+### Step 1: Clone or Download the Project
 
-3. **Google Tag Manager** (Optional)
-   - Container ID
-   - Gateway API endpoint
-   - API token
-
-### Required GitHub Secrets
-
-Navigate to: `Settings → Secrets and variables → Actions → New repository secret`
-
-| Secret Name | Description | Example |
-|-------------|-------------|---------|
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token | `xyz123...` |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID | `a1b2c3d4...` |
-| `CF_ZONE_ID` | Cloudflare Zone ID for brainsait.com | `zone123...` |
-| `GTM_CONTAINER_ID` | Google Tag Manager Container ID | `GTM-XXXXXXX` |
-| `GTM_GATEWAY_ENDPOINT` | GTM Gateway API endpoint | `https://api.example.com/gtm/config` |
-| `GTM_API_TOKEN` | GTM Gateway API token | `gtm_token...` |
-
-## 📁 Project Structure
-
-```
-GIVC/
-├── .github/
-│   ├── workflows/
-│   │   ├── deploy-enhanced.yml    # Main deployment workflow
-│   │   ├── ci-cd.yml              # CI/CD pipeline
-│   │   └── deploy.yml             # Simple deployment
-│   └── scripts/
-│       └── cf-upsert-dns.sh       # DNS management script
-├── workers/
-│   ├── router.js                   # Main API router
-│   ├── access-validator.js         # CF Access JWT validation
-│   ├── agents/                     # AI agents
-│   └── middleware/                 # Security middleware
-├── frontend/
-│   └── src/                        # React application
-├── dist/                           # Build output (created by build)
-└── package.json
+```powershell
+cd C:\
+# Project is already at C:\nphies-integration
 ```
 
-## 🛠️ Setup Instructions
+### Step 2: Create Virtual Environment (Recommended)
 
-### Step 1: Clone Repository
-
-```bash
-git clone https://github.com/Fadil369/GIVC.git
-cd GIVC
+```powershell
+cd C:\nphies-integration
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
 
-### Step 2: Install Dependencies
+### Step 3: Install Dependencies
 
-```bash
-npm install
+```powershell
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-### Step 3: Configure Environment Variables
+### Step 4: Create Required Directories
 
-Create `.env` file in project root:
-
-```env
-# Cloudflare Configuration
-CLOUDFLARE_API_TOKEN=your_api_token_here
-CLOUDFLARE_ACCOUNT_ID=your_account_id_here
-CF_ZONE_ID=your_zone_id_here
-
-# Domain Configuration
-CF_DOMAIN=givc.brainsait.com
-TARGET_HOST=givc-healthcare.pages.dev
-
-# Google Tag Manager (Optional)
-GTM_CONTAINER_ID=GTM-XXXXXXX
-GTM_GATEWAY_ENDPOINT=https://api.example.com/gtm/config
-GTM_API_TOKEN=your_gtm_token_here
-
-# Cloudflare Access
-ACCESS_AUD=5bc270d16bb84f830d04e92712d45cfdbf3527f3fdb8aecba8ec30296add9b22
-ACCESS_TEAM_DOMAIN=https://fadil369.cloudflareaccess.com
+```powershell
+New-Item -ItemType Directory -Force -Path logs, output, certs
 ```
 
-### Step 4: Configure GitHub Secrets
+## ⚙️ Configuration
 
-1. Go to GitHub repository settings
-2. Navigate to: **Settings → Secrets and variables → Actions**
-3. Add each secret from the table above
-4. Verify all secrets are added correctly
+### Step 1: Create Environment File
 
-### Step 5: Test Build Locally
-
-```bash
-# Test build
-npm run build:production
-
-# Verify build output
-ls -la dist/
-
-# Test locally (optional)
-npm run preview
+```powershell
+copy .env.example .env
 ```
 
-## 🚀 Deployment
+### Step 2: Update Credentials
 
-### Automatic Deployment (Recommended)
+Edit `.env` file with your actual credentials:
 
-Push to `main` branch to trigger automatic deployment:
+```ini
+# NPHIES API Configuration
+NPHIES_BASE_URL=https://NPHIES.sa/api/fs/fhir
+NPHIES_SANDBOX_URL=https://HSB.nphies.sa/api/fs/fhir
 
-```bash
-git add .
-git commit -m "Deploy GIVC platform with enhanced workflow"
-git push origin main
+# Your Organization Credentials
+NPHIES_LICENSE=7000911508          # Your license number
+NPHIES_ORGANIZATION_ID=10000000000988  # Your org ID
+NPHIES_PROVIDER_ID=1048            # Your provider ID
+NPHIES_PAYER_ID=7000911508         # Insurance payer ID
+
+# Provider Details
+PROVIDER_NAME=Al Hayat National Hospital
+PROVIDER_CHI_ID=1048
+INSURANCE_GROUP_CODE=1096
+
+# Environment (sandbox for testing, production for live)
+ENVIRONMENT=sandbox
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FILE=logs/nphies_integration.log
 ```
 
-The workflow will automatically:
-1. ✅ Build the application
-2. ✅ Deploy to Cloudflare Pages
-3. ✅ Configure DNS records
-4. ✅ Deploy Cloudflare Workers
-5. ✅ Configure Google Tag Gateway
-6. ✅ Set up Cloudflare Access validation
-7. ✅ Run health checks
-8. ✅ Generate deployment report
+### Step 3: Configure Certificates (Production Only)
 
-### Manual Deployment
+For production environment:
 
-```bash
-# Build application
-npm run build:production
+1. Obtain certificates from NPHIES
+2. Place in `certs/` directory:
+   - `client_certificate.pem`
+   - `private_key.pem`
+   - `ca_bundle.pem`
+3. Update paths in `.env`
 
-# Deploy to Cloudflare Pages
-wrangler pages deploy dist --project-name=givc-healthcare
+## 🔌 API Integration
 
-# Deploy Workers
-cd workers
-wrangler deploy router.js --name givc-router
-wrangler deploy access-validator.js --name givc-access-validator
+### Understanding NPHIES API
 
-# Configure DNS (requires environment variables)
-chmod +x .github/scripts/cf-upsert-dns.sh
-./.github/scripts/cf-upsert-dns.sh
+NPHIES uses **FHIR (Fast Healthcare Interoperability Resources)** standard:
+
+- **Base Endpoint**: `https://NPHIES.sa/api/fs/fhir`
+- **Message Format**: FHIR Bundle (JSON)
+- **Authentication**: Certificate-based (production) or License-based (sandbox)
+- **Message Types**:
+  - Eligibility Verification
+  - Prior Authorization
+  - Claim Submission
+  - Claim Inquiry
+  - Communication Polling
+
+### API Request Flow
+
+```
+1. Build FHIR Bundle
+   ├── MessageHeader (routing info)
+   ├── Request Resource (Eligibility/Claim/etc)
+   ├── Patient Resource
+   ├── Coverage Resource
+   └── Organization Resources
+
+2. Authenticate Request
+   ├── Add License/Org headers
+   └── Attach certificates (production)
+
+3. Send to NPHIES
+   POST https://NPHIES.sa/api/fs/fhir/$process-message
+
+4. Parse Response
+   ├── Extract resources from Bundle
+   ├── Check for errors
+   └── Process results
 ```
 
-## 🌐 DNS Configuration
+### Available Services
 
-### Automatic DNS Setup
+#### 1. Eligibility Service
 
-The workflow automatically creates/updates:
-- `givc.brainsait.com` → Cloudflare Pages (A record with proxy)
-- `api.givc.brainsait.com` → Workers (CNAME with proxy)
+```python
+from services.eligibility import EligibilityService
 
-### Manual DNS Configuration
-
-```bash
-# Set required environment variables
-export CF_API_TOKEN="your_token"
-export CF_ZONE_ID="your_zone_id"
-export CF_DOMAIN="givc.brainsait.com"
-export TARGET_HOST="givc-healthcare.pages.dev"
-export RECORD_TYPE="CNAME"
-export PROXIED="true"
-
-# Run DNS script
-./.github/scripts/cf-upsert-dns.sh
+service = EligibilityService()
+result = service.check_eligibility(
+    member_id="1234567890",
+    payer_id="7000911508",
+    service_date="2025-10-22"
+)
 ```
 
-### DNS Verification
+#### 2. Claims Service
 
-```bash
-# Check DNS resolution
-nslookup givc.brainsait.com
+```python
+from services.claims import ClaimsService
 
-# Check with Cloudflare DNS
-dig @1.1.1.1 givc.brainsait.com
-
-# Check API subdomain
-dig @1.1.1.1 api.givc.brainsait.com
+service = ClaimsService()
+result = service.submit_claim(
+    claim_type="professional",
+    patient_id="patient-001",
+    member_id="1234567890",
+    payer_id="7000911508",
+    services=[...],
+    total_amount=150.00
+)
 ```
 
-## 🏷️ Google Tag Manager Integration
+#### 3. Communication Service
 
-### Configuration
+```python
+from services.communication import CommunicationService
 
-The workflow automatically configures GTM with:
-- Container ID from secrets
-- Consent mode settings (HIPAA-compliant)
-- Server-side tracking endpoint
-- Analytics tracking enabled
+service = CommunicationService()
+result = service.poll_communications()
+```
 
-### Custom GTM Configuration
+## 📊 Data Extraction
 
-Edit `.github/workflows/deploy-enhanced.yml` to customize:
+### Using the Data Pipeline
 
-```yaml
-GTM_PAYLOAD=$(jq -n \
-  --arg containerId "${{ secrets.GTM_CONTAINER_ID }}" \
-  --arg domain "${{ env.DOMAIN }}" \
-  --argjson consentMode true \
-  '{
-    containerId: $containerId,
-    domain: $domain,
-    config: {
-      consentMode: {
-        enabled: $consentMode,
-        defaultConsent: {
-          ad_storage: "denied",           # No advertising
-          analytics_storage: "granted",   # Analytics allowed
-          functionality_storage: "granted",
-          personalization_storage: "denied",
-          security_storage: "granted"
-        }
-      }
+The extraction pipeline provides automated data collection:
+
+```python
+from pipeline.extractor import NPHIESDataExtractor
+
+extractor = NPHIESDataExtractor()
+
+# Define data sources
+members_to_check = [
+    {"member_id": "1234567890", "payer_id": "7000911508"},
+    {"member_id": "0987654321", "payer_id": "7000911508"}
+]
+
+claims_to_submit = [
+    {
+        "claim_type": "professional",
+        "patient_id": "patient-001",
+        "member_id": "1234567890",
+        "payer_id": "7000911508",
+        "services": [...],
+        "total_amount": 150.00
     }
-  }')
+]
+
+# Run extraction
+results = extractor.run_full_extraction(
+    eligibility_members=members_to_check,
+    claims_data=claims_to_submit,
+    poll_communications=True,
+    output_dir="output"
+)
 ```
 
-## 🔐 Cloudflare Access Integration
+### Output Files
 
-### JWT Validation Setup
+Results are saved to JSON files:
 
-The `access-validator.js` worker validates JWT tokens from Cloudflare Access:
-
-```javascript
-// Configuration
-const ACCESS_CONFIG = {
-  AUD: '5bc270d16bb84f830d04e92712d45cfdbf3527f3fdb8aecba8ec30296add9b22',
-  TEAM_DOMAIN: 'https://fadil369.cloudflareaccess.com',
-  CERTS_URL: 'https://fadil369.cloudflareaccess.com/cdn-cgi/access/certs'
-};
+```
+output/
+├── eligibility_results.json          # Eligibility check results
+├── claims_results.json                # Claim submission results
+├── communications_results.json        # Polled communications
+└── complete_extraction_results.json   # Complete pipeline summary
 ```
 
-### Testing JWT Validation
+### Integrating with Your Platform
 
-```bash
-# Get JWT token from Cloudflare Access
-# Then test validation:
+#### Option 1: Direct Integration
 
-curl -X GET https://givc.brainsait.workers.dev/validate \
-  -H "cf-access-jwt-assertion: YOUR_JWT_TOKEN"
+```python
+# Import services into your application
+from services.eligibility import EligibilityService
+
+# Use in your code
+eligibility = EligibilityService()
+result = eligibility.check_eligibility(...)
 ```
 
-### Integrating with Your Application
+#### Option 2: API Wrapper
 
-Add JWT validation to your Express app:
+Create REST API wrapper using Flask/FastAPI:
 
-```javascript
-const express = require("express");
-const jose = require("jose");
+```python
+from fastapi import FastAPI
+from services.eligibility import EligibilityService
 
-const AUD = process.env.POLICY_AUD;
-const TEAM_DOMAIN = process.env.TEAM_DOMAIN;
-const CERTS_URL = `${TEAM_DOMAIN}/cdn-cgi/access/certs`;
+app = FastAPI()
+eligibility = EligibilityService()
 
-const JWKS = jose.createRemoteJWKSet(new URL(CERTS_URL));
-
-const verifyToken = async (req, res, next) => {
-  if (!AUD) {
-    return res.status(403).send({
-      status: false,
-      message: "missing required audience"
-    });
-  }
-
-  const token = req.headers["cf-access-jwt-assertion"];
-
-  if (!token) {
-    return res.status(403).send({
-      status: false,
-      message: "missing required cf authorization token"
-    });
-  }
-
-  try {
-    const result = await jose.jwtVerify(token, JWKS, {
-      issuer: TEAM_DOMAIN,
-      audience: AUD
-    });
-
-    req.user = result.payload;
-    next();
-  } catch (err) {
-    return res.status(403).send({
-      status: false,
-      message: "invalid token"
-    });
-  }
-};
-
-app.use(verifyToken);
+@app.post("/api/check-eligibility")
+def check_eligibility(data: dict):
+    return eligibility.check_eligibility(**data)
 ```
 
-## 📊 Workflow Jobs Overview
+#### Option 3: Scheduled Jobs
 
-### 1. Build & Deploy
-- Installs dependencies
-- Builds production bundle
-- Deploys to Cloudflare Pages
-- Outputs deployment URL
+Use Windows Task Scheduler or cron:
 
-### 2. DNS Configuration
-- Creates/updates A record for main domain
-- Creates/updates CNAME for API subdomain
-- Enables Cloudflare proxy
-- Verifies DNS resolution
-
-### 3. Deploy Workers
-- Deploys main router worker
-- Deploys AI agent workers
-- Deploys access validation worker
-- Configures worker routes
-
-### 4. GTM Configuration
-- Sends PATCH request to GTM Gateway
-- Configures container settings
-- Sets up consent mode
-- Enables server-side tracking
-
-### 5. Access Configuration
-- Deploys JWT validation worker
-- Configures Access application
-- Sets up authentication flow
-- Enables security features
-
-### 6. Verification
-- Checks DNS propagation
-- Tests health endpoints
-- Verifies Workers deployment
-- Generates deployment report
-
-## 🔍 Monitoring & Debugging
-
-### View Workflow Logs
-
-1. Go to GitHub repository
-2. Click **Actions** tab
-3. Select latest workflow run
-4. View logs for each job
-
-### Check Deployment Status
-
-```bash
-# Check Pages deployment
-curl https://givc.brainsait.com/api/v1/health
-
-# Check Workers deployment
-curl https://givc.brainsait.workers.dev/api/v1/health
-
-# Check Access validation
-curl https://givc.brainsait.workers.dev/health
+```powershell
+# Run daily at 2 AM
+schtasks /create /tn "NPHIES Data Extraction" /tr "C:\nphies-integration\venv\Scripts\python.exe C:\nphies-integration\main.py" /sc daily /st 02:00
 ```
+
+## 🚀 Production Deployment
+
+### Pre-Deployment Checklist
+
+- [ ] Obtain production NPHIES credentials
+- [ ] Install and configure SSL certificates
+- [ ] Update `.env` with production values
+- [ ] Set `ENVIRONMENT=production`
+- [ ] Test connection to production endpoint
+- [ ] Setup logging and monitoring
+- [ ] Configure backup and recovery
+- [ ] Document runbooks and procedures
+
+### Production Configuration
+
+```ini
+# .env for production
+ENVIRONMENT=production
+NPHIES_BASE_URL=https://NPHIES.sa/api/fs/fhir
+
+# Production credentials
+NPHIES_LICENSE=YOUR_PRODUCTION_LICENSE
+NPHIES_ORGANIZATION_ID=YOUR_PROD_ORG_ID
+
+# Certificates
+CERT_FILE_PATH=C:/nphies-integration/certs/prod_certificate.pem
+CERT_KEY_PATH=C:/nphies-integration/certs/prod_key.pem
+CA_BUNDLE_PATH=C:/nphies-integration/certs/ca_bundle.pem
+
+# Production logging
+LOG_LEVEL=INFO
+LOG_FILE=C:/logs/nphies_production.log
+```
+
+### Running in Production
+
+```powershell
+# Activate virtual environment
+cd C:\nphies-integration
+.\venv\Scripts\Activate.ps1
+
+# Run application
+python main.py
+
+# Or run as Windows service (requires additional setup)
+```
+
+### Monitoring & Logging
+
+Monitor these log files:
+- `logs/nphies_integration.log` - Application logs
+- `output/` - Extraction results
+
+Key metrics to monitor:
+- Success/failure rates
+- Response times
+- Error patterns
+- API quotas/limits
+
+## 🔍 Troubleshooting
 
 ### Common Issues
 
-#### DNS Not Propagating
-```bash
-# Force DNS flush (Windows PowerShell)
-ipconfig /flushdns
+#### 1. Connection Failed
 
-# Force DNS flush (Linux/Mac)
-sudo dscacheutil -flushcache
+**Problem**: Cannot connect to NPHIES API
 
-# Wait 5-10 minutes for Cloudflare propagation
+**Solutions**:
+```powershell
+# Check network connectivity
+Test-NetConnection NPHIES.sa -Port 443
+
+# Verify DNS resolution
+nslookup NPHIES.sa
+
+# Check firewall rules
+# Review proxy settings if behind corporate firewall
 ```
 
-#### Build Failures
-```bash
-# Clear cache and reinstall
-rm -rf node_modules package-lock.json
-npm install
-npm run build:production
+#### 2. Certificate Errors (Production)
+
+**Problem**: SSL certificate validation fails
+
+**Solutions**:
+- Verify certificate files exist and are readable
+- Check certificate expiration date
+- Ensure private key matches certificate
+- Verify CA bundle contains correct root certificates
+
+```python
+# Test certificates
+from auth.cert_manager import check_certificates
+status = check_certificates()
+print(status)
 ```
 
-#### Worker Deployment Issues
-```bash
-# Check wrangler authentication
-wrangler whoami
+#### 3. Authentication Errors
 
-# Re-authenticate if needed
-wrangler login
+**Problem**: 401 Unauthorized or 403 Forbidden
 
-# Manually deploy worker
-wrangler deploy workers/router.js --name givc-router
+**Solutions**:
+- Verify license number is correct
+- Confirm organization/provider IDs
+- Check if credentials are active in NPHIES portal
+- Review authentication headers
+
+#### 4. Validation Errors
+
+**Problem**: Request rejected due to invalid data
+
+**Solutions**:
+- Enable DEBUG logging: `LOG_LEVEL=DEBUG`
+- Review validation error messages
+- Check required fields are present
+- Verify data formats (dates, codes, etc.)
+- Consult NPHIES FHIR documentation
+
+#### 5. Timeout Errors
+
+**Problem**: Requests timing out
+
+**Solutions**:
+```ini
+# Increase timeout in .env
+REQUEST_TIMEOUT=60
+MAX_RETRIES=5
+RETRY_DELAY=3
 ```
 
-## 📈 Optimization Tips
+### Enable Debug Mode
 
-### Build Output Directory
-
-The workflow uses `dist/` as the build directory. If using Next.js or another framework:
-
-**Next.js Static Export:**
-```json
-// next.config.js
-module.exports = {
-  output: 'export',
-  distDir: 'out'
-}
+```ini
+# In .env
+LOG_LEVEL=DEBUG
 ```
 
-Update workflow:
-```yaml
-env:
-  BUILD_DIR: 'out'
+### Get Support
+
+1. **NPHIES Portal**: https://portal.nphies.sa
+2. **NPHIES Documentation**: https://portal.nphies.sa/ig/
+3. **Technical Support**: Contact through NPHIES portal
+4. **Project Issues**: Review code and logs
+
+## 📈 Performance Optimization
+
+### Batch Processing
+
+Process multiple records efficiently:
+
+```python
+# Instead of individual calls
+for member in members:
+    service.check_eligibility(**member)
+
+# Use batch method
+service.batch_check_eligibility(members)
 ```
 
-**Vite (Current Setup):**
-```javascript
-// vite.config.js
-export default defineConfig({
-  build: {
-    outDir: 'dist'
-  }
-})
+### Async Processing (Future Enhancement)
+
+Enable async processing in config:
+
+```ini
+ENABLE_ASYNC=true
+PARALLEL_WORKERS=5
 ```
 
-### Performance Optimization
+### Caching
 
-1. **Enable Cloudflare Proxy**: Already enabled in DNS config
-2. **Configure Caching**: Set in `_headers` file
-3. **Enable Compression**: Automatic with Cloudflare
-4. **Optimize Images**: Use Cloudflare Images or R2
+Implement caching for repeated queries:
+- Cache eligibility results (TTL: 24 hours)
+- Cache organization lookups
+- Use Redis or in-memory cache
 
-### Security Enhancements
+## 🔐 Security Best Practices
 
-1. **Enable Rate Limiting**: Configure in Workers
-2. **Set up WAF Rules**: In Cloudflare dashboard
-3. **Configure HSTS**: Already in security headers
-4. **Enable DDoS Protection**: Automatic with Cloudflare
+1. **Credentials**: Never commit `.env` or certificates to version control
+2. **Certificates**: Restrict file permissions (read-only for app user)
+3. **Logs**: Mask sensitive data (member IDs, etc.)
+4. **Network**: Use VPN/secure network for production
+5. **Backups**: Encrypt backup files
+6. **Access**: Limit who can run production jobs
+
+## 📝 Maintenance
+
+### Regular Tasks
+
+- **Daily**: Review logs for errors
+- **Weekly**: Check certificate expiration
+- **Monthly**: Review and rotate logs
+- **Quarterly**: Update dependencies
+- **Annually**: Renew certificates
+
+### Updating Dependencies
+
+```powershell
+pip list --outdated
+pip install --upgrade package_name
+pip freeze > requirements.txt
+```
+
+## 🎯 Next Steps
+
+1. **Test in Sandbox**: Thoroughly test all operations
+2. **Validate Data**: Ensure data quality and accuracy
+3. **Monitor Performance**: Track metrics and optimize
+4. **Scale**: Add more parallel workers as needed
+5. **Integrate**: Connect with your healthcare systems
+6. **Automate**: Schedule regular data extraction
+7. **Document**: Keep documentation up-to-date
 
 ## 📚 Additional Resources
 
-- [Cloudflare Pages Documentation](https://developers.cloudflare.com/pages/)
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
-- [Cloudflare Access Documentation](https://developers.cloudflare.com/cloudflare-one/)
-- [Cloudflare DNS API Documentation](https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-list-dns-records)
-- [Google Tag Manager Server-Side](https://developers.google.com/tag-platform/tag-manager/server-side)
-
-## 🤝 Support
-
-For issues or questions:
-1. Check workflow logs in GitHub Actions
-2. Review Cloudflare dashboard for errors
-3. Check DNS propagation status
-4. Verify all secrets are configured
-5. Test locally before deploying
+- **FHIR Specification**: https://hl7.org/fhir/
+- **NPHIES Implementation Guide**: Available on portal
+- **Saudi eHealth Guidelines**: https://ehealth.sa
 
 ---
 
-**© 2024 Dr. Al Fadil - BRAINSAIT LTD. All rights reserved.**  
-**GIVC - Transforming Healthcare Through Technology** 🏥✨
+**Version**: 1.0.0  
+**Last Updated**: October 2025  
+**Contact**: Support via NPHIES Portal
