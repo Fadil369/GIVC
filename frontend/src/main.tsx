@@ -12,7 +12,7 @@ import App from './App';
 import './index.css';
 
 // Import environment validation and logger
-import { validateEnvironment, getConfig } from './config/validateEnv';
+import { validateEnv, getConfig } from './config/validateEnv';
 import logger from './services/logger';
 
 // Environment Validation Error UI Component
@@ -179,7 +179,7 @@ async function initializeApp() {
   try {
     // Validate environment before starting app
     logger.info('🚀 Initializing GIVC Healthcare Platform...');
-    const validation = validateEnvironment();
+    const validation = validateEnv();
 
     if (!validation.isValid) {
       logger.error('Environment validation failed', {
