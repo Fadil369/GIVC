@@ -4,6 +4,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
 # Build outputs
 dist/
@@ -11,6 +12,7 @@ build/
 .output/
 .next/
 out/
+*.egg-info/
 
 # Environment files
 .env
@@ -18,7 +20,10 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*.local
+.env.backup
 *.env.backup
+.env.test
 
 # Certificates and Private Keys (SECURITY)
 certificates/*.pem
@@ -42,7 +47,6 @@ env/
 .pytest_cache/
 .coverage
 htmlcov/
-*.log
 
 # Backend specific
 logs/
@@ -51,8 +55,10 @@ logs/
 *.sqlite3
 
 # IDE files
+.vscode/
 .vscode/settings.json
 .vscode/launch.json
+.vscode-test
 .idea/
 *.swp
 *.swo
@@ -76,13 +82,8 @@ Thumbs.db
 Desktop.ini
 
 # Logs
-logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
+logs/
 
 # Runtime data
 pids/
@@ -104,6 +105,8 @@ test-output/
 tmp/
 temp/
 .tmp/
+*.tmp
+*.temp
 
 # Cloudflare
 .wrangler/
@@ -137,15 +140,9 @@ wrangler.toml.backup
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env.test
-
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
 
 # Vitest
 .vitest-cache/
@@ -155,13 +152,9 @@ wrangler.toml.backup
 .storybook-out
 storybook-static
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
 # Docker
 .dockerignore
+.docker/
 
 # Security
 *.pem
@@ -173,14 +166,17 @@ storybook-static
 
 # Backup files
 *.backup
+*.backup.*
 *.bak
-*.tmp
 
 # Application specific
 uploads/
 public/uploads/
 medical-files/
 audit-logs/
+audit-report-*.log
+deployment-*.log
+backups/
 
 # Performance monitoring
 .lighthouse/
@@ -192,47 +188,8 @@ bundle-analyzer-report.html
 # Husky
 .husky/_/
 
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+# Credentials
+credentials.json
 
-# Virtual environments
-venv/
-env/
-ENV/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-logs/
-
-# Build artifacts
-dist/
-build/
-*.egg-info/
-
-# Environment
-.env.local
-.env.*.local
-
-# Temporary files
-*.tmp
-*.temp
-.cache/
-
-# Test coverage
-.coverage
-htmlcov/
-.pytest_cache/
+# Nested Git Repositories
+GIVC/

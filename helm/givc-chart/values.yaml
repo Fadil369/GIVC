@@ -1,0 +1,195 @@
+## GIVC Healthcare Platform Helm Values
+## This is a YAML-formatted file for configuring Kubernetes deployment
+
+global:
+  imagePullSecrets: []
+  storageClass: ""
+
+## Frontend Application Configuration
+frontend:
+  enabled: true
+  replicaCount: 3
+  
+  image:
+    repository: givc-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+## Backend API Configuration
+backend:
+  enabled: true
+  replicaCount: 2
+  
+  image:
+    repository: givc-backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 8000
+    targetPort: 8000
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 70
+  
+  env:
+    LOG_LEVEL: "INFO"
+    ENVIRONMENT: "production"
+    REQUEST_TIMEOUT: "30"
+    MAX_RETRIES: "3"
+  
+  secrets:
+    nphiesLicense: ""
+    nphiesOrgId: ""
+    databaseUrl: ""
+
+## PostgreSQL Database Configuration
+postgresql:
+  enabled: true
+  auth:
+    username: givc
+    password: changeme
+    database: givc_production
+  
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+    
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+## Redis Cache Configuration
+redis:
+  enabled: true
+  auth:
+    password: changeme
+  
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+    
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+
+## Ingress Configuration
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+  
+  hosts:
+    - host: givc.thefadil.site
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+    - host: api.givc.thefadil.site
+      paths:
+        - path: /
+          pathType: Prefix
+          service: backend
+  
+  tls:
+    - secretName: givc-tls
+      hosts:
+        - givc.thefadil.site
+        - api.givc.thefadil.site
+
+## ServiceAccount Configuration
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+## Pod Security Configuration
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  capabilities:
+    drop:
+      - ALL
+    add:
+      - NET_BIND_SERVICE
+
+## Network Policy
+networkPolicy:
+  enabled: true
+  policyTypes:
+    - Ingress
+    - Egress
+
+## Monitoring Configuration
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+  
+  prometheusRule:
+    enabled: true
+
+## Backup Configuration
+backup:
+  enabled: false
+  schedule: "0 2 * * *"
+  retention: 7
