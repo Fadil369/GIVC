@@ -209,3 +209,8 @@ build/
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Spec-kit (nested git repository) and temporary files
+spec-kit/
+.specify/
+all-setup.txt
