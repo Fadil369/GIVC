@@ -73,3 +73,66 @@ def setup_test_env(monkeypatch):
     monkeypatch.setenv("NPHIES_LICENSE", "7000911508")
     monkeypatch.setenv("NPHIES_ORGANIZATION_ID", "10000000000988")
     monkeypatch.setenv("NPHIES_PROVIDER_ID", "7000911508")
+
+
+@pytest.fixture
+def sample_bundle_request():
+    """Sample FHIR bundle request"""
+    return {
+        "resourceType": "Bundle",
+        "type": "message",
+        "id": "bundle-test-123",
+        "entry": [
+            {
+                "resource": {
+                    "resourceType": "MessageHeader",
+                    "id": "msg-1",
+                    "eventUri": "http://nphies.sa/eligibility"
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "CoverageEligibilityRequest",
+                    "id": "eligreq-1",
+                    "status": "active",
+                    "patient": {"reference": "Patient/p1"}
+                }
+            }
+        ]
+    }
+
+
+@pytest.fixture
+def sample_coverage_data():
+    """Sample coverage data"""
+    return {
+        "id": "coverage-1",
+        "beneficiary": {"reference": "Patient/patient-1"},
+        "payor": [{"reference": "Organization/payer-1"}],
+        "class": [
+            {
+                "type": {"coding": [{"code": "plan"}]},
+                "value": "gold"
+            }
+        ]
+    }
+
+
+@pytest.fixture
+def sample_claim_data():
+    """Sample claim data"""
+    return {
+        "id": "claim-1",
+        "type": {"coding": [{"code": "professional"}]},
+        "patient": {"reference": "Patient/p1"},
+        "provider": {"reference": "Organization/org1"},
+        "insurer": {"reference": "Organization/ins1"},
+        "item": [
+            {
+                "sequence": 1,
+                "productOrService": {
+                    "coding": [{"code": "service1"}]
+                }
+            }
+        ]
+    }

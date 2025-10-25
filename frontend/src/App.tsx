@@ -23,16 +23,13 @@ import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import Layout from '@/components/Layout/Layout';
 
 // Lazy-loaded components for better initial load performance
-const Dashboard = lazy(() => import('@/components/Dashboard/DashboardEnhanced'));
+const Dashboard = lazy(() => import('@/components/Dashboard/Dashboard'));
 const MediVault = lazy(() => import('@/components/MediVault/MediVault'));
 const AITriage = lazy(() => import('@/components/AITriage/AITriage'));
 const MedicalAgents = lazy(() => import('@/components/MedicalAgents/MedicalAgents'));
-const CustomerSupport = lazy(() => import('@/components/CustomerSupport/CustomerSupport'));
 const CustomerSupportHub = lazy(() => import('@/components/CustomerSupport/CustomerSupportHub'));
-const ClaimsProcessing = lazy(() => import('@/components/ClaimsProcessing/ClaimsProcessing'));
 const ClaimsProcessingCenter = lazy(() => import('@/components/ClaimsProcessing/ClaimsProcessingCenter'));
 const RiskAssessmentEngine = lazy(() => import('@/components/RiskAssessment/RiskAssessmentEngine'));
-const LandingPage = lazy(() => import('@/components/LandingPage'));
 
 function App() {
   return (
@@ -45,7 +42,6 @@ function App() {
                 <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
                   <Suspense fallback={<LoadingFallback />}>
                     <Routes>
-                      <Route path="/landing" element={<LandingPage />} />
                       <Route path="/login" element={<Login />} />
                       <Route path="/" element={<Navigate to="/dashboard" replace />} />
                       <Route path="/dashboard-direct" element={<Dashboard />} />
