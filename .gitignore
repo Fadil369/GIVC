@@ -18,10 +18,37 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+*.env.backup
 
-# Nested Git Repositories
-GIVC/
-.env.backup
+# Certificates and Private Keys (SECURITY)
+certificates/*.pem
+certificates/*.key
+certificates/*.crt
+certificates/*.p12
+certificates/*.pfx
+!certificates/README.md
+!certificates/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Backend specific
+logs/
+*.db
+*.sqlite
+*.sqlite3
 
 # IDE files
 .vscode/settings.json

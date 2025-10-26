@@ -1,243 +1,130 @@
 """
-Main Application Entry Point for NPHIES Integration
+Main FastAPI Application
+BrainSAIT-NPHIES-GIVC Integration Platform
 """
-import sys
-import json
-from pathlib import Path
-from datetime import datetime
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import uvicorn
 
-from config.settings import settings
-from auth.auth_manager import auth_manager
-from auth.cert_manager import check_certificates
-from pipeline.extractor import NPHIESDataExtractor
-from services.eligibility import EligibilityService
-from services.claims import ClaimsService
-from services.communication import CommunicationService
-from utils.logger import setup_logger, get_logger
+from app.core import log, setup_logging, settings, load_config_yaml
+from app.services.integration import IntegrationService
 
-# Setup logging
-logger = setup_logger(
-    name="nphies",
-    log_level=settings.LOG_LEVEL,
-    log_file=settings.LOG_FILE,
-    console=True
+
+# Global integration service
+integration_service: IntegrationService = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan manager"""
+    global integration_service
+    
+    # Startup
+    log.info(f"Starting {settings.app_name}...")
+    setup_logging(settings.log_level, settings.log_file)
+    
+    # Load configuration
+    try:
+        config = load_config_yaml()
+        integration_service = IntegrationService(config)
+        log.info("Integration service initialized successfully")
+    except Exception as e:
+        log.error(f"Failed to initialize integration service: {str(e)}")
+        raise
+    
+    yield
+    
+    # Shutdown
+    log.info("Shutting down...")
+    if integration_service:
+        await integration_service.close()
+    log.info("Shutdown complete")
+
+
+# Create FastAPI app
+app = FastAPI(
+    title=settings.app_name,
+    description="AI-Powered Healthcare Claims Integration Platform",
+    version="2.0.0",
+    lifespan=lifespan
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
-def print_banner():
-    """Print application banner"""
-    banner = """
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║     🏥  NPHIES API Integration Platform                     ║
-║                                                              ║
-║     Saudi Arabia National Platform for Health Insurance     ║
-║     Electronic Services - Data Extraction System            ║
-║                                                              ║
-║     Version: 1.0.0                                          ║
-║     Environment: {env:<45}║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
-    """.format(env=settings.ENVIRONMENT.upper())
-    print(banner)
-
-
-def check_system_status():
-    """Check system status and prerequisites"""
-    logger.info("=== System Status Check ===")
-    
-    status = {
-        "environment": settings.ENVIRONMENT,
-        "api_url": settings.api_base_url,
-        "organization_id": settings.NPHIES_ORGANIZATION_ID,
-        "ready": True
-    }
-    
-    # Check certificates (for production)
-    if settings.ENVIRONMENT == "production":
-        cert_status = check_certificates()
-        status["certificates"] = cert_status
-        
-        if not cert_status["ready"]:
-            logger.warning("⚠️  Certificates not ready for production")
-            status["ready"] = False
-    
-    # Test API connection
-    logger.info("Testing NPHIES API connection...")
-    connection_ok, connection_msg = auth_manager.test_connection()
-    status["connection"] = {
-        "status": "connected" if connection_ok else "failed",
-        "message": connection_msg
-    }
-    
-    if connection_ok:
-        logger.info(f"✓ {connection_msg}")
-    else:
-        logger.error(f"✗ {connection_msg}")
-        status["ready"] = False
-    
-    return status
-
-
-def example_eligibility_check():
-    """Example: Check eligibility for a member"""
-    logger.info("\n=== Example: Eligibility Check ===")
-    
-    service = EligibilityService()
-    
-    # Example member data
-    result = service.check_eligibility(
-        member_id="1234567890",  # Replace with actual member ID
-        payer_id=settings.NPHIES_PAYER_ID,
-        service_date="2025-10-22",
-        patient_name="Test Patient"
+# Exception handlers
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": exc.detail}
     )
-    
-    logger.info(f"Eligibility Result: {json.dumps(result, indent=2)}")
-    return result
 
 
-def example_claim_submission():
-    """Example: Submit a claim"""
-    logger.info("\n=== Example: Claim Submission ===")
-    
-    service = ClaimsService()
-    
-    # Example claim data
-    services = [
-        {
-            "code": "99213",
-            "description": "Office Visit",
-            "quantity": 1,
-            "unit_price": 150.00,
-            "net_amount": 150.00
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc):
+    log.error(f"Unhandled exception: {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Internal server error"}
+    )
+
+
+# Import routers
+from app.api.v1 import auth, claims, nphies, givc, health
+
+# Register routers
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
+app.include_router(claims.router, prefix="/api/v1/claims", tags=["Claims"])
+app.include_router(nphies.router, prefix="/api/v1/nphies", tags=["NPHIES"])
+app.include_router(givc.router, prefix="/api/v1/givc", tags=["GIVC AI"])
+app.include_router(health.router, prefix="/api/v1/health", tags=["Health"])
+
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "app": settings.app_name,
+        "version": "2.0.0",
+        "status": "running",
+        "features": {
+            "nphies_integration": True,
+            "givc_ai": True,
+            "legacy_portals": True,
+            "smart_routing": True
         }
-    ]
-    
-    result = service.submit_claim(
-        claim_type="professional",
-        patient_id="patient-001",
-        member_id="1234567890",
-        payer_id=settings.NPHIES_PAYER_ID,
-        services=services,
-        total_amount=150.00,
-        patient_name="Test Patient"
-    )
-    
-    logger.info(f"Claim Result: {json.dumps(result, indent=2)}")
-    return result
+    }
 
 
-def example_communication_poll():
-    """Example: Poll for communications"""
-    logger.info("\n=== Example: Communication Poll ===")
-    
-    service = CommunicationService()
-    
-    result = service.poll_communications()
-    
-    logger.info(f"Communications: {json.dumps(result, indent=2)}")
-    return result
-
-
-def run_data_extraction_pipeline():
-    """Run complete data extraction pipeline"""
-    logger.info("\n=== Running Data Extraction Pipeline ===")
-    
-    extractor = NPHIESDataExtractor()
-    
-    # Example data - replace with actual data sources
-    eligibility_members = [
-        {
-            "member_id": "1234567890",
-            "payer_id": settings.NPHIES_PAYER_ID,
-            "service_date": "2025-10-22"
-        },
-        # Add more members as needed
-    ]
-    
-    claims_data = [
-        {
-            "claim_type": "professional",
-            "patient_id": "patient-001",
-            "member_id": "1234567890",
-            "payer_id": settings.NPHIES_PAYER_ID,
-            "services": [
-                {
-                    "code": "99213",
-                    "description": "Office Visit",
-                    "quantity": 1,
-                    "unit_price": 150.00
-                }
-            ],
-            "total_amount": 150.00
-        },
-        # Add more claims as needed
-    ]
-    
-    # Run extraction
-    results = extractor.run_full_extraction(
-        eligibility_members=eligibility_members,
-        claims_data=claims_data,
-        poll_communications=True,
-        output_dir="output"
-    )
-    
-    logger.info("\n=== Extraction Summary ===")
-    logger.info(json.dumps(results["summary"], indent=2))
-    
-    return results
-
-
-def main():
-    """Main application entry point"""
-    try:
-        # Print banner
-        print_banner()
-        
-        # Check system status
-        status = check_system_status()
-        
-        if not status["ready"]:
-            logger.error("\n❌ System not ready. Please fix the issues above.")
-            return 1
-        
-        logger.info("\n✅ System ready!")
-        
-        # Example usage - uncomment what you need
-        
-        # 1. Single eligibility check
-        # example_eligibility_check()
-        
-        # 2. Single claim submission
-        # example_claim_submission()
-        
-        # 3. Poll communications
-        # example_communication_poll()
-        
-        # 4. Run full data extraction pipeline
-        logger.info("\n" + "="*60)
-        logger.info("Starting data extraction pipeline...")
-        logger.info("="*60)
-        
-        run_data_extraction_pipeline()
-        
-        logger.info("\n" + "="*60)
-        logger.info("✅ Application completed successfully!")
-        logger.info("="*60)
-        
-        return 0
-        
-    except KeyboardInterrupt:
-        logger.warning("\n⚠️  Application interrupted by user")
-        return 130
-    except Exception as e:
-        logger.error(f"\n❌ Application error: {str(e)}", exc_info=True)
-        return 1
-    finally:
-        # Cleanup
-        auth_manager.close()
+@app.get("/api/v1")
+async def api_info():
+    """API information"""
+    return {
+        "version": "1.0",
+        "endpoints": {
+            "auth": "/api/v1/auth",
+            "claims": "/api/v1/claims",
+            "nphies": "/api/v1/nphies",
+            "givc": "/api/v1/givc",
+            "health": "/api/v1/health"
+        }
+    }
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    uvicorn.run(
+        "main:app",
+        host=settings.host,
+        port=settings.port,
+        reload=settings.debug
+    )
