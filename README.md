@@ -1,6 +1,6 @@
 ﻿#  BrainSAIT-NPHIES-GIVC Ultimate Integration Platform
 
-**Version 3.0.0** | **October 26, 2025** | **Unified Monorepo**
+**Version 3.0.0**  **October 26, 2025**  **Unified Monorepo**
 
 A comprehensive, AI-powered healthcare integration platform combining NPHIES compliance, GIVC Ultrathink AI, OASIS automation, and multi-portal connectivity for Al Hayat Hospital branches.
 
@@ -15,233 +15,255 @@ A comprehensive, AI-powered healthcare integration platform combining NPHIES com
 - [ Documentation](#-documentation)
 - [ Configuration](#-configuration)
 - [ Testing](#-testing)
-- [ Deployment](#-deployment)
+- [ Deployment](#-deployment-1)
 - [ Contributing](#-contributing)
 - [ License](#-license)
+- [ Support](#-support)
+- [ Roadmap](#-roadmap)
 
 ---
 
 ##  Overview
 
-The **BrainSAIT-NPHIES-GIVC Ultimate Integration Platform** is a unified healthcare integration solution that combines:
+The **BrainSAIT-NPHIES-GIVC Ultimate Integration Platform** unifies:
 
-- **NPHIES Compliance**: Full FHIR R4 implementation with certificate-based authentication
-- **GIVC Ultrathink AI**: Intelligent claim validation, smart form completion, and error detection
-- **OASIS Automation**: Automated portal interactions for all Al Hayat hospital branches
-- **Multi-Portal Connectivity**: Seamless integration with MOH, Jisr, Bupa, TAWUNIYA, and NCCI systems
-- **Enterprise Architecture**: Monorepo structure with microservices, infrastructure, and CI/CD
+- **NPHIES Compliance**  Full FHIR R4 implementation with certificate-based authentication
+- **GIVC Ultrathink AI**  Intelligent claim validation, smart form completion, and error detection
+- **OASIS Automation**  Automated portal interactions for all Al Hayat hospital branches
+- **Multi-Portal Connectivity**  Seamless integration with MOH, Jisr, Bupa, TAWUNIYA, and NCCI systems
+- **Enterprise Architecture**  Monorepo structure with microservices, infrastructure as code, and CI/CD
 
-###  Hospital Integration
-- **Al Hayat Hospital**: NPHIES ID 10000000000988, CHI ID 1048, License 7000911508
-- **6 Branches**: Riyadh, Madinah, Unaizah, Khamis, Jizan, Abha
-- **Unified Credentials**: U2415/U2415 across all OASES portals
+###  Hospital Coverage
+
+- **Al Hayat Hospital**  NPHIES ID `10000000000988`, CHI ID `1048`, License `7000911508`
+- **Branches**  Riyadh, Madinah, Unaizah, Khamis, Jizan, Abha
+- **Credentials**  Unified U2415/U2415 across all OASES portals
 
 ###  Portal Integrations
-- **NPHIES**: Production HSB.nphies.sa with certificate authentication
-- **GIVC**: AI-powered validation at https://4d31266d.givc-platform-static.pages.dev/
-- **TAWUNIYA**: 8 BALSAM GOLD policies, Group Code 1096
-- **NCCI**: Account INS-809
-- **OASES**: All 6 branches with standardized credentials
+
+- **NPHIES**  Production `https://HSB.nphies.sa` with certificate authentication
+- **GIVC**  AI services at `https://4d31266d.givc-platform-static.pages.dev/`
+- **TAWUNIYA**  8 BALSAM GOLD policies (Group Code 1096)
+- **NCCI**  Account INS-809
+- **OASES**  6 branch portals with standardized credentials
 
 ---
 
 ##  Key Features
 
-###  NPHIES Integration (v2.0)
--  **Certificate Authentication**: OpenID Connect with production certificates
--  **FHIR R4 Compliance**: Complete healthcare data exchange standard
--  **5 Authorization Types**: Institutional, Professional, Pharmacy, Dental, Vision
--  **Claim Submission**: Automated workflow with AI validation
--  **Status Polling**: Real-time transaction monitoring
--  **Communication**: Secure message exchange with attachments
+###  NPHIES Integration v2.0
+
+-  Certificate-based OpenID Connect authentication
+-  FHIR R4 message bundles with MessageHeader-first structure
+-  Five authorization types: institutional, professional, pharmacy, dental, vision
+-  Automated claim submission with FHIR Claim/ClaimResponse
+-  Real-time status polling and communication workflows
+-  Comprehensive error handling with BV code awareness
 
 ###  GIVC Ultrathink AI
--  **Claim Validation**: AI-powered error detection and correction
--  **Smart Form Completion**: Auto-fill provider, dates, and claim types
--  **Error Detection**: Future dates, pricing inconsistencies, missing data
--  **Claim Optimization**: Bundling recommendations and prior auth suggestions
--  **Analytics Dashboard**: Performance metrics and insights
+
+-  AI-powered claim validation with confidence scoring
+-  Smart form completion for provider details, dates, and CPT codes
+-  Automated detection of data gaps and pricing anomalies
+-  Claim optimization, bundling recommendations, and prior-auth hints
+-  Analytics dashboards with service-level metrics
 
 ###  OASIS Automation
--  **Multi-Branch Support**: All 6 Al Hayat branches
--  **Unified Credentials**: U2415/U2415 across all portals
--  **Automated Workflows**: Login, submission, status checking
--  **Error Handling**: Retry logic and circuit breakers
--  **Session Management**: Secure credential handling
 
-###  Enterprise Features
--  **Monorepo Architecture**: Apps, packages, services, infrastructure
--  **Microservices**: Independent deployment and scaling
--  **Infrastructure as Code**: Docker, Kubernetes, CI/CD
--  **Security**: Certificate management, encryption, audit logs
--  **Monitoring**: Health checks, metrics, alerting
+-  Unified credentials (U2415/U2415) across all branches
+-  Automated login, submission, and status retrieval workflows
+-  Session manager with expiry and renewal
+-  Retry logic plus circuit breaker resilience
+-  Structured logging for audit readiness
+
+###  Enterprise-Grade Architecture
+
+-  Monorepo with apps, packages, services, and infrastructure modules
+-  Microservices for NPHIES, OASES, GIVC AI, fraud detection, notifications, and more
+-  Infrastructure as code (Docker, Kubernetes, Terraform)
+-  Security hardening: certificate management, secrets isolation, audit trails
+-  Monitoring: health checks, metrics endpoints, alerting hooks
 
 ---
 
 ##  Architecture
 
-`
+```
 BrainSAIT-NPHIES-GIVC Ultimate Platform
-  apps/                 # Frontend applications
-    web/                # Main web application
-    admin/              # Admin dashboard
-    api/                # API gateway
-  packages/            # Shared packages
-    ui/                 # UI components
-    utils/              # Utility functions
-    config/             # Configuration management
-  services/            # Backend services
-    nphies/             # NPHIES integration service
-    givc/               # GIVC AI service
-    oasis/              # OASIS automation service
-    auth/               # Authentication service
-  infrastructure/      # Infrastructure as Code
-    docker/             # Container definitions
-    k8s/                # Kubernetes manifests
-    terraform/          # Cloud infrastructure
-  app/                 # FastAPI backend
-    connectors/         # Portal connectors
-    services/           # Business logic
-    api/                # API routes
-  config/              # Configuration files
-  docs/                # Documentation
-  tests/               # Test suites
-`
+ apps/                    # Frontend applications
+    web/                 # Main web application
+    admin/               # Administrative console
+    api-gateway/         # API gateway UI
+ packages/                # Shared packages (UI, utils, config)
+ services/                # Backend microservices
+    nphies-integration/  # FHIR-compliant NPHIES service
+    givc-ultrathink/     # AI validation and optimization
+    oasis-integration/   # OASES automation workflows
+    fraud-detection/     # Predictive analytics modules
+ infrastructure/          # Docker, Kubernetes, Terraform stacks
+ app/                     # FastAPI integration gateway
+    connectors/          # Portal connectors (NPHIES, OASES, etc.)
+    services/            # Orchestration logic
+    models/              # Pydantic schemas
+    api/                 # REST endpoints
+ config/                  # Environment & portal configuration
+ docs/                    # Technical documentation
+ tests/                   # Unit and integration tests
+```
 
 ###  Data Flow
 
-`
-Patient Data  AI Validation  Portal Routing  Submission  Status Tracking
-                                                               
-   FHIR Format   GIVC Ultrathink  Smart Strategy   NPHIES/OASIS   Real-time
-   Compliance    Error Detection  Selection       Certificate     Monitoring
-`
+```
+Patient Intake  AI Validation  Smart Routing  Portal Submission  Status Tracking
+                                                                        
+   FHIR Builder    Ultrathink AI     Strategy Engine   NPHIES/OASES     Monitoring & Alerts
+```
 
 ---
 
 ##  Quick Start
 
 ### Prerequisites
+
 - Python 3.9+
 - Node.js 18+
 - Docker & Docker Compose
-- NPHIES Production Certificates
+- NPHIES production certificates
 
-### 1. Clone and Setup
-`ash
+### 1. Navigate to Repository
+
+```powershell
 cd C:\Users\rcmrejection3\nphies-rcm\GIVC
-`
+```
 
-### 2. Environment Setup
-`ash
+### 2. Configure Environment
+
+```powershell
 # Copy environment template
 copy .env.example .env
 
-# Edit configuration
+# Edit settings
 notepad .env
-`
+```
 
 ### 3. Install Dependencies
-`ash
-# Python backend
+
+```powershell
+# Backend
 pip install -r requirements.txt
 
-# Node.js packages
+# Frontend monorepo
 npm install
-`
+```
 
 ### 4. Place Certificates
-`ash
-# Create certificates directory
+
+```powershell
 mkdir certificates
+copy C:\path\to\nphies_production.pem certificates\
+copy C:\path\to\nphies_production_key.pem certificates\
+```
 
-# Copy NPHIES certificates
-copy your-nphies-cert.pem certificates\
-copy your-nphies-key.pem certificates\
-`
+### 5. Run Development Servers
 
-### 5. Run Development Server
-`ash
-# Backend API
+```powershell
+# FastAPI backend
 python main.py
 
-# Frontend (if available)
+# Frontend (monorepo turbo workspace)
 npm run dev
-`
+```
 
-### 6. Access Application
-- **API Documentation**: http://localhost:8000/docs
-- **Health Check**: http://localhost:8000/api/v1/health/
-- **Frontend**: http://localhost:3000 (if running)
+### 6. Access Interfaces
+
+- API Docs: <http://localhost:8000/docs>
+- Health Check: <http://localhost:8000/api/v1/health/>
+- Frontend: <http://localhost:3000>
 
 ---
 
 ##  Documentation
 
-###  Core Documentation
-- **[ULTIMATE_INTEGRATION_GUIDE.md](ULTIMATE_INTEGRATION_GUIDE.md)** - Complete platform overview
-- **[NPHIES_INTEGRATION_GUIDE.md](docs/NPHIES_INTEGRATION_GUIDE.md)** - NPHIES implementation details
-- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Technical implementation summary
-- **[QUICKSTART.md](QUICKSTART.md)** - 5-minute deployment guide
+### Core References
 
-###  Technical Guides
-- **[GIT_UPDATE_README.md](GIT_UPDATE_README.md)** - Git repository management
-- **[GIT_UPDATE_GUIDE.md](GIT_UPDATE_GUIDE.md)** - Detailed git operations
-- **[PRE_PUSH_CHECKLIST.md](PRE_PUSH_CHECKLIST.md)** - Security checklist
-- **[OASIS_STATUS_REPORT.md](docs/OASIS_STATUS_REPORT.md)** - OASIS automation status
-- **[OASIS_AUTOMATION_READY.md](docs/OASIS_AUTOMATION_READY.md)** - OASIS implementation guide
+- [`ULTIMATE_INTEGRATION_GUIDE.md`](ULTIMATE_INTEGRATION_GUIDE.md)
+- [`docs/NPHIES_INTEGRATION_GUIDE.md`](docs/NPHIES_INTEGRATION_GUIDE.md)
+- [`IMPLEMENTATION_SUMMARY.md`](IMPLEMENTATION_SUMMARY.md)
+- [`QUICKSTART.md`](QUICKSTART.md)
 
-###  Analysis & Reports
-- **[COMPREHENSIVE_ORGANIZATIONAL_ANALYSIS.md](COMPREHENSIVE_ORGANIZATIONAL_ANALYSIS.md)** - Business analysis
-- **[DEEP_ORGANIZATIONAL_INSIGHTS.md](DEEP_ORGANIZATIONAL_INSIGHTS.md)** - Organizational insights
-- **[RCM_INTEGRATION_ENHANCEMENT.md](RCM_INTEGRATION_ENHANCEMENT.md)** - RCM enhancement details
-- **[PLATFORM_IMPLEMENTATION_COMPLETE.md](docs/PLATFORM_IMPLEMENTATION_COMPLETE.md)** - Implementation completion report
+### Operational Guides
+
+- [`GIT_UPDATE_README.md`](GIT_UPDATE_README.md)
+- [`GIT_UPDATE_GUIDE.md`](GIT_UPDATE_GUIDE.md)
+- [`PRE_PUSH_CHECKLIST.md`](PRE_PUSH_CHECKLIST.md)
+- [`docs/OASIS_STATUS_REPORT.md`](docs/OASIS_STATUS_REPORT.md)
+- [`docs/OASIS_AUTOMATION_READY.md`](docs/OASIS_AUTOMATION_READY.md)
+- [`docs/PLATFORM_IMPLEMENTATION_COMPLETE.md`](docs/PLATFORM_IMPLEMENTATION_COMPLETE.md)
+
+### Analysis & Intelligence
+
+- [`COMPREHENSIVE_ORGANIZATIONAL_ANALYSIS.md`](COMPREHENSIVE_ORGANIZATIONAL_ANALYSIS.md)
+- [`DEEP_ORGANIZATIONAL_INSIGHTS.md`](DEEP_ORGANIZATIONAL_INSIGHTS.md)
+- [`RCM_INTEGRATION_ENHANCEMENT.md`](RCM_INTEGRATION_ENHANCEMENT.md)
 
 ---
 
 ##  Configuration
 
-### Environment Variables (.env)
+### Environment Variables (`.env`)
 
-`ash
-# NPHIES Configuration
+```ini
+# NPHIES
 NPHIES_HOSPITAL_ID=10000000000988
 NPHIES_CHI_ID=1048
 NPHIES_LICENSE=7000911508
 NPHIES_CERT_PATH=./certificates/nphies_production.pem
 NPHIES_KEY_PATH=./certificates/nphies_production_key.pem
-NPHIES_CERT_PASSWORD=your-cert-password
+NPHIES_CERT_PASSWORD=change-me
 
-# GIVC Platform
+# GIVC
 GIVC_ULTRATHINK_ENABLED=true
-GIVC_API_KEY=your-givc-api-key
+GIVC_API_KEY=change-me
 
-# OASES Credentials (All branches use U2415/U2415)
+# OASES  unified U2415 credentials for all branches
 OASES_RIYADH_USERNAME=U2415
 OASES_RIYADH_PASSWORD=U2415
 OASES_MADINAH_USERNAME=U2415
 OASES_MADINAH_PASSWORD=U2415
-# ... (all 6 branches)
+OASES_UNAIZAH_USERNAME=U2415
+OASES_UNAIZAH_PASSWORD=U2415
+OASES_KHAMIS_USERNAME=U2415
+OASES_KHAMIS_PASSWORD=U2415
+OASES_JIZAN_USERNAME=U2415
+OASES_JIZAN_PASSWORD=U2415
+OASES_ABHA_USERNAME=U2415
+OASES_ABHA_PASSWORD=U2415
 
-# Database (Optional)
+# Optional services
 DATABASE_URL=postgresql://user:pass@localhost:5432/brainsait
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://localhost:6379/0
 
 # Application
 DEBUG=false
 LOG_LEVEL=INFO
 HOST=0.0.0.0
 PORT=8000
-`
+```
 
-### Portal Configuration (config/config.yaml)
+### Portal Configuration (`config/config.yaml`)
 
-`yaml
+```yaml
 nphies:
   base_url: "https://HSB.nphies.sa"
   auth_url: "https://sso.nphies.sa"
   realm: "sehaticoreprod"
   client_id: "community"
+  endpoints:
+    eligibility: "/eligibility/v1/check"
+    prior_authorization: "/priorauth/v1/create"
+    claims: "/claim/v1/submit"
+    communication: "/communication/v1/send"
+    poll: "/poll/v1/status"
 
 givc:
   base_url: "https://4d31266d.givc-platform-static.pages.dev"
@@ -252,175 +274,145 @@ hospital:
   chi_id: "1048"
   license: "7000911508"
   ftp_host: "172.25.11.15"
-`
+```
 
 ---
 
 ##  Testing
 
-### Backend Tests
-`ash
-# Run all tests
+### Backend
+
+```powershell
 python -m pytest tests/
-
-# Run specific test
 python -m pytest tests/test_nphies_integration.py -v
-
-# Run with coverage
 python -m pytest --cov=app --cov-report=html
-`
+```
 
-### Integration Tests
-`ash
-# Test NPHIES connectivity
+### Integration Diagnostics
+
+```powershell
 python -c "from app.connectors.nphies import NPHIESConnector; print('NPHIES OK')"
-
-# Test GIVC AI
 python -c "from app.services.givc import GIVCService; print('GIVC OK')"
-
-# Test OASES automation
-python -c "from services.oasis.oasis_service import OASISService; print('OASIS OK')"
-`
+python -c "from services.oasis_integration.service import OASISService; print('OASES OK')"
+```
 
 ### Health Checks
-`ash
-# System health
+
+```powershell
 curl http://localhost:8000/api/v1/health/
-
-# Portal health
 curl http://localhost:8000/api/v1/health/portal/nphies
-curl http://localhost:8000/api/v1/health/portal/oasis
-
-# Branch health
+curl http://localhost:8000/api/v1/health/portal/oases
 curl http://localhost:8000/api/v1/health/branch/riyadh
-`
+```
 
 ---
 
 ##  Deployment
 
-### Development
-`ash
-# Run locally
+### Development Mode
+
+```powershell
 python main.py
-
-# With hot reload
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
-`
+```
 
-### Production
-`ash
-# Using Docker
+### Containerized
+
+```powershell
+# Docker image
 docker build -t brainsait-nphies-givc .
 docker run -p 8000:8000 brainsait-nphies-givc
 
-# Using Docker Compose
+# Docker Compose
 docker-compose up -d
-`
+```
 
-### Cloud Deployment
-`ash
-# Infrastructure setup
+### Cloud
+
+```powershell
 cd infrastructure/terraform
 terraform init
 terraform plan
 terraform apply
 
-# Kubernetes deployment
-cd infrastructure/k8s
+cd ..\k8s
 kubectl apply -f .
-`
+```
 
 ### CI/CD
-`ash
-# GitHub Actions
-# See .github/workflows/ for CI/CD pipelines
 
-# Update remote repository
-./git-update.bat
-`
+- GitHub Actions pipelines under `.github/workflows/`
+- Use `git-update.bat` or `push-to-remote.bat` for standardized pushes
 
 ---
 
 ##  Contributing
 
-### Development Setup
 1. Fork the repository
-2. Create a feature branch: git checkout -b feature/your-feature
-3. Make your changes
-4. Run tests: python -m pytest
-5. Commit changes: git commit -am 'Add your feature'
-6. Push to branch: git push origin feature/your-feature
-7. Create a Pull Request
+2. Create a feature branch: `git checkout -b feature/xyz`
+3. Make changes with tests: `python -m pytest`
+4. Commit: `git commit -am "feat: add xyz"`
+5. Push: `git push origin feature/xyz`
+6. Open a pull request
 
-### Code Standards
-- **Python**: PEP 8, type hints, docstrings
-- **JavaScript**: ESLint, Prettier configuration
-- **Testing**: 80%+ coverage required
-- **Documentation**: Update docs for all changes
+### Standards
 
-### Commit Guidelines
-`
-feat: add new NPHIES connector
-fix: resolve certificate authentication issue
-docs: update API documentation
-test: add integration tests for GIVC AI
-refactor: optimize claim submission workflow
-`
+- Python: PEP 8, type hints, descriptive docstrings
+- JavaScript/TypeScript: ESLint + Prettier
+- Testing:  80% coverage for modified modules
+- Documentation: Update README and integration guides for new features
 
 ---
 
 ##  License
 
-This project is proprietary software for Al Hayat Hospital integration.
-
-**Confidential**: Contains sensitive healthcare integration code and credentials.
-
-**Contact**: For access permissions, contact the development team.
+Proprietary software for Al Hayat Hospital. Unauthorized distribution prohibited.
 
 ---
 
 ##  Support
 
-### Emergency Contacts
-- **Technical Support**: IT Department
-- **NPHIES Issues**: NPHIES Support Team
-- **Security Incidents**: Security Team
+- Technical Support  IT Department
+- NPHIES Operations  NPHIES Support Team
+- Security Incidents  Security Operations Center
 
-### Documentation Links
+Helpful links:
+
 - [NPHIES Portal](https://portal.nphies.sa)
 - [GIVC Platform](https://4d31266d.givc-platform-static.pages.dev/)
-- [FHIR R4 Specification](https://www.hl7.org/fhir/R4/)
+- [FHIR R4 Specification](https://hl7.org/fhir/R4/)
 
-### Health Check Endpoints
-- **System Health**: /api/v1/health/
-- **Portal Health**: /api/v1/health/portal/{portal}
-- **Branch Health**: /api/v1/health/branch/{branch}
+Health endpoints:
+
+- `/api/v1/health/`
+- `/api/v1/health/portal/{portal}`
+- `/api/v1/health/branch/{branch}`
 
 ---
 
 ##  Roadmap
 
-### Phase 1 (Current): Foundation 
+### Phase 1  Foundation 
+
 - NPHIES v2.0 integration
-- GIVC AI implementation
+- GIVC AI enablement
 - OASES automation
-- Basic monorepo structure
+- Monorepo baseline
 
-### Phase 2 (Next): Enhancement 
-- Advanced AI features
-- Real-time analytics
-- Mobile application
-- Multi-tenant support
+### Phase 2  Enhancement 
 
-### Phase 3 (Future): Scale 
-- Cloud-native deployment
-- Global expansion
-- Advanced ML models
-- Blockchain integration
+- Advanced AI models
+- Real-time analytics dashboards
+- Mobile application support
+- Multi-tenant architecture
+
+### Phase 3  Scale 
+
+- Cloud-native global deployment
+- Fraud detection ML pipelines
+- Blockchain-backed audit registry
+- Partner API marketplace
 
 ---
 
-**Built with  for Al Hayat Hospital** | **Version 3.0.0** | **October 26, 2025**
-
-*Unifying healthcare integration through AI-powered automation and compliance.*
+**Built with  for Al Hayat Hospital**  *Unifying healthcare integration with AI-powered compliance.*
