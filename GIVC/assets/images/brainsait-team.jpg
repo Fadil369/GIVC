@@ -1,0 +1,49 @@
+<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="400" fill="url(#teamBg)"/>
+  
+  <!-- Professional team illustration -->
+  <rect x="50" y="80" width="500" height="240" rx="20" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+  
+  <!-- Team members represented as professional avatars -->
+  <circle cx="150" cy="180" r="40" fill="url(#avatar1)"/>
+  <circle cx="250" cy="180" r="40" fill="url(#avatar2)"/>
+  <circle cx="350" cy="180" r="40" fill="url(#avatar3)"/>
+  <circle cx="450" cy="180" r="40" fill="url(#avatar4)"/>
+  
+  <!-- Professional elements -->
+  <rect x="80" y="250" width="440" height="40" rx="20" fill="rgba(255,255,255,0.1)"/>
+  <text x="300" y="275" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">BRAINSAIT Healthcare Technology Team</text>
+  
+  <!-- Medical/Tech icons -->
+  <path d="M120 60h16v16h-16v-16zm8-8v8m0 16v8m-8-8h16" stroke="white" stroke-width="2" fill="none"/>
+  <path d="M460 60h16v16h-16v-16z" fill="white"/>
+  <path d="M468 52v24m-8-8h16" stroke="#1E40AF" stroke-width="2"/>
+  
+  <defs>
+    <linearGradient id="teamBg" x1="0" y1="0" x2="600" y2="400" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E40AF"/>
+      <stop offset="0.5" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    
+    <linearGradient id="avatar1" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+    
+    <linearGradient id="avatar2" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34D399"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    
+    <linearGradient id="avatar3" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    
+    <linearGradient id="avatar4" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F472B6"/>
+      <stop offset="1" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+</svg>

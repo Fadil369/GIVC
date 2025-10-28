@@ -1,0 +1,599 @@
+/* Responsive Design for GIVC-BRAINSAIT Landing Page */
+/* © Dr. Al Fadil (BRAINSAIT LTD) */
+
+/* Base Mobile First Approach (320px+) */
+/* Styles are already mobile-first in main.css */
+
+/* Small devices (480px+) */
+@media (min-width: 480px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.25rem;
+  }
+  
+  .section-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: row;
+  }
+  
+  .stat-card {
+    padding: 2rem;
+  }
+  
+  .service-card {
+    padding: 2rem;
+  }
+}
+
+/* Medium devices - Tablets (768px+) */
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2rem;
+  }
+  
+  /* Header */
+  .mobile-menu-toggle {
+    display: none;
+  }
+  
+  .nav-menu {
+    display: flex !important;
+  }
+  
+  /* Hero Section */
+  .hero-title {
+    font-size: 3.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.5rem;
+  }
+  
+  .hero-glass-card {
+    padding: 4rem 3rem;
+  }
+  
+  /* Sections */
+  .section-title {
+    font-size: 3.5rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1.25rem;
+  }
+  
+  /* Grid Layouts */
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .about-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .contact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .hero-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  /* Cards */
+  .service-card {
+    padding: 2.5rem;
+  }
+  
+  .glass-card {
+    padding: 2rem;
+  }
+  
+  /* Form */
+  .contact-form {
+    padding: 3rem;
+  }
+  
+  .contact-info {
+    padding: 3rem;
+  }
+  
+  /* Team */
+  .team-member {
+    padding: 3rem;
+  }
+  
+  /* Technology */
+  .tech-item {
+    padding: 2rem;
+  }
+}
+
+/* Large devices - Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 2.5rem;
+  }
+  
+  /* Hero Section */
+  .hero-title {
+    font-size: 4.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.75rem;
+  }
+  
+  .hero-glass-card {
+    padding: 5rem 4rem;
+  }
+  
+  /* Sections */
+  .section-title {
+    font-size: 4rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1.375rem;
+  }
+  
+  /* Grid Layouts */
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .tech-grid .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  /* Spacing */
+  .py-20 {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+  
+  /* Cards */
+  .service-card {
+    padding: 3rem;
+  }
+  
+  .tech-item {
+    padding: 2.5rem;
+  }
+  
+  /* Animations */
+  .interactive-card:hover {
+    transform: translateY(-12px) scale(1.02);
+  }
+  
+  /* Navigation */
+  .nav-link {
+    font-size: 1.1rem;
+    padding: 0.75rem 0;
+  }
+}
+
+/* Extra Large devices (1280px+) */
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+    padding: 0 3rem;
+  }
+  
+  /* Hero Section */
+  .hero-title {
+    font-size: 5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 2rem;
+  }
+  
+  .hero-glass-card {
+    padding: 6rem 5rem;
+  }
+  
+  /* Sections */
+  .section-title {
+    font-size: 4.5rem;
+  }
+  
+  /* Spacing */
+  .py-20 {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+  
+  /* Grid gaps */
+  .gap-8 {
+    gap: 3rem;
+  }
+  
+  .gap-12 {
+    gap: 4rem;
+  }
+}
+
+/* Ultra Wide Screens (1440px+) */
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  /* Hero Section */
+  .hero-title {
+    font-size: 5.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 2.25rem;
+  }
+  
+  /* Sections */
+  .section-title {
+    font-size: 5rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1.5rem;
+  }
+  
+  /* Enhanced spacing for large screens */
+  .py-20 {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+  
+  /* Larger cards */
+  .service-card {
+    padding: 3.5rem;
+  }
+  
+  .hero-glass-card {
+    padding: 7rem 6rem;
+  }
+}
+
+/* Mobile Specific Adjustments */
+@media (max-width: 767px) {
+  /* Navigation */
+  .nav-menu {
+    display: none;
+  }
+  
+  .mobile-menu-toggle {
+    display: flex;
+  }
+  
+  /* Hero */
+  .hero-glass-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .btn-lg {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  /* Sections */
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+  }
+  
+  .py-20 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  /* Cards */
+  .service-card,
+  .glass-card {
+    padding: 1.5rem;
+  }
+  
+  .stat-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  /* Technology tabs */
+  .tech-tab {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Contact form */
+  .contact-form,
+  .contact-info {
+    padding: 2rem 1.5rem;
+  }
+  
+  /* Team */
+  .team-member {
+    padding: 2rem 1.5rem;
+  }
+  
+  /* Mission pillars stack vertically */
+  .mission-pillars {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  /* Back to top button */
+  .back-to-top {
+    bottom: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  /* Scroll indicator */
+  .scroll-indicator {
+    bottom: 2rem;
+  }
+  
+  /* Reduce animations on mobile for better performance */
+  .interactive-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  /* Optimize glass effects for mobile */
+  .glass-card {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+  }
+  
+  .hero-glass-card {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
+/* Tablet Portrait Specific (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Services grid - 2 columns for tablets */
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  
+  /* Technology grid - 2 columns */
+  .tech-grid .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* About section adjustments */
+  .about-grid {
+    gap: 3rem;
+  }
+  
+  /* Hero stats */
+  .hero-stats {
+    gap: 2rem;
+  }
+}
+
+/* Landscape mobile phones */
+@media (max-width: 896px) and (orientation: landscape) {
+  .hero-section {
+    min-height: 80vh;
+  }
+  
+  .hero-glass-card {
+    padding: 2rem;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .py-20 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .interactive-card:hover {
+    transform: none;
+  }
+  
+  .service-card:hover {
+    transform: none;
+  }
+  
+  .tech-item:hover {
+    transform: none;
+  }
+  
+  /* Make touch targets larger */
+  .nav-link {
+    padding: 1rem 0;
+  }
+  
+  .mobile-nav-link {
+    padding: 1rem 0;
+  }
+  
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    min-height: 44px;
+    padding: 0.875rem 1.5rem;
+  }
+  
+  .social-link {
+    padding: 0.75rem 1.25rem;
+    min-height: 44px;
+  }
+  
+  .tech-tab {
+    min-height: 44px;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Optimize for retina displays */
+  .glass-card {
+    border-width: 0.5px;
+  }
+  
+  .glass-header {
+    border-bottom-width: 0.5px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .glass-header,
+  .back-to-top,
+  .scroll-indicator,
+  .mobile-menu-toggle,
+  .hero-background,
+  .animated-shapes {
+    display: none !important;
+  }
+  
+  .glass-card,
+  .service-card,
+  .hero-glass-card {
+    background: white !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+  
+  .hero-section {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .text-white {
+    color: black !important;
+  }
+  
+  a {
+    text-decoration: underline;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .hero-background .animated-shapes {
+    animation: none;
+  }
+  
+  .scroll-indicator {
+    animation: none;
+  }
+  
+  .interactive-card:hover {
+    transform: none;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+  }
+  
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+  
+  .section-title {
+    color: var(--text-primary);
+  }
+  
+  .section-subtitle {
+    color: var(--text-secondary);
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .glass-card,
+  .service-card,
+  .hero-glass-card {
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    border: 2px solid white;
+  }
+  
+  .nav-link::after {
+    height: 3px;
+  }
+}
+
+/* Container queries for modern browsers */
+@supports (container-type: inline-size) {
+  .service-card {
+    container-type: inline-size;
+  }
+  
+  @container (max-width: 300px) {
+    .service-card {
+      padding: 1rem;
+    }
+    
+    .service-card .service-icon {
+      font-size: 2.5rem;
+    }
+  }
+}

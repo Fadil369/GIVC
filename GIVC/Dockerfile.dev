@@ -1,0 +1,34 @@
+# Development Docker configuration
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies for native modules
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S givc -u 1001 -G nodejs
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm install
+
+# Change ownership of app directory
+RUN chown -R givc:nodejs /app
+
+# Switch to non-root user
+USER givc
+
+# Expose port
+EXPOSE 3000
+
+# Start development server
+CMD ["npm", "run", "dev", "--", "--host"]
