@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   keywords: ['healthcare', 'claims', 'NPHIES', 'Saudi Arabia', 'medical insurance'],
 }
 
+// Force dynamic rendering to avoid static generation issues with React Context
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: Readonly<{

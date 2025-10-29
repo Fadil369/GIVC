@@ -20,13 +20,13 @@ interface RiskScoreCardProps {
 export function RiskScoreCard({ score, riskLevel, compliance }: RiskScoreCardProps) {
   const getRiskColor = (level: RiskLevel) => {
     switch (level) {
-      case 'LOW':
+      case RiskLevel.LOW:
         return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20';
-      case 'MEDIUM':
+      case RiskLevel.MEDIUM:
         return 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20';
-      case 'HIGH':
+      case RiskLevel.HIGH:
         return 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20';
-      case 'CRITICAL':
+      case RiskLevel.CRITICAL:
         return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20';
       default:
         return 'text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20';

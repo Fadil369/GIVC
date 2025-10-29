@@ -15,11 +15,11 @@ interface ValidationIssuesListProps {
 export function ValidationIssuesList({ issues }: ValidationIssuesListProps) {
   const getSeverityIcon = (severity: IssueSeverity) => {
     switch (severity) {
-      case 'ERROR':
+      case IssueSeverity.ERROR:
         return 'error';
-      case 'WARNING':
+      case IssueSeverity.WARNING:
         return 'warning';
-      case 'INFO':
+      case IssueSeverity.INFO:
         return 'info';
       default:
         return 'help';
@@ -28,11 +28,11 @@ export function ValidationIssuesList({ issues }: ValidationIssuesListProps) {
   
   const getSeverityColor = (severity: IssueSeverity) => {
     switch (severity) {
-      case 'ERROR':
+      case IssueSeverity.ERROR:
         return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20';
-      case 'WARNING':
+      case IssueSeverity.WARNING:
         return 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20';
-      case 'INFO':
+      case IssueSeverity.INFO:
         return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20';
       default:
         return 'text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20';
