@@ -1,9 +1,41 @@
 // Insurance System Types for GIVC Healthcare Platform
+import {
+  InsurancePlanType,
+  SmokingStatus,
+  BudgetPreference,
+  CommunicationChannel,
+  Severity,
+  MedicalConditionStatus,
+  ClaimType,
+  ClaimStatus,
+  ClaimDocumentType,
+  MessageSender,
+  MessageType,
+  ChatSessionStatus,
+  ChatCategory,
+  Priority,
+  RiskAssessmentType,
+  RiskLevel,
+  Impact,
+  RiskFactorSource,
+  FraudAlertType,
+  FraudAlertStatus,
+  ComplianceType,
+  ComplianceStatus,
+  ComplianceFindingStatus,
+  ContentType,
+  ContentCategory,
+  ReadingLevel,
+  Trend,
+  AnalyticsCategory,
+  SortOrder,
+  FilterOperator,
+} from './enums';
 
 export interface InsurancePlan {
   id: string;
   name: string;
-  type: 'individual' | 'family' | 'group' | 'medicare' | 'medicaid';
+  type: InsurancePlanType;
   premium: {
     monthly: number;
     annual: number;
@@ -53,7 +85,7 @@ export interface Customer {
     medications: Medication[];
     allergies: string[];
     familyHistory: string[];
-    smokingStatus: 'never' | 'former' | 'current';
+    smokingStatus: SmokingStatus;
     riskFactors: string[];
   };
   insuranceInfo: {
@@ -65,10 +97,10 @@ export interface Customer {
   financialInfo: {
     income: number;
     dependents: number;
-    budgetPreference: 'low' | 'medium' | 'high';
+    budgetPreference: BudgetPreference;
   };
   preferences: {
-    communicationChannel: 'email' | 'phone' | 'chat' | 'app';
+    communicationChannel: CommunicationChannel;
     language: string;
     accessibilityNeeds: string[];
   };
@@ -77,9 +109,9 @@ export interface Customer {
 export interface MedicalCondition {
   id: string;
   name: string;
-  severity: 'mild' | 'moderate' | 'severe';
+  severity: Severity;
   diagnosedDate: string;
-  status: 'active' | 'resolved' | 'chronic';
+  status: MedicalConditionStatus;
   treatments: string[];
   estimatedAnnualCost: number;
 }
@@ -98,8 +130,8 @@ export interface Claim {
   id: string;
   customerId: string;
   planId: string;
-  type: 'medical' | 'prescription' | 'dental' | 'vision' | 'mental_health';
-  status: 'submitted' | 'processing' | 'approved' | 'denied' | 'pending_info';
+  type: ClaimType;
+  status: ClaimStatus;
   submittedDate: string;
   processedDate?: string;
   provider: {
@@ -143,7 +175,7 @@ export interface ClaimService {
 
 export interface ClaimDocument {
   id: string;
-  type: 'medical_record' | 'receipt' | 'prescription' | 'referral' | 'prior_auth';
+  type: ClaimDocumentType;
   filename: string;
   uploadDate: string;
   extractedData: Record<string, any>;
@@ -152,10 +184,10 @@ export interface ClaimDocument {
 
 export interface ChatMessage {
   id: string;
-  sender: 'user' | 'ai' | 'agent';
+  sender: MessageSender;
   content: string;
   timestamp: string;
-  type: 'text' | 'file' | 'form' | 'quick_reply';
+  type: MessageType;
   metadata?: {
     intent?: string;
     confidence?: number;
@@ -169,9 +201,9 @@ export interface ChatSession {
   customerId: string;
   startTime: string;
   endTime?: string;
-  status: 'active' | 'resolved' | 'escalated' | 'abandoned';
-  category: 'general' | 'claims' | 'enrollment' | 'billing' | 'benefits' | 'emergency';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: ChatSessionStatus;
+  category: ChatCategory;
+  priority: Priority;
   messages: ChatMessage[];
   aiAgent: {
     name: string;
@@ -195,9 +227,9 @@ export interface RiskAssessment {
   id: string;
   customerId: string;
   assessmentDate: string;
-  type: 'enrollment' | 'renewal' | 'claims_analysis' | 'fraud_detection';
+  type: RiskAssessmentType;
   riskScore: number; // 0-100
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: RiskLevel;
   factors: RiskFactor[];
   recommendations: string[];
   predictedCosts: {
@@ -220,10 +252,10 @@ export interface RiskAssessment {
 export interface RiskFactor {
   type: string;
   description: string;
-  impact: 'positive' | 'negative';
+  impact: Impact;
   weight: number;
   confidence: number;
-  source: 'medical_history' | 'claims_data' | 'demographics' | 'lifestyle';
+  source: RiskFactorSource;
 }
 
 export interface PlanRecommendation {
@@ -264,11 +296,11 @@ export interface RecommendedPlan {
 export interface FraudAlert {
   id: string;
   claimId: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  type: 'billing_anomaly' | 'provider_pattern' | 'patient_behavior' | 'duplicate_claims';
+  severity: RiskLevel;
+  type: FraudAlertType;
   description: string;
   detectedDate: string;
-  status: 'open' | 'investigating' | 'resolved' | 'false_positive';
+  status: FraudAlertStatus;
   confidence: number;
   evidencePoints: string[];
   investigation: {
@@ -281,13 +313,13 @@ export interface FraudAlert {
 
 export interface ComplianceReport {
   id: string;
-  type: 'hipaa' | 'ada' | 'state_regulation' | 'federal_regulation';
+  type: ComplianceType;
   generatedDate: string;
   period: {
     startDate: string;
     endDate: string;
   };
-  status: 'compliant' | 'non_compliant' | 'requires_attention';
+  status: ComplianceStatus;
   findings: ComplianceFinding[];
   recommendations: string[];
   nextReviewDate: string;
@@ -296,7 +328,7 @@ export interface ComplianceReport {
 export interface ComplianceFinding {
   regulation: string;
   requirement: string;
-  status: 'met' | 'not_met' | 'partially_met';
+  status: ComplianceFindingStatus;
   evidence: string[];
   remediation?: string[];
   deadline?: string;
@@ -306,10 +338,10 @@ export interface EducationalContent {
   id: string;
   title: string;
   content: string;
-  type: 'article' | 'video' | 'infographic' | 'interactive' | 'checklist';
-  category: 'benefits' | 'wellness' | 'claims' | 'preventive_care' | 'cost_management';
+  type: ContentType;
+  category: ContentCategory;
   targetAudience: string[];
-  readingLevel: 'basic' | 'intermediate' | 'advanced';
+  readingLevel: ReadingLevel;
   personalizedFor?: string; // customer ID
   tags: string[];
   createdDate: string;
@@ -326,14 +358,14 @@ export interface AnalyticsMetric {
   id: string;
   name: string;
   value: number;
-  trend: 'increasing' | 'decreasing' | 'stable';
+  trend: Trend;
   period: string;
   comparison: {
     previousPeriod: number;
     change: number;
     changePercent: number;
   };
-  category: 'customer_satisfaction' | 'claims_processing' | 'cost_management' | 'fraud_detection';
+  category: AnalyticsCategory;
   drillDown?: AnalyticsMetric[];
 }
 
@@ -362,9 +394,9 @@ export interface ChatIntent {
   actions: string[];
 }
 
-// Common utility types
-export type SortOrder = 'asc' | 'desc';
-export type FilterOperator = 'equals' | 'contains' | 'greater_than' | 'less_than' | 'between';
+// Common utility types (now imported from enums)
+// export type SortOrder - using enum from enums.ts
+// export type FilterOperator - using enum from enums.ts
 
 export interface Filter {
   field: string;
