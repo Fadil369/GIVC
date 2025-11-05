@@ -1,6 +1,50 @@
 # Docker Compose version 3.8 (version key is now obsolete and optional)
 
 services:
+  # FastAPI Backend - Ultrathink AI
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    container_name: givc-ultrathink-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://givc:givc123@postgres:5432/ultrathink}
+      - API_SECRET_KEY=${API_SECRET_KEY:-your-secret-key-change-in-production}
+      - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-change-in-production}
+      - ULTRATHINK_ENABLED=${ULTRATHINK_ENABLED:-true}
+      - SECURITY_MIDDLEWARE_ENABLED=${SECURITY_MIDDLEWARE_ENABLED:-true}
+      - ML_MODEL_PATH=${ML_MODEL_PATH:-/app/models}
+      - RATE_LIMIT_DEFAULT=${RATE_LIMIT_DEFAULT:-100}
+      - RATE_LIMIT_STRICT=${RATE_LIMIT_STRICT:-10}
+      - PROMETHEUS_ENABLED=${PROMETHEUS_ENABLED:-true}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+    volumes:
+      - ./models:/app/models
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - givc-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
   # Main application
   givc-app:
     build:
@@ -107,14 +151,15 @@ services:
 
   # PostgreSQL database
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
+    container_name: givc-postgres
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:-givc_dev}
+      - POSTGRES_DB=${POSTGRES_DB:-ultrathink}
       - POSTGRES_USER=${POSTGRES_USER:-givc}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-givc_dev_password}
-      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-givc123}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro

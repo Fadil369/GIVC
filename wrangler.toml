@@ -1,6 +1,6 @@
-name = "givc"
+name = "givc-ultrathink"
 main = "workers/router.js"
-compatibility_date = "2023-11-01"
+compatibility_date = "2024-11-05"
 
 # Pages configuration - Use root directory for static HTML site
 pages_build_output_dir = "."
@@ -14,6 +14,22 @@ pages_build_output_dir = "."
 ENVIRONMENT = "production"
 HIPAA_COMPLIANCE_LEVEL = "strict"
 RCM_ACCREDITATION = "enabled"
+
+# Ultrathink AI Configuration
+ULTRATHINK_ENABLED = "true"
+AI_VALIDATION_ENABLED = "true"
+SMART_COMPLETION_ENABLED = "true"
+ERROR_PREDICTION_ENABLED = "true"
+ANOMALY_DETECTION_ENABLED = "true"
+
+# FastAPI Backend URL (Deploy FastAPI separately)
+API_BACKEND_URL = "" # Set to your FastAPI deployment URL
+FASTAPI_PORT = "8000"
+
+# Security Settings
+SECURITY_MIDDLEWARE_ENABLED = "true"
+RATE_LIMIT_DEFAULT = "100"
+RATE_LIMIT_STRICT = "10"
 
 # D1 Database Bindings
 [[d1_databases]]
@@ -46,6 +62,9 @@ bucket_name = "givc-medical-files"
 # - ENCRYPTION_KEY: Master encryption key for AES-256-GCM
 # - CLOUDFLARE_API_TOKEN: API token for Cloudflare access
 # - CLOUDFLARE_ACCOUNT_ID: Account ID
+# - API_SECRET_KEY: Ultrathink API secret key
+# - DATABASE_URL: PostgreSQL connection string for Ultrathink
+# - REDIS_URL: Redis connection string for caching (optional)
 
 # Workers AI Binding
 [ai]

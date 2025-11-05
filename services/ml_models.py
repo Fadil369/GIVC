@@ -184,7 +184,7 @@ class DiagnosisPredictionModel(BaseMLModel):
                 code_num = int(code)
                 if 99201 <= code_num <= 99499:
                     categories['evaluation_management'] += 1
-                elif 00100 <= code_num <= 01999:
+                elif 100 <= code_num <= 1999:
                     categories['anesthesia'] += 1
                 elif 10021 <= code_num <= 69990:
                     categories['surgery'] += 1
