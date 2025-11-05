@@ -65,11 +65,11 @@ app.add_middleware(
         "http://localhost:5173",  # Vite dev server
         "http://localhost:3000",  # Alternative port
         "https://givc.thefadil.site",  # Production
-        "https://*.pages.dev",  # Cloudflare Pages preview
+        "https://4d31266d.givc-platform-static.pages.dev",  # Cloudflare Pages (specific subdomain)
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicit methods only
+    allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
 )
 
 # Initialize services
@@ -198,6 +198,8 @@ async def health_check():
 # =============================================================================
 # Eligibility Endpoints
 # =============================================================================
+# TODO: Add authentication middleware to protect these endpoints
+# Currently endpoints are unprotected - implement JWT or API key auth
 
 @app.post("/api/eligibility/check", response_model=EligibilityResponse, tags=["Eligibility"])
 async def check_eligibility(request: EligibilityCheckRequest):

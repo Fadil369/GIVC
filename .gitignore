@@ -9,6 +9,7 @@ lerna-debug.log*
 # Build outputs
 dist/
 build/
+build_unified/
 .output/
 .next/
 out/
@@ -193,3 +194,7 @@ credentials.json
 
 # Nested Git Repositories
 GIVC/
+
+# Spec testing
+.specify/
+spec-kit/
