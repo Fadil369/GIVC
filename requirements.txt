@@ -1,85 +1,163 @@
 # BrainSAIT-NPHIES-GIVC Integration
-# Python 3.9+
+# Python 3.11+
+# Updated: 2025-11-08 - Merged comprehensive dependencies with latest security updates
 
-# FastAPI Framework
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-python-multipart==0.0.18
+# ============================================================================
+# FastAPI Framework & Web Server
+# ============================================================================
+fastapi==0.115.5  # Updated from 0.109.0
+uvicorn[standard]==0.32.1  # Updated from 0.27.0
+python-multipart==0.0.20  # Updated from 0.0.18
+starlette==0.41.3  # Explicit starlette version
 
+# ============================================================================
 # HTTP Clients
-httpx==0.26.0
-aiohttp==3.12.14
-requests==2.32.4
-
-# Data Validation
-pydantic==2.5.3
-pydantic-settings==2.1.0
-
-# HTML Parsing (for OASES portal)
-beautifulsoup4==4.12.2
-lxml==5.1.0
-
-# Authentication & Security
-PyJWT==2.8.0
-cryptography==43.0.1
-python-jose[cryptography]==3.4.0
+# ============================================================================
+httpx==0.28.1  # Updated from 0.26.0
+aiohttp==3.12.14  # Latest version with security fixes
+requests==2.32.4  # Latest version
 urllib3==2.2.2  # Security fix for proxy headers
 certifi==2024.8.30  # Updated root certificates
 
-# Database
-asyncpg==0.29.0
-sqlalchemy[asyncio]==2.0.25
-alembic==1.13.1
+# ============================================================================
+# Data Validation
+# ============================================================================
+pydantic==2.10.3  # Updated from 2.5.3
+pydantic-settings==2.6.1  # Updated from 2.1.0
+pydantic-extra-types==2.10.1  # Extended Pydantic types
 
-# Redis
-redis[hiredis]==5.0.1
-aioredis==2.0.1
+# ============================================================================
+# HTML Parsing (for OASES portal integration)
+# ============================================================================
+beautifulsoup4==4.12.3  # Updated from 4.12.2
+lxml==5.3.0  # Updated from 5.1.0
 
-# Logging
-loguru==0.7.2
-
-# Configuration
-PyYAML==6.0.1
-python-dotenv==1.0.0
-
-# Date/Time
-python-dateutil==2.8.2
-pytz==2023.3
-
-# Data Processing
-pandas==2.1.4
-openpyxl==3.1.2
-
-# Testing
-pytest==7.4.4
-pytest-asyncio==0.23.3
-pytest-cov==4.1.0
-httpx-mock==0.7.0
-
-# Code Quality
-black==24.8.0  # Security fix for ReDoS vulnerability
-flake8==7.0.0
-mypy==1.8.0
-
-# Monitoring
-prometheus-client==0.19.0
-
-# Utils
-tenacity==8.2.3  # Retry logic
-python-json-logger==2.0.7
-
-# Ultrathink AI Dependencies
+# ============================================================================
+# Authentication & Security - CRITICAL UPDATES
+# ============================================================================
+PyJWT==2.10.1  # SECURITY UPDATE from 2.8.0
+cryptography==46.0.3  # SECURITY UPDATE from 43.0.1
+python-jose[cryptography]==3.4.0  # Latest compatible version
+passlib[bcrypt]==1.7.4  # Password hashing
 bleach==6.1.0  # XSS prevention
-numpy>=1.24.0  # Statistical analysis
-scikit-learn>=1.5.2  # Machine learning models (security fix)
-joblib>=1.3.0  # Model persistence
-scipy>=1.11.0  # Scientific computing
-matplotlib>=3.7.0  # Data visualization
-seaborn>=0.12.0  # Statistical visualization
-orjson>=3.10.11  # Fast JSON with recursion limit fix
+
+# ============================================================================
+# Database - PostgreSQL
+# ============================================================================
+asyncpg==0.30.0  # Updated from 0.29.0
+sqlalchemy[asyncio]==2.0.36  # Updated from 2.0.25
+alembic==1.14.0  # Updated from 1.13.1
+psycopg2-binary==2.9.10  # For synchronous operations
+
+# ============================================================================
+# Redis Cache & Session Store
+# ============================================================================
+redis[hiredis]==5.2.1  # Updated from 5.0.1
+# Note: aioredis is deprecated, redis>=4.2.0 includes async support
+
+# ============================================================================
+# Logging & Monitoring
+# ============================================================================
+loguru==0.7.3  # Updated from 0.7.2
+prometheus-client==0.21.0  # Updated from 0.19.0
+python-json-logger==3.2.1  # Updated from 2.0.7
+
+# ============================================================================
+# Configuration Management
+# ============================================================================
+PyYAML==6.0.2  # Updated from 6.0.1
+python-dotenv==1.0.1  # Updated from 1.0.0
+
+# ============================================================================
+# Date/Time Handling
+# ============================================================================
+python-dateutil==2.9.0  # Updated from 2.8.2
+pytz==2024.2  # Updated from 2023.3
+arrow==1.3.0  # Modern datetime library
+
+# ============================================================================
+# Data Processing & Analytics
+# ============================================================================
+pandas==2.2.3  # Updated from 2.1.4
+numpy==2.2.1  # Required by pandas, latest version
+openpyxl==3.1.5  # Updated from 3.1.2
+xlsxwriter==3.2.0  # Excel writing
+
+# ============================================================================
+# AI/ML Dependencies for Enhanced Features
+# ============================================================================
+scikit-learn==1.6.1  # Machine learning
+scipy==1.15.1  # Scientific computing
+joblib==1.4.2  # Model persistence
+openai==1.57.5  # OpenAI API integration
+anthropic==0.42.0  # Claude API integration
 
 # Enhanced ML Dependencies
 xgboost>=1.7.0  # Gradient boosting
 lightgbm>=4.0.0  # Light gradient boosting
 imbalanced-learn>=0.11.0  # Handling imbalanced data
 optuna>=3.3.0  # Hyperparameter optimization
+
+# Data Visualization
+matplotlib>=3.7.0  # Data visualization
+seaborn>=0.12.0  # Statistical visualization
+
+# ============================================================================
+# NLP for Clinical Decision Support
+# ============================================================================
+spacy==3.8.3  # NLP library
+nltk==3.9.1  # Natural Language Toolkit
+
+# ============================================================================
+# Testing Framework
+# ============================================================================
+pytest==8.3.4  # Updated from 7.4.4
+pytest-asyncio==0.24.0  # Updated from 0.23.3
+pytest-cov==6.0.0  # Updated from 4.1.0
+pytest-xdist==3.6.1  # Parallel testing
+httpx-mock==0.7.0  # HTTP mocking for tests
+faker==33.1.0  # Test data generation
+
+# ============================================================================
+# Code Quality & Type Checking
+# ============================================================================
+black==24.10.0  # Updated from 24.8.0, code formatting
+flake8==7.1.1  # Updated from 7.0.0, linting
+mypy==1.13.0  # Updated from 1.8.0, type checking
+isort==5.13.2  # Import sorting
+pylint==3.3.2  # Code analysis
+bandit==1.8.0  # Security linting
+
+# ============================================================================
+# Utilities
+# ============================================================================
+tenacity==9.0.0  # Updated from 8.2.3 - Retry logic
+click==8.1.8  # CLI utilities
+rich==13.9.4  # Rich terminal output
+orjson>=3.10.11  # Fast JSON with recursion limit fix
+
+# ============================================================================
+# Email & Notifications
+# ============================================================================
+emails==0.6  # Email sending
+twilio==9.3.7  # SMS notifications
+python-telegram-bot==21.9  # Telegram notifications
+
+# ============================================================================
+# File Processing
+# ============================================================================
+python-magic==0.4.27  # File type detection
+pillow==11.0.0  # Image processing
+pypdf==5.1.0  # PDF processing
+
+# ============================================================================
+# Caching & Performance
+# ============================================================================
+cachetools==5.5.0  # Caching utilities
+aiocache==0.12.3  # Async caching
+
+# ============================================================================
+# FHIR & Healthcare Standards
+# ============================================================================
+fhir.resources==7.1.0  # FHIR R4 resource models
+hl7apy==1.3.5  # HL7 message parsing
