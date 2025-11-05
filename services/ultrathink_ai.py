@@ -26,6 +26,27 @@ from pydantic import BaseModel, Field
 import numpy as np
 from collections import defaultdict
 
+# Import ML models
+try:
+    from .ml_models import (
+        diagnosis_model,
+        amount_model, 
+        error_model,
+        anomaly_model
+    )
+    ML_MODELS_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️ ML models not available: {e}")
+    ML_MODELS_AVAILABLE = False
+
+# Import database manager
+try:
+    from .database_models import db_manager
+    DATABASE_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️ Database models not available: {e}")
+    DATABASE_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -472,19 +493,41 @@ class UltrathinkAIService:
         warnings = sum(1 for v in validation_results
                       if v.severity == ValidationSeverity.WARNING)
 
-        # Calculate failure probability
-        if critical_errors > 0:
-            failure_probability = 0.95
-            will_fail = True
-        elif errors > 0:
-            failure_probability = 0.70 + (errors * 0.05)
-            will_fail = True
-        elif warnings > 2:
-            failure_probability = 0.30 + (warnings * 0.10)
-            will_fail = False
+        # Use ML model for failure probability if available
+        if ML_MODELS_AVAILABLE:
+            try:
+                ml_probability = await error_model.predict(claim_data, validation_results)
+                failure_probability = ml_probability
+                will_fail = failure_probability > 0.5
+            except Exception as e:
+                logger.error(f"ML error prediction failed: {e}")
+                # Fallback to rule-based calculation
+                if critical_errors > 0:
+                    failure_probability = 0.95
+                    will_fail = True
+                elif errors > 0:
+                    failure_probability = 0.70 + (errors * 0.05)
+                    will_fail = True
+                elif warnings > 2:
+                    failure_probability = 0.30 + (warnings * 0.10)
+                    will_fail = False
+                else:
+                    failure_probability = 0.10
+                    will_fail = False
         else:
-            failure_probability = 0.10
-            will_fail = False
+            # Rule-based calculation
+            if critical_errors > 0:
+                failure_probability = 0.95
+                will_fail = True
+            elif errors > 0:
+                failure_probability = 0.70 + (errors * 0.05)
+                will_fail = True
+            elif warnings > 2:
+                failure_probability = 0.30 + (warnings * 0.10)
+                will_fail = False
+            else:
+                failure_probability = 0.10
+                will_fail = False
 
         # Generate recommendations
         recommendations = []
@@ -515,7 +558,7 @@ class UltrathinkAIService:
         context: Optional[Dict[str, Any]] = None
     ) -> AnomalyDetection:
         """
-        Detect anomalies and potential fraud
+        Detect anomalies and potential fraud using real ML models
 
         Uses statistical analysis and ML models to identify unusual patterns
 
@@ -526,6 +569,37 @@ class UltrathinkAIService:
         Returns:
             Anomaly detection result with risk assessment
         """
+        if ML_MODELS_AVAILABLE:
+            try:
+                # Use real ML anomaly detection
+                ml_result = await anomaly_model.detect(claim_data, context)
+                
+                # Log anomaly detection if database is available
+                if DATABASE_AVAILABLE:
+                    try:
+                        await db_manager.log_anomaly_detection(
+                            claim_id=claim_data.get('claim_id', 'unknown'),
+                            user_id=context.get('user_id', 'system') if context else 'system',
+                            claim_data=claim_data,
+                            detection_result=ml_result,
+                            processing_time_ms=50.0,  # Placeholder
+                            model_version="ml_1.0"
+                        )
+                    except Exception as e:
+                        logger.error(f"Failed to log anomaly detection: {e}")
+                
+                return AnomalyDetection(
+                    is_anomaly=ml_result["is_anomaly"],
+                    anomaly_score=ml_result["anomaly_score"],
+                    anomaly_type=ml_result["anomaly_type"],
+                    details=ml_result["details"],
+                    risk_level=ml_result["risk_level"]
+                )
+                
+            except Exception as e:
+                logger.error(f"ML anomaly detection failed: {e}")
+        
+        # Fallback to rule-based detection
         anomaly_score = 0.0
         anomaly_details = []
         anomaly_type = "none"
@@ -567,13 +641,29 @@ class UltrathinkAIService:
         else:
             risk_level = "low"
 
-        return AnomalyDetection(
+        result = AnomalyDetection(
             is_anomaly=anomaly_score > 0.3,
             anomaly_score=anomaly_score,
             anomaly_type=anomaly_type,
             details="; ".join(anomaly_details) if anomaly_details else "No anomalies detected",
             risk_level=risk_level
         )
+        
+        # Log fallback anomaly detection
+        if DATABASE_AVAILABLE:
+            try:
+                await db_manager.log_anomaly_detection(
+                    claim_id=claim_data.get('claim_id', 'unknown'),
+                    user_id=context.get('user_id', 'system') if context else 'system',
+                    claim_data=claim_data,
+                    detection_result=result.dict(),
+                    processing_time_ms=25.0,  # Placeholder
+                    model_version="rule_based_1.0"
+                )
+            except Exception as e:
+                logger.error(f"Failed to log anomaly detection: {e}")
+        
+        return result
 
     # =========================================================================
     # Helper Methods
@@ -651,12 +741,18 @@ class UltrathinkAIService:
         self,
         procedure_codes: List[str]
     ) -> Optional[Dict]:
-        """Predict diagnosis codes based on procedure codes"""
-        # In production, use ML model
-        return {
+        """Predict diagnosis codes based on procedure codes using real ML model"""
+        if ML_MODELS_AVAILABLE:
+            try:
+                return await diagnosis_model.predict(procedure_codes)
+            except Exception as e:
+                logger.error(f"ML diagnosis prediction failed: {e}")
+        
+        # Fallback to rule-based prediction
+        return await diagnosis_model.predict(procedure_codes) if ML_MODELS_AVAILABLE else {
             "codes": ["J06.9"],  # Common cold
             "confidence": 0.75,
-            "reasoning": "Most common diagnosis for this procedure",
+            "reasoning": "Fallback rule-based prediction",
             "alternatives": [["R50.9"], ["M54.5"]]
         }
 
@@ -665,14 +761,19 @@ class UltrathinkAIService:
         procedure_codes: List[str],
         context: Optional[Dict]
     ) -> Optional[Dict]:
-        """Predict claim amount based on procedures"""
-        # In production, use pricing database and ML model
-        base_amount = len(procedure_codes) * 500  # Simplified
-        return {
-            "amount": base_amount,
+        """Predict claim amount based on procedures using real ML model"""
+        if ML_MODELS_AVAILABLE:
+            try:
+                return await amount_model.predict(procedure_codes, context)
+            except Exception as e:
+                logger.error(f"ML amount prediction failed: {e}")
+        
+        # Fallback to rule-based prediction
+        return await amount_model.predict(procedure_codes, context) if ML_MODELS_AVAILABLE else {
+            "amount": len(procedure_codes) * 500,
             "confidence": 0.70,
-            "reasoning": "Based on average procedure pricing",
-            "range": [base_amount * 0.8, base_amount * 1.2]
+            "reasoning": "Fallback rule-based pricing",
+            "range": [len(procedure_codes) * 400, len(procedure_codes) * 600]
         }
 
     async def _generate_ml_recommendations(

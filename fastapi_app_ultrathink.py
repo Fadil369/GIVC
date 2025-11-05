@@ -48,6 +48,14 @@ try:
 except ImportError as e:
     print(f"⚠️  Security Middleware: Disabled ({e})")
 
+# Import monitoring and health checks
+try:
+    from services.monitoring import health_checker, metrics_collector, get_health_status, get_metrics
+    MONITORING_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️  Monitoring not available: {e}")
+    MONITORING_AVAILABLE = False
+
 # Import existing services
 try:
     from config.settings import settings
@@ -257,25 +265,48 @@ async def health_check():
     Enhanced health check with Ultrathink status
     """
     try:
-        services_status = {
-            "nphies_auth": auth_manager.check_connection() if hasattr(auth_manager, 'check_connection') else True,
-            "database": True,
-            "eligibility_service": True,
-            "claims_service": True,
-            "analytics_service": True,
-            "ultrathink_ai": ULTRATHINK_ENABLED,
-            "security_middleware": SECURITY_MIDDLEWARE_ENABLED
-        }
+        if MONITORING_AVAILABLE:
+            # Use comprehensive health checker
+            health_status = await get_health_status()
+            
+            return HealthResponse(
+                status=health_status["status"],
+                timestamp=datetime.now(),
+                version="2.0.0",
+                environment=settings.ENVIRONMENT,
+                services={
+                    "database": health_status["components"].get("database", {}).get("healthy", False),
+                    "redis": health_status["components"].get("redis", {}).get("healthy", False),
+                    "ml_models": health_status["components"].get("ml_models", {}).get("healthy", False),
+                    "nphies": health_status["components"].get("nphies", {}).get("healthy", False),
+                    "security": health_status["components"].get("security", {}).get("healthy", False),
+                    "ultrathink_ai": ULTRATHINK_ENABLED,
+                    "security_middleware": SECURITY_MIDDLEWARE_ENABLED
+                },
+                ultrathink_enabled=ULTRATHINK_ENABLED,
+                security_enabled=SECURITY_MIDDLEWARE_ENABLED
+            )
+        else:
+            # Fallback simple health check
+            services_status = {
+                "nphies_auth": auth_manager.check_connection() if hasattr(auth_manager, 'check_connection') else True,
+                "database": True,
+                "eligibility_service": True,
+                "claims_service": True,
+                "analytics_service": True,
+                "ultrathink_ai": ULTRATHINK_ENABLED,
+                "security_middleware": SECURITY_MIDDLEWARE_ENABLED
+            }
 
-        return HealthResponse(
-            status="healthy",
-            timestamp=datetime.now(),
-            version="2.0.0",
-            environment=settings.ENVIRONMENT,
-            services=services_status,
-            ultrathink_enabled=ULTRATHINK_ENABLED,
-            security_enabled=SECURITY_MIDDLEWARE_ENABLED
-        )
+            return HealthResponse(
+                status="healthy",
+                timestamp=datetime.now(),
+                version="2.0.0",
+                environment=settings.ENVIRONMENT,
+                services=services_status,
+                ultrathink_enabled=ULTRATHINK_ENABLED,
+                security_enabled=SECURITY_MIDDLEWARE_ENABLED
+            )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -317,6 +348,31 @@ async def get_features():
             "insurance_portals": ["MOH", "Jisr", "Bupa", "Tawuniya"]
         }
     }
+
+@app.get("/api/metrics", tags=["System"])
+async def get_prometheus_metrics():
+    """
+    Get Prometheus metrics for monitoring
+    """
+    if MONITORING_AVAILABLE:
+        metrics_data = await get_metrics()
+        return Response(content=metrics_data, media_type="text/plain")
+    else:
+        return Response(content="# Monitoring not available\n", media_type="text/plain")
+
+@app.get("/api/health/detailed", tags=["System"])
+async def detailed_health_check():
+    """
+    Detailed health check with component-level status
+    """
+    if MONITORING_AVAILABLE:
+        return await get_health_status()
+    else:
+        return {
+            "status": "limited",
+            "message": "Detailed monitoring not available",
+            "components": {}
+        }
 
 # =============================================================================
 # Eligibility Endpoints (Ultrathink Enhanced)

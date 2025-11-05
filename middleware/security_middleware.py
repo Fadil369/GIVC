@@ -424,33 +424,27 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                     }
                 )
 
-        # Verify request signature if enabled
+        # Verify request signature if enabled (optional for now)
         if self.signer and request.method in ["POST", "PUT", "PATCH", "DELETE"]:
             signature = request.headers.get("X-Signature")
             timestamp = request.headers.get("X-Timestamp")
 
-            if not signature or not timestamp:
-                logger.warning(f"Missing signature headers from {identifier}")
-                # Don't block for now, but log
-                # return JSONResponse(
-                #     status_code=status.HTTP_401_UNAUTHORIZED,
-                #     content={"error": "Missing request signature"}
-                # )
-            elif signature and timestamp:
-                body = await request.body()
-                if not self.signer.verify_signature(
-                    request.method,
-                    str(request.url.path),
-                    body,
-                    timestamp,
-                    signature
-                ):
-                    logger.warning(f"Invalid signature from {identifier}")
-                    # Don't block for now, but log
-                    # return JSONResponse(
-                    #     status_code=status.HTTP_401_UNAUTHORIZED,
-                    #     content={"error": "Invalid request signature"}
-                    # )
+            if signature and timestamp:
+                try:
+                    body = await request.body()
+                    if not self.signer.verify_signature(
+                        request.method,
+                        str(request.url.path),
+                        body,
+                        timestamp,
+                        signature
+                    ):
+                        logger.warning(f"Invalid signature from {identifier}")
+                        # For now just log, but could block in production
+                        from .monitoring import metrics_collector
+                        metrics_collector.record_security_event("invalid_signature", "medium")
+                except Exception as e:
+                    logger.error(f"Signature verification error: {e}")
 
         # Validate request data for POST/PUT/PATCH
         if request.method in ["POST", "PUT", "PATCH"]:
