@@ -21,7 +21,7 @@ lxml==5.1.0
 
 # Authentication & Security
 PyJWT==2.8.0
-cryptography==42.0.0
+cryptography==44.0.1
 python-jose[cryptography]==3.4.0
 
 # Database
@@ -55,7 +55,7 @@ pytest-cov==4.1.0
 httpx-mock==0.7.0
 
 # Code Quality
-black==23.12.1
+black==24.3.0
 flake8==7.0.0
 mypy==1.8.0
 

@@ -5,8 +5,8 @@ python-multipart==0.0.18
 
 # Core Dependencies
 requests==2.32.4
-urllib3==2.1.0
-certifi==2023.11.17
+urllib3==2.5.0
+certifi==2024.7.4
 httpx==0.25.2
 
 # Environment Management
@@ -23,13 +23,13 @@ pydantic==2.5.3
 jsonschema==4.20.0
 
 # Cryptography
-cryptography==41.0.7
+cryptography==44.0.1
 
 # Retry Logic
 tenacity==8.2.3
 
 # JSON Processing
-orjson==3.9.10
+orjson==3.9.15
 
 # Database
 sqlalchemy==2.0.23
