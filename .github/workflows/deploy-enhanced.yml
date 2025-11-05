@@ -502,7 +502,7 @@ jobs:
           cat deployment-report.md
 
       - name: 📤 Upload Deployment Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5
         with:
           name: deployment-report
           path: deployment-report.md

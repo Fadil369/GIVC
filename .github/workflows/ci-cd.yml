@@ -108,7 +108,7 @@ jobs:
           NODE_ENV: production
 
       - name: 📦 Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5
         with:
           name: dist
           path: dist/
