@@ -4,6 +4,7 @@
  */
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import { logger } from './logger';
 
 // Types
 export interface HealthStatus {
@@ -123,11 +124,11 @@ class OASISApiClient {
         if (error.response) {
           // Server responded with error
           const apiError = error.response.data;
-          console.error('API Error:', apiError);
+          logger.error('API Error', apiError);
           return Promise.reject(apiError);
         } else if (error.request) {
           // Request made but no response
-          console.error('Network Error:', error.message);
+          logger.error('Network Error', { message: error.message });
           return Promise.reject({
             error: true,
             message: 'Network error - unable to reach server',
@@ -135,7 +136,7 @@ class OASISApiClient {
           });
         } else {
           // Something else happened
-          console.error('Error:', error.message);
+          logger.error('Request Error', { message: error.message });
           return Promise.reject({
             error: true,
             message: error.message,

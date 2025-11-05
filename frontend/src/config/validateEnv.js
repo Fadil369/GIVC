@@ -1,9 +1,11 @@
 /**
  * Environment Variable Validation
  * Ensures all required environment variables are present before app starts
- * 
+ *
  * HIPAA Compliance: Validates security-critical configuration
  */
+
+import { logger } from '../services/logger';
 
 const requiredEnvVars = [
   'VITE_APP_NAME',
@@ -67,21 +69,21 @@ ${missing.map(v => `║  ❌ ${v.padEnd(55)} ║`).join('\n')}
 
   // Log warnings for optional variables
   if (warnings.length > 0 && import.meta.env.DEV) {
-    console.warn('⚠️ Optional environment variables not set:', warnings);
-    console.warn('Some features may not work as expected.');
+    logger.warn('Optional environment variables not set', { warnings });
+    logger.warn('Some features may not work as expected');
   }
 
   // Validate HIPAA compliance level
   const hipaaLevel = import.meta.env.VITE_HIPAA_COMPLIANCE_LEVEL;
   const validLevels = ['strict', 'moderate', 'minimal'];
   if (!validLevels.includes(hipaaLevel)) {
-    console.warn(`⚠️ Invalid HIPAA_COMPLIANCE_LEVEL: "${hipaaLevel}". Expected one of: ${validLevels.join(', ')}`);
+    logger.warn(`Invalid HIPAA_COMPLIANCE_LEVEL: "${hipaaLevel}". Expected one of: ${validLevels.join(', ')}`);
   }
 
   // Success message in development
   if (import.meta.env.DEV) {
-    console.log('✅ Environment variables validated successfully');
-    console.log('📊 Configuration:', {
+    logger.info('Environment variables validated successfully');
+    logger.debug('Configuration', {
       environment: import.meta.env.MODE,
       apiUrl: import.meta.env.VITE_API_BASE_URL,
       hipaaLevel,
