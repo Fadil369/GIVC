@@ -1,15 +1,23 @@
 import subprocess
 import os
 import sys
+import shlex
 
-def run_command(cmd, cwd=None, shell=True):
-    """Run a command and return the result"""
+def run_command(cmd, cwd=None, shell=False):
+    """Run a command safely without shell injection vulnerability"""
     print(f"\n[RUNNING] {cmd}")
     try:
+        # Parse command safely - split into list if string
+        if isinstance(cmd, str):
+            # For git and simple commands, split safely
+            cmd_list = shlex.split(cmd)
+        else:
+            cmd_list = cmd
+
         result = subprocess.run(
-            cmd,
+            cmd_list,
             cwd=cwd,
-            shell=shell,
+            shell=shell,  # Always False now for security
             capture_output=True,
             text=True
         )
