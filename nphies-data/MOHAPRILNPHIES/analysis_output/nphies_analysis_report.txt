@@ -1,0 +1,25 @@
+================================================================================
+NPHIES DATA ANALYSIS SUMMARY REPORT
+Generated: 2025-10-12 15:43:50
+================================================================================
+
+CLAIMS SUMMARY:
+  Total Claims: 9866
+  Status Distribution:
+    Approved: 5018
+    Partial: 3568
+    Rejected: 840
+    Error: 380
+    Cancelled: 53
+    Queued: 5
+    Pended: 2
+
+PAYMENT RECONCILIATION SUMMARY:
+  Total Payment Bundles: 430
+  Total Amount: SAR 1,391,141.51
+
+ELIGIBILITY REQUESTS SUMMARY:
+  Total Requests: 1174
+  Status Distribution:
+    Error: 1173
+

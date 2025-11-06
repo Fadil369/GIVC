@@ -1,0 +1,61 @@
+================================================================================
+                   NPHIES CLAIMS ANALYSIS - EXECUTIVE REPORT                    
+                    Generated: October 12, 2025 at 05:52 AM                     
+================================================================================
+
+EXECUTIVE SUMMARY
+--------------------
+📊 Total Claims Processed: 21,881
+✅ Approved Claims: 8,926 (40.8%)
+❌ Rejected Claims: 2,933 (13.4%)
+⚠️  Partial Claims: 5,427 (24.8%)
+
+💰 Financial Overview:
+   • Total Claim Value: 173,958,621.89 SAR
+   • Approved Amount: 97,320,552.12 SAR
+   • Financial Loss: 76,638,069.77 SAR
+   • Recovery Rate: 55.9%
+
+🚨 CRITICAL ISSUES REQUIRING IMMEDIATE ATTENTION
+--------------------------------------------------
+Top Rejecting Insurers:
+   1. Bupa Arabia for Cooperative Insurance: 1204 rejections
+   2. The Cooperative Company for Cooperative Insurance (Tawuniya): 425 rejections
+   3. The Mediterranean and Gulf Cooperative Insurance and Reinsurance Company (MedGulf): 377 rejections
+   4. Gulf Union Cooperative Insurance Company: 183 rejections
+   5. Al-Rajhi Company for Cooperative Insurance: 124 rejections
+
+💸 HIGH-VALUE REJECTIONS (>10,000 SAR):
+   Total Count: 285
+   Total Value: 11,267,133.48 SAR
+
+   Top 10 Priority Appeals:
+    1. Transaction 7364322: 268,993 SAR (CNHI)
+    2. Transaction 7295759: 233,028 SAR (CNHI)
+    3. Transaction 7247761: 224,745 SAR (CNHI)
+    4. Transaction 7277202: 203,900 SAR (CNHI)
+    5. Transaction 7273291: 203,900 SAR (CNHI)
+    6. Transaction 7271871: 203,900 SAR (CNHI)
+    7. Transaction 7271324: 203,900 SAR (CNHI)
+    8. Transaction 7271298: 203,900 SAR (CNHI)
+    9. Transaction 7271279: 203,900 SAR (CNHI)
+   10. Transaction 7271014: 203,900 SAR (CNHI)
+
+🎯 IMMEDIATE ACTION PLAN
+-------------------------
+WEEK 1 PRIORITIES:
+   □ Appeal top 10 high-value rejections
+   □ Schedule meetings with top 3 rejecting insurers
+   □ Implement daily rejection monitoring
+
+WEEK 2-4 PRIORITIES:
+   □ Develop insurer-specific submission guidelines
+   □ Train staff on rejection patterns
+   □ Establish weekly insurer communication
+
+MONTH 2 INITIATIVES:
+   □ Implement automated validation system
+   □ Create rejection prediction model
+   □ Establish performance KPIs
+
+================================================================================

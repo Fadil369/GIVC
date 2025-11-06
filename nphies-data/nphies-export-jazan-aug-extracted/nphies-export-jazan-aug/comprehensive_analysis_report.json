@@ -1,0 +1,123 @@
+{
+  "analysis_date": "2025-10-14T14:00:23.134064",
+  "dataset_info": {
+    "total_records": 21881,
+    "total_columns": 28,
+    "memory_usage_mb": 29.463561058044434,
+    "duplicate_rows": 0
+  },
+  "columns": {
+    "all_columns": [
+      "Bundle ID",
+      "Transaction Identifier",
+      "Patient Identifier",
+      "Provider License",
+      "Provider Name",
+      "Receiver License",
+      "Receiver Name",
+      "Insurer License",
+      "Insurer Name",
+      "Claim Type",
+      "Claim Sub Type",
+      "Claim Response Polled At",
+      "Submission Date",
+      "Net Amount",
+      "Approved Amount",
+      "Status",
+      "Encounter Class",
+      "Service Event Type",
+      "Triage Category",
+      "Policy Number",
+      "Policy Holder Name",
+      "source_file",
+      "Associated Transaction",
+      "Sender License",
+      "Sender Name",
+      "Polled At",
+      "Receiver Name ",
+      "Number Of Claims"
+    ],
+    "categorized": {
+      "Identification": [
+        "Bundle ID",
+        "Transaction Identifier",
+        "Patient Identifier",
+        "Provider License",
+        "Provider Name"
+      ],
+      "Financial": [
+        "Net Amount",
+        "Approved Amount"
+      ],
+      "Status": [
+        "Status"
+      ],
+      "Temporal": [
+        "Submission Date"
+      ],
+      "Medical": [
+        "Service Event Type"
+      ],
+      "Organization": [
+        "Insurer License",
+        "Insurer Name"
+      ]
+    }
+  },
+  "data_quality": {
+    "missing_data": {
+      "Missing_Count": {
+        "Number Of Claims": 21778,
+        "Receiver Name ": 21778,
+        "Triage Category": 20705,
+        "Associated Transaction": 20118,
+        "Polled At": 19824,
+        "Sender Name": 19824,
+        "Sender License": 19824,
+        "Encounter Class": 6138,
+        "Service Event Type": 6138,
+        "Claim Response Polled At": 4052,
+        "Policy Number": 2121,
+        "Policy Holder Name": 2113,
+        "Approved Amount": 2071,
+        "Status": 2057,
+        "Provider Name": 2057,
+        "Provider License": 2057,
+        "Net Amount": 1954,
+        "Claim Sub Type": 1866,
+        "Claim Type": 1866,
+        "Insurer Name": 1866,
+        "Insurer License": 1866,
+        "Receiver Name": 103,
+        "Patient Identifier": 103
+      },
+      "Missing_Percentage": {
+        "Number Of Claims": 99.53,
+        "Receiver Name ": 99.53,
+        "Triage Category": 94.63,
+        "Associated Transaction": 91.94,
+        "Polled At": 90.6,
+        "Sender Name": 90.6,
+        "Sender License": 90.6,
+        "Encounter Class": 28.05,
+        "Service Event Type": 28.05,
+        "Claim Response Polled At": 18.52,
+        "Policy Number": 9.69,
+        "Policy Holder Name": 9.66,
+        "Approved Amount": 9.46,
+        "Status": 9.4,
+        "Provider Name": 9.4,
+        "Provider License": 9.4,
+        "Net Amount": 8.93,
+        "Claim Sub Type": 8.53,
+        "Claim Type": 8.53,
+        "Insurer Name": 8.53,
+        "Insurer License": 8.53,
+        "Receiver Name": 0.47,
+        "Patient Identifier": 0.47
+      }
+    },
+    "empty_strings": 0,
+    "zero_values": 4928
+  }
+}

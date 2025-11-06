@@ -1,0 +1,224 @@
+groups:
+  - name: claimlinc_alerts
+    interval: 30s
+    rules:
+      # ========================================
+      # Vault Alerts
+      # ========================================
+      - alert: VaultSealed
+        expr: vault_core_unsealed == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: vault
+        annotations:
+          summary: "Vault is sealed on {{ $labels.instance }}"
+          description: "Vault instance {{ $labels.instance }} is in sealed state"
+
+      - alert: VaultAuthFailureHigh
+        expr: rate(vault_core_handle_request_count{path=~"auth/.*", status="permission_denied"}[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: vault
+        annotations:
+          summary: "High authentication failure rate on {{ $labels.instance }}"
+          description: "{{ $value }} auth failures per second"
+
+      - alert: VaultTokenLeakage
+        expr: vault_token_count_by_ttl{creation_ttl="+Inf"} > 100
+        for: 30m
+        labels:
+          severity: warning
+          component: vault
+        annotations:
+          summary: "High number of long-lived tokens"
+          description: "{{ $value }} tokens with infinite TTL detected"
+
+      # ========================================
+      # RabbitMQ Alerts
+      # ========================================
+      - alert: RabbitMQNodeDown
+        expr: up{job="rabbitmq"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: rabbitmq
+        annotations:
+          summary: "RabbitMQ node {{ $labels.instance }} is down"
+          description: "RabbitMQ node unreachable for 2 minutes"
+
+      - alert: RabbitMQQueueDepthHigh
+        expr: rabbitmq_queue_messages > 10000
+        for: 10m
+        labels:
+          severity: warning
+          component: rabbitmq
+        annotations:
+          summary: "Queue {{ $labels.queue }} depth is high"
+          description: "{{ $value }} messages in queue {{ $labels.queue }}"
+
+      - alert: RabbitMQDLQNonEmpty
+        expr: rabbitmq_queue_messages{queue=~"dlq\\..*"} > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: rabbitmq
+        annotations:
+          summary: "Dead letter queue {{ $labels.queue }} has messages"
+          description: "{{ $value }} messages in DLQ - manual review required"
+
+      - alert: RabbitMQMemoryHigh
+        expr: rabbitmq_node_mem_used / rabbitmq_node_mem_limit > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: rabbitmq
+        annotations:
+          summary: "RabbitMQ memory usage high on {{ $labels.instance }}"
+          description: "Memory usage at {{ $value | humanizePercentage }}"
+
+      # ========================================
+      # Redis Alerts
+      # ========================================
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: redis
+        annotations:
+          summary: "Redis instance {{ $labels.instance }} is down"
+          description: "Redis unreachable for 2 minutes"
+
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Redis memory usage high on {{ $labels.instance }}"
+          description: "Memory usage at {{ $value | humanizePercentage }}"
+
+      - alert: RedisReplicationLag
+        expr: redis_connected_slaves < 2
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Redis replication lag on {{ $labels.instance }}"
+          description: "Only {{ $value }} replicas connected"
+
+      # ========================================
+      # Celery Alerts
+      # ========================================
+      - alert: CeleryWorkerDown
+        expr: up{job="celery"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: celery
+        annotations:
+          summary: "Celery worker {{ $labels.instance }} is down"
+          description: "No metrics from Celery worker"
+
+      - alert: CeleryTaskFailureRateHigh
+        expr: rate(celery_task_failed_total[5m]) / rate(celery_task_total[5m]) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+          component: celery
+        annotations:
+          summary: "High task failure rate"
+          description: "{{ $value | humanizePercentage }} of tasks failing"
+
+      - alert: CeleryTaskLatencyHigh
+        expr: histogram_quantile(0.95, rate(celery_task_duration_seconds_bucket[5m])) > 30
+        for: 10m
+        labels:
+          severity: warning
+          component: celery
+        annotations:
+          summary: "High task latency"
+          description: "95th percentile latency: {{ $value | humanizeDuration }}"
+
+      # ========================================
+      # API Alerts
+      # ========================================
+      - alert: APIDown
+        expr: up{job="api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "FastAPI instance {{ $labels.instance }} is down"
+          description: "API unreachable for 1 minute"
+
+      - alert: APIHighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "High API error rate"
+          description: "{{ $value | humanizePercentage }} of requests returning 5xx"
+
+      - alert: APIHighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 10m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API latency"
+          description: "95th percentile latency: {{ $value | humanizeDuration }}"
+
+      # ========================================
+      # Database Alerts
+      # ========================================
+      - alert: PostgreSQLDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: postgres
+        annotations:
+          summary: "PostgreSQL instance {{ $labels.instance }} is down"
+          description: "Database unreachable"
+
+      - alert: PostgreSQLConnectionsHigh
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: postgres
+        annotations:
+          summary: "High number of PostgreSQL connections"
+          description: "{{ $value | humanizePercentage }} of max connections used"
+
+      # ========================================
+      # NPHIES Integration Alerts
+      # ========================================
+      - alert: NPHIESHighFailureRate
+        expr: rate(nphies_requests_failed_total[10m]) / rate(nphies_requests_total[10m]) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+          component: nphies
+        annotations:
+          summary: "High NPHIES failure rate"
+          description: "{{ $value | humanizePercentage }} of NPHIES requests failing"
+
+      - alert: NPHIESCertificateExpiringSoon
+        expr: (nphies_certificate_expiry_timestamp - time()) / 86400 < 7
+        for: 1h
+        labels:
+          severity: critical
+          component: nphies
+        annotations:
+          summary: "NPHIES certificate expiring soon"
+          description: "Certificate expires in {{ $value }} days"

@@ -1,0 +1,73 @@
+NPHIES CLAIM APPEAL REQUEST
+===========================
+
+TO: CNHI Claims Review Department
+FROM: Ruh-phcc-AlNuayma Claims Department
+DATE: October 12, 2025
+RE: URGENT APPEAL - Transaction ID 7364322
+
+CLAIM DETAILS:
+--------------
+Transaction ID: 7364322
+Patient ID: 1053672422
+Submission Date: August 20, 2025 01:07:18
+Claim Amount: 268,992.95 SAR
+Current Status: REJECTED
+Provider: Ruh-phcc-AlNuayma
+
+APPEAL REQUEST:
+---------------
+We respectfully request immediate reconsideration of the above claim rejection.
+
+JUSTIFICATION FOR APPEAL:
+--------------------------
+1. SYSTEMATIC PATTERN CONCERN:
+   - Multiple high-value claims rejected simultaneously
+   - No clear rejection reason provided
+   - Pattern suggests processing error rather than clinical issue
+
+2. CLINICAL JUSTIFICATION:
+   - [TO BE COMPLETED: Add specific medical justification]
+   - [TO BE COMPLETED: Attach supporting clinical documentation]
+   - [TO BE COMPLETED: Include physician notes/recommendations]
+
+3. COMPLIANCE VERIFICATION:
+   - Claim submitted per NPHIES guidelines
+   - All required documentation provided
+   - Patient eligibility confirmed at time of service
+
+SUPPORTING DOCUMENTS ATTACHED:
+------------------------------
+□ Original claim submission
+□ Medical records
+□ Physician notes
+□ Diagnostic reports
+□ Treatment authorization (if applicable)
+□ Patient consent forms
+
+REQUESTED ACTION:
+-----------------
+1. Immediate review and approval of claim
+2. Payment processing within 5 business days
+3. Explanation of original rejection reason
+4. Review of similar claims from same period
+
+CONTACT INFORMATION:
+-------------------
+Claims Manager: [NAME]
+Phone: [PHONE]
+Email: [EMAIL]
+Reference: Appeal-7364322-20251012
+
+URGENCY NOTICE:
+---------------
+This appeal represents significant financial impact and is part of a pattern
+of rejections requiring immediate attention. We request expedited processing
+and direct communication regarding resolution.
+
+Thank you for your prompt attention to this matter.
+
+Sincerely,
+[SIGNATURE]
+Claims Department
+Ruh-phcc-AlNuayma

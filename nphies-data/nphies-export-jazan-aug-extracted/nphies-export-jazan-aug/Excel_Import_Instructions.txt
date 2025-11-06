@@ -1,0 +1,28 @@
+EXCEL IMPORT INSTRUCTIONS
+==============================
+
+To create the complete Excel workbook:
+
+1. Open Excel
+2. Create a new workbook
+3. Import each CSV file as a separate sheet:
+
+   Sheet 1: Dashboard (Excel_Sheet_Dashboard.csv)
+   Sheet 2: Insurer Analysis (Excel_Sheet_Insurer_Analysis.csv)
+   Sheet 3: High-Value Appeals (Excel_Sheet_High_Value_Appeals.csv)
+   Sheet 4: Daily Trends (Excel_Sheet_Daily_Trends.csv)
+   Sheet 5: Action Plan (Excel_Sheet_Action_Plan.csv)
+
+4. Apply formatting:
+   - Bold headers
+   - Color-code priority levels
+   - Add charts for trends
+   - Format currency columns
+
+5. Save as Excel workbook (.xlsx)
+
+RECOMMENDED FORMATTING:
+- Critical items: Red background
+- High priority: Orange background
+- Medium priority: Yellow background
+- Completed items: Green background

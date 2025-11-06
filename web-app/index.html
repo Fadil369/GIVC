@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClaimLinc AI Workspace - Team Collaboration Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <i class="fas fa-hospital-alt"></i>
+                <h1>ClaimLinc AI Workspace</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-icon" id="notificationBtn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="notificationBadge">3</span>
+                </button>
+                <button class="btn btn-icon" id="settingsBtn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Dr+Fadil&background=0D8ABC&color=fff" alt="User">
+                    <span>Dr. Fadil</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-view="sheets">
+                    <i class="fas fa-table"></i>
+                    <span>Data Sheets</span>
+                </a>
+                <a href="#" class="nav-item" data-view="ai-analysis">
+                    <i class="fas fa-brain"></i>
+                    <span>AI Analysis</span>
+                </a>
+                <a href="#" class="nav-item" data-view="collaboration">
+                    <i class="fas fa-users"></i>
+                    <span>Team Collaboration</span>
+                </a>
+                <a href="#" class="nav-item" data-view="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="nav-item" data-view="tasks">
+                    <i class="fas fa-tasks"></i>
+                    <span>Task Manager</span>
+                </a>
+                <a href="#" class="nav-item" data-view="export">
+                    <i class="fas fa-download"></i>
+                    <span>Export Data</span>
+                </a>
+            </nav>
+
+            <!-- AI Assistant Quick Access -->
+            <div class="sidebar-footer">
+                <button class="btn btn-primary btn-full" id="aiAssistantBtn">
+                    <i class="fas fa-robot"></i>
+                    AI Assistant
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <!-- Dashboard View -->
+            <div class="view active" id="dashboard-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h2>
+                    <div class="view-actions">
+                        <button class="btn btn-secondary" id="refreshDashboard">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Total Claims</h3>
+                            <p class="kpi-value" id="totalClaims">0</p>
+                            <span class="kpi-change positive">+12% vs last month</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Rejections</h3>
+                            <p class="kpi-value" id="totalRejections">0</p>
+                            <span class="kpi-change negative">-8% vs last month</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Approved Claims</h3>
+                            <p class="kpi-value" id="approvedClaims">0</p>
+                            <span class="kpi-change positive">+15% vs last month</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Total Amount</h3>
+                            <p class="kpi-value" id="totalAmount">SAR 0</p>
+                            <span class="kpi-change positive">+20% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Claims by Payer</h3>
+                        <canvas id="payerChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Monthly Trend</h3>
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                    <div class="activity-list" id="activityList">
+                        <!-- Activity items will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Sheets View -->
+            <div class="view" id="sheets-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-table"></i> Data Sheets</h2>
+                    <div class="view-actions">
+                        <select class="select-input" id="sheetSelector">
+                            <option value="all">All Data</option>
+                            <option value="specific">Specific Sheet (gid: 562525379)</option>
+                        </select>
+                        <button class="btn btn-secondary" id="extractDataBtn">
+                            <i class="fas fa-download"></i> Extract Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sheet Controls -->
+                <div class="sheet-controls">
+                    <div class="control-group">
+                        <label>Search:</label>
+                        <input type="text" class="input" id="sheetSearch" placeholder="Search data...">
+                    </div>
+                    <div class="control-group">
+                        <label>Filter by Branch:</label>
+                        <select class="select-input" id="branchFilter">
+                            <option value="all">All Branches</option>
+                            <option value="MainRiyadh">Main Riyadh</option>
+                            <option value="Unaizah">Unaizah</option>
+                            <option value="Abha">Abha</option>
+                            <option value="Madinah">Madinah</option>
+                            <option value="Khamis">Khamis Mushait</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Filter by Payer:</label>
+                        <select class="select-input" id="payerFilter">
+                            <option value="all">All Payers</option>
+                            <option value="Bupa">Bupa Arabia</option>
+                            <option value="Tawuniya">Tawuniya/Waseel</option>
+                            <option value="GlobeMed">GlobeMed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Embedded Google Sheets -->
+                <div class="sheets-container">
+                    <div class="sheet-tab-container">
+                        <button class="sheet-tab active" data-sheet="all">All Data View</button>
+                        <button class="sheet-tab" data-sheet="specific">Specific Sheet View</button>
+                    </div>
+                    
+                    <div class="sheet-embed active" id="sheet-all">
+                        <iframe 
+                            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQrUv_Zw6mB3rAhGIO_x2OSkUT-6TWATy9b5C1M9_PpQ-3rINTSg2XzpR9JIEUZOWT1-5AEiuukoaJQ/pubhtml?widget=true&amp;headers=false"
+                            frameborder="0"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    
+                    <div class="sheet-embed" id="sheet-specific">
+                        <iframe 
+                            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQrUv_Zw6mB3rAhGIO_x2OSkUT-6TWATy9b5C1M9_PpQ-3rINTSg2XzpR9JIEUZOWT1-5AEiuukoaJQ/pubhtml?gid=562525379&amp;single=true&amp;widget=true&amp;headers=false"
+                            frameborder="0"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Analysis View -->
+            <div class="view" id="ai-analysis-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-brain"></i> AI-Powered Analysis</h2>
+                    <div class="view-actions">
+                        <button class="btn btn-primary" id="runAnalysisBtn">
+                            <i class="fas fa-play"></i> Run Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <div class="ai-analysis-grid">
+                    <!-- AI Insights Panel -->
+                    <div class="ai-panel">
+                        <h3><i class="fas fa-lightbulb"></i> AI Insights</h3>
+                        <div class="insights-container" id="aiInsights">
+                            <div class="insight-card">
+                                <div class="insight-header">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <span>Top Rejection Reasons</span>
+                                </div>
+                                <div class="insight-content">
+                                    <p>AI is analyzing your data patterns...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Chat Assistant -->
+                    <div class="ai-panel">
+                        <h3><i class="fas fa-comments"></i> AI Chat Assistant</h3>
+                        <div class="chat-container">
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="chat-message bot">
+                                    <div class="message-avatar">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div class="message-content">
+                                        <p>Hello! I'm your AI assistant. I can help you analyze claims data, identify patterns, and provide insights. Try asking me:</p>
+                                        <ul>
+                                            <li>"What are the top rejection reasons?"</li>
+                                            <li>"Analyze Bupa claims performance"</li>
+                                            <li>"Show me trends for Riyadh branch"</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-input-container">
+                                <input type="text" class="input" id="chatInput" placeholder="Ask me anything about your claims data...">
+                                <button class="btn btn-primary" id="sendChatBtn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Results -->
+                <div class="analysis-results" id="analysisResults">
+                    <h3><i class="fas fa-chart-line"></i> Analysis Results</h3>
+                    <div class="results-grid">
+                        <!-- Results will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collaboration View -->
+            <div class="view" id="collaboration-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-users"></i> Team Collaboration</h2>
+                    <div class="view-actions">
+                        <button class="btn btn-primary" id="addCommentBtn">
+                            <i class="fas fa-plus"></i> Add Comment
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Team Members -->
+                <div class="team-section">
+                    <h3>Active Team Members</h3>
+                    <div class="team-grid">
+                        <div class="team-member online">
+                            <img src="https://ui-avatars.com/api/?name=Dr+Fadil&background=0D8ABC&color=fff" alt="Dr Fadil">
+                            <div class="member-info">
+                                <h4>Dr. Fadil</h4>
+                                <p>Admin - Online</p>
+                            </div>
+                        </div>
+                        <div class="team-member online">
+                            <img src="https://ui-avatars.com/api/?name=Sarah+Ahmed&background=FF6B6B&color=fff" alt="Sarah">
+                            <div class="member-info">
+                                <h4>Sarah Ahmed</h4>
+                                <p>Riyadh Branch - Online</p>
+                            </div>
+                        </div>
+                        <div class="team-member">
+                            <img src="https://ui-avatars.com/api/?name=Mohammed+Ali&background=4ECDC4&color=fff" alt="Mohammed">
+                            <div class="member-info">
+                                <h4>Mohammed Ali</h4>
+                                <p>Abha Branch - Away</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments & Annotations -->
+                <div class="comments-section">
+                    <h3>Recent Comments & Annotations</h3>
+                    <div class="comments-list" id="commentsList">
+                        <!-- Comments will be added dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports View -->
+            <div class="view" id="reports-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-chart-bar"></i> Reports</h2>
+                    <div class="view-actions">
+                        <button class="btn btn-primary" id="generateReportBtn">
+                            <i class="fas fa-file-pdf"></i> Generate Report
+                        </button>
+                    </div>
+                </div>
+
+                <div class="report-builder">
+                    <h3>Report Builder</h3>
+                    <div class="report-options">
+                        <div class="option-group">
+                            <label>Report Type:</label>
+                            <select class="select-input" id="reportType">
+                                <option>Claims Summary</option>
+                                <option>Rejection Analysis</option>
+                                <option>Branch Performance</option>
+                                <option>Payer Analysis</option>
+                                <option>Custom Report</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>Date Range:</label>
+                            <input type="date" class="input" id="reportStartDate">
+                            <span>to</span>
+                            <input type="date" class="input" id="reportEndDate">
+                        </div>
+                        <div class="option-group">
+                            <label>Format:</label>
+                            <select class="select-input" id="reportFormat">
+                                <option>PDF</option>
+                                <option>Excel</option>
+                                <option>CSV</option>
+                                <option>HTML</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-preview" id="reportPreview">
+                    <h3>Report Preview</h3>
+                    <div class="preview-content">
+                        <p class="text-muted">Configure your report settings above and click "Generate Report" to see a preview.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks View -->
+            <div class="view" id="tasks-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-tasks"></i> Task Manager</h2>
+                    <div class="view-actions">
+                        <button class="btn btn-primary" id="addTaskBtn">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tasks-container">
+                    <div class="task-board">
+                        <div class="task-column">
+                            <h3>To Do</h3>
+                            <div class="task-list" id="todoTasks">
+                                <!-- Tasks will be added dynamically -->
+                            </div>
+                        </div>
+                        <div class="task-column">
+                            <h3>In Progress</h3>
+                            <div class="task-list" id="inProgressTasks">
+                                <!-- Tasks will be added dynamically -->
+                            </div>
+                        </div>
+                        <div class="task-column">
+                            <h3>Done</h3>
+                            <div class="task-list" id="doneTasks">
+                                <!-- Tasks will be added dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export View -->
+            <div class="view" id="export-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-download"></i> Export Data</h2>
+                </div>
+
+                <div class="export-options">
+                    <h3>Export Options</h3>
+                    <div class="export-grid">
+                        <button class="export-card" data-format="csv">
+                            <i class="fas fa-file-csv"></i>
+                            <h4>Export as CSV</h4>
+                            <p>Comma-separated values for Excel</p>
+                        </button>
+                        <button class="export-card" data-format="excel">
+                            <i class="fas fa-file-excel"></i>
+                            <h4>Export as Excel</h4>
+                            <p>Microsoft Excel workbook (.xlsx)</p>
+                        </button>
+                        <button class="export-card" data-format="json">
+                            <i class="fas fa-file-code"></i>
+                            <h4>Export as JSON</h4>
+                            <p>JavaScript Object Notation</p>
+                        </button>
+                        <button class="export-card" data-format="pdf">
+                            <i class="fas fa-file-pdf"></i>
+                            <h4>Export as PDF</h4>
+                            <p>Portable Document Format</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Assistant Modal -->
+    <div class="modal" id="aiAssistantModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2><i class="fas fa-robot"></i> AI Assistant</h2>
+                <button class="modal-close" id="closeAiModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-assistant-container">
+                    <div class="chat-messages" id="modalChatMessages">
+                        <div class="chat-message bot">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Hello! I'm your ClaimLinc AI Assistant. How can I help you today?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="input" id="modalChatInput" placeholder="Ask me anything...">
+                        <button class="btn btn-primary" id="modalSendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button class="btn-text" id="markAllRead">Mark all as read</button>
+        </div>
+        <div class="notification-list">
+            <div class="notification-item unread">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="notification-content">
+                    <p>New rejection from Bupa - 15 claims require attention</p>
+                    <span class="notification-time">5 minutes ago</span>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <i class="fas fa-check-circle"></i>
+                <div class="notification-content">
+                    <p>Resubmission successful - 23 claims approved</p>
+                    <span class="notification-time">1 hour ago</span>
+                </div>
+            </div>
+            <div class="notification-item">
+                <i class="fas fa-info-circle"></i>
+                <div class="notification-content">
+                    <p>AI analysis completed for monthly report</p>
+                    <span class="notification-time">2 hours ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

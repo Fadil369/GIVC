@@ -1,0 +1,122 @@
+{
+  "generated_at": "2025-10-12T05:36:20.880854",
+  "summary": {
+    "total_claims": 21881,
+    "rejection_rate": 13.404323385585668,
+    "financial_loss": 76638069.77000001,
+    "recovery_potential": 11267133.48,
+    "critical_insurers": 4
+  },
+  "charts_data": {
+    "status_distribution": {
+      "Rejected": 2933,
+      "Approved": 8926,
+      "Partial": 5427,
+      "NotRequired": 717,
+      "Error": 754,
+      "Cancelled": 215,
+      "Pended": 839,
+      "Queued": 13,
+      "": 2057
+    },
+    "insurer_performance": {
+      "Arabia Insurance Cooperative Company": {
+        "rejection_rate": 16.793893129770993,
+        "total_claims": 393,
+        "total_revenue": 1461964.7600000035
+      },
+      "Bupa Arabia for Cooperative Insurance": {
+        "rejection_rate": 24.70757233736918,
+        "total_claims": 4873,
+        "total_revenue": 10101725.489999937
+      },
+      "CNHI": {
+        "rejection_rate": 5.8474576271186445,
+        "total_claims": 1180,
+        "total_revenue": 139088551.26999938
+      },
+      "Arabian Shield Cooperative Insurance Company *": {
+        "rejection_rate": 8.562918838421444,
+        "total_claims": 1343,
+        "total_revenue": 2503450.029999961
+      },
+      "The Cooperative Company for Cooperative Insurance (Tawuniya)": {
+        "rejection_rate": 9.654702407996366,
+        "total_claims": 4402,
+        "total_revenue": 7920641.110000025
+      },
+      "The Mediterranean and Gulf Cooperative Insurance and Reinsurance Company (MedGulf)": {
+        "rejection_rate": 9.525012632642749,
+        "total_claims": 3958,
+        "total_revenue": 4599534.230000002
+      },
+      "Malath Cooperative Insurance and Reinsurance Company": {
+        "rejection_rate": 19.023569023569024,
+        "total_claims": 594,
+        "total_revenue": 821990.8300000009
+      },
+      "Gulf Union Cooperative Insurance Company": {
+        "rejection_rate": 24.563758389261743,
+        "total_claims": 745,
+        "total_revenue": 1889603.699999998
+      },
+      "AL Jazira Takaful": {
+        "rejection_rate": 52.89855072463768,
+        "total_claims": 138,
+        "total_revenue": 868070.9300000004
+      },
+      "Al-Rajhi Company for Cooperative Insurance": {
+        "rejection_rate": 18.397626112759642,
+        "total_claims": 674,
+        "total_revenue": 1030638.7499999942
+      },
+      "Gulf Insurance Group \u2013 GIG": {
+        "rejection_rate": 5.88235294117647,
+        "total_claims": 119,
+        "total_revenue": 66831.73000000003
+      },
+      "Mutakamela Insurance Company": {
+        "rejection_rate": 6.646525679758309,
+        "total_claims": 331,
+        "total_revenue": 602203.9799999996
+      },
+      "Saudi Enaya Cooperative Insurance Company": {
+        "rejection_rate": 10.81081081081081,
+        "total_claims": 74,
+        "total_revenue": 140117.86000000004
+      },
+      "\u00a0 Saudi United Cooperative Insurance Company (Wala": {
+        "rejection_rate": 4.822335025380711,
+        "total_claims": 394,
+        "total_revenue": 563984.5299999993
+      },
+      "Al Sagr Cooperative Insurance Company *": {
+        "rejection_rate": 10.588235294117647,
+        "total_claims": 85,
+        "total_revenue": 90624.53000000001
+      },
+      "Al Etihad Cooperative Insurance Company": {
+        "rejection_rate": 26.794258373205743,
+        "total_claims": 209,
+        "total_revenue": 373444.3899999994
+      },
+      "Amana Cooperative Insurance Company *": {
+        "rejection_rate": 14.130434782608695,
+        "total_claims": 276,
+        "total_revenue": 852599.0100000001
+      },
+      "Salama Cooperative Insurance Company": {
+        "rejection_rate": 8.661417322834646,
+        "total_claims": 127,
+        "total_revenue": 254564.16
+      },
+      "": {
+        "rejection_rate": 0.0,
+        "total_claims": 1866,
+        "total_revenue": 623028.02
+      }
+    },
+    "daily_trends": {},
+    "claim_type_analysis": {}
+  }
+}

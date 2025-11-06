@@ -1,0 +1,9 @@
+,Net Amount,Net Amount,Net Amount,Approved Amount,Approved Amount
+,count,sum,mean,sum,mean
+Status,,,,,
+Approved,362,46121747.61,127408.14,46121747.61,127408.14
+Cancelled,8,677834.48,84729.31,0.0,0.0
+Error,59,8859633.16,150163.27,0.0,0.0
+Partial,444,58035009.88,130709.48,31160264.9,70180.78
+Pended,238,19443826.71,81696.75,0.0,0.0
+Rejected,69,5950499.43,86239.12,0.0,0.0

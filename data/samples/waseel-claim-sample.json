@@ -1,0 +1,197 @@
+{
+  "resourceType": "Bundle",
+  "id": "WSE-CLAIM-2025-001",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Claim",
+        "id": "WSE-2025-0001",
+        "identifier": [
+          {
+            "system": "http://hospital.example.com/claim-ids",
+            "value": "WSE-2025-0001"
+          }
+        ],
+        "status": "active",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+              "code": "institutional",
+              "display": "Institutional"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "Patient/P001",
+          "display": "Fatima Al-Zahra"
+        },
+        "provider": {
+          "reference": "Organization/AH001",
+          "display": "Al Hayat Hospital - Riyadh"
+        },
+        "insurance": [
+          {
+            "sequence": 1,
+            "focal": true,
+            "coverage": {
+              "reference": "Coverage/C001",
+              "display": "Tawuniya Insurance Company"
+            }
+          }
+        ],
+        "billablePeriod": {
+          "start": "2025-01-20T14:00:00Z",
+          "end": "2025-01-22T12:00:00Z"
+        },
+        "created": "2025-01-22T12:30:00Z",
+        "insurer": {
+          "reference": "Organization/T001",
+          "display": "Tawuniya Insurance Company"
+        },
+        "total": {
+          "value": 8500.00,
+          "currency": "SAR"
+        },
+        "diagnosis": [
+          {
+            "sequence": 1,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/sid/icd-10",
+                  "code": "J44.0",
+                  "display": "Chronic obstructive pulmonary disease with acute lower respiratory infection"
+                }
+              ]
+            }
+          }
+        ],
+        "procedure": [
+          {
+            "sequence": 1,
+            "procedureCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://www.ama-assn.org/go/cpt",
+                  "code": "31575",
+                  "display": "Laryngoscopy, flexible; diagnostic"
+                }
+              ]
+            }
+          }
+        ],
+        "item": [
+          {
+            "sequence": 1,
+            "productOrService": {
+              "coding": [
+                {
+                  "system": "http://www.ama-assn.org/go/cpt",
+                  "code": "31575",
+                  "display": "Laryngoscopy, flexible; diagnostic"
+                }
+              ]
+            },
+            "net": {
+              "value": 2000.00,
+              "currency": "SAR"
+            },
+            "encounter": [
+              {
+                "reference": "Encounter/E001"
+              }
+            ]
+          },
+          {
+            "sequence": 2,
+            "productOrService": {
+              "coding": [
+                {
+                  "system": "http://www.ama-assn.org/go/cpt",
+                  "code": "99232",
+                  "display": "Hospital inpatient or observation care for E/M"
+                }
+              ]
+            },
+            "net": {
+              "value": 6500.00,
+              "currency": "SAR"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "P001",
+        "identifier": [
+          {
+            "system": "http://waseel.com/member-id",
+            "value": "TW987654321"
+          }
+        ],
+        "name": [
+          {
+            "family": "Al-Zahra",
+            "given": ["Fatima"]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1985-03-22",
+        "address": [
+          {
+            "line": ["123 King Fahd Street"],
+            "city": "Riyadh",
+            "state": "Riyadh",
+            "postalCode": "11564",
+            "country": "SA"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "AH001",
+        "name": "Al Hayat Hospital - Riyadh",
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+                "code": "prov",
+                "display": "Healthcare Provider"
+              }
+            ]
+          }
+        ],
+        "contact": [
+          {
+            "purpose": "billing",
+            "name": "Billing Department",
+            "telecom": [
+              {
+                "system": "phone",
+                "value": "+966-11-123-4567"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2025-01-22T12:30:00Z",
+    "source": "EMR-System-v2.1",
+    "profile": ["http://nphies.org/fhir/StructureDefinition/ClaimBundle"]
+  },
+  "extension": [
+    {
+      "url": "http://nphies.org/fhir/StructureDefinition/provider-branch",
+      "valueCode": "MainRiyadh"
+    }
+  ]
+}

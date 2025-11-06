@@ -1,0 +1,74 @@
+{
+  "1400765839": {
+    "doctor_name": "1400765839",
+    "total_rejections": 3,
+    "top_rejection_category": "Other",
+    "rejection_count": 3,
+    "common_issues": [
+      "Issues with diagnosis codes: M0034609, M0039770",
+      "Medication indication issues with codes: 0034609, 0039770"
+    ],
+    "training_materials": [
+      "Review payer guidelines for specific requirements",
+      "Contact payer for clarification",
+      "Verify all claim information for accuracy",
+      "Consider appealing with additional documentation"
+    ],
+    "affected_services": [],
+    "payer_recommendations": []
+  },
+  "1400914988": {
+    "doctor_name": "1400914988",
+    "total_rejections": 106,
+    "top_rejection_category": "Other",
+    "rejection_count": 66,
+    "common_issues": [
+      "Issues with diagnosis codes: H10, R17, J15.2, R10, Z76.2, E55, R32, H66.0, L20, P58.3, K75.0, N99.52, K29.1, J17, D50, Z38, J30.1, K90, A09, J06.9, J45",
+      "Medication indication issues with codes: 2-5434-21, 52-124-98has, 110-276-13, 1710211185, 52-124-98, 2812211518, 3010222852, 0801233059, 216-212-07, 5434, 216-212-07has, 2-186-96, 219-368-20, 1506222195, 2301221622"
+    ],
+    "training_materials": [
+      "Review payer guidelines for specific requirements",
+      "Contact payer for clarification",
+      "Verify all claim information for accuracy",
+      "Consider appealing with additional documentation"
+    ],
+    "affected_services": [],
+    "payer_recommendations": []
+  },
+  "22398782": {
+    "doctor_name": "22398782",
+    "total_rejections": 109,
+    "top_rejection_category": "Other",
+    "rejection_count": 60,
+    "common_issues": [
+      "Issues with diagnosis codes: C50.9, C18.7, C45, C43.9, C50.1",
+      "Medication indication issues with codes: 2501233168, 100000073871, 0512211418, 2307245634, 69-23-19, 16-201-92, 267-186-09, 0508210905, 3103210658, 2-5500-20, 5500, 0109222573, 414-277-19, 92-212-98, 2303233414, 1001233084, 7000000146, 2025"
+    ],
+    "training_materials": [
+      "Review payer guidelines for specific requirements",
+      "Contact payer for clarification",
+      "Verify all claim information for accuracy",
+      "Consider appealing with additional documentation"
+    ],
+    "affected_services": [],
+    "payer_recommendations": []
+  },
+  "2517394082": {
+    "doctor_name": "2517394082",
+    "total_rejections": 4,
+    "top_rejection_category": "Other",
+    "rejection_count": 4,
+    "common_issues": [
+      "Issues with diagnosis codes: M0002038, M0032207",
+      "Medication indication issues with codes: 0032207, 0002038"
+    ],
+    "training_materials": [
+      "Review payer guidelines for specific requirements",
+      "Contact payer for clarification",
+      "Verify all claim information for accuracy",
+      "Consider appealing with additional documentation"
+    ],
+    "affected_services": [],
+    "payer_recommendations": []
+  }
+}

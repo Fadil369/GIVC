@@ -1,0 +1,88 @@
+WEEKLY INSURER COMMUNICATION SCHEDULE
+====================================
+Effective: October 16, 2025
+Review: Monthly
+
+📅 WEEKLY SCHEDULE:
+
+MONDAY - BUPA ARABIA (CRITICAL PRIORITY)
+----------------------------------------
+Time: 10:00 AM - 10:30 AM
+Attendees: Senior Management, Claims Manager
+Agenda:
+□ Review previous week's rejections
+□ Appeal status updates  
+□ New rejection patterns
+□ Process improvement progress
+□ Next week priorities
+
+TUESDAY - TAWUNIYA (HIGH PRIORITY)
+----------------------------------
+Time: 2:00 PM - 2:30 PM  
+Attendees: Claims Manager, Operations Manager
+Agenda:
+□ Claims processing review
+□ Partnership optimization
+□ Process efficiency discussion
+□ Issue resolution
+
+WEDNESDAY - MEDGULF (MEDIUM PRIORITY)
+-------------------------------------
+Time: 11:00 AM - 11:30 AM
+Attendees: Claims Manager
+Agenda:
+□ Routine performance review
+□ Best practices sharing
+□ Process alignment
+□ Relationship maintenance
+
+THURSDAY - CNHI (SPECIAL FOCUS)
+-------------------------------
+Time: 3:00 PM - 3:30 PM
+Attendees: Senior Management, Claims Manager
+Agenda:
+□ High-value rejection follow-up
+□ Systematic issue resolution
+□ Appeal progress tracking
+□ Process improvement
+
+FRIDAY - INTERNAL TEAM REVIEW
+------------------------------
+Time: 4:00 PM - 4:30 PM
+Attendees: All team members
+Agenda:
+□ Week performance summary
+□ Insurer feedback compilation
+□ Process improvement ideas
+□ Next week planning
+□ Success celebrations
+
+📞 COMMUNICATION TEMPLATES:
+
+MEETING INVITATION:
+Subject: Weekly Claims Performance Review - [INSURER NAME]
+"This is our scheduled weekly review to discuss claims performance, 
+resolve issues, and strengthen our partnership."
+
+AGENDA TEMPLATE:
+1. Previous week metrics review (5 min)
+2. Outstanding issues discussion (10 min)  
+3. Process improvements (10 min)
+4. Next week priorities (5 min)
+
+FOLLOW-UP EMAIL:
+"Thank you for today's productive discussion. 
+Action items: [LIST]
+Next meeting: [DATE/TIME]"
+
+🚨 ESCALATION TRIGGERS:
+- No response to meeting invitation within 24 hours
+- Rejection rate increases >5% week-over-week
+- High-value rejections >3 in one week
+- Process improvement commitments not met
+
+📊 SUCCESS METRICS:
+- 100% meeting attendance rate
+- <48 hour issue resolution time
+- Measurable rejection rate improvement
+- Positive relationship feedback

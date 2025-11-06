@@ -1,0 +1,16 @@
+Metric,Value,Percentage
+Approved Claims,8926,40.8%
+Partial Claims,5427,24.8%
+Rejected Claims,2933,13.4%
+ Claims,2057,9.4%
+Pended Claims,839,3.8%
+Error Claims,754,3.4%
+NotRequired Claims,717,3.3%
+Cancelled Claims,215,1.0%
+Queued Claims,13,0.1%
+,,
+Financial Metrics,,
+Total Net Amount (SAR),"173,958,621.89",
+Total Approved (SAR),"97,320,552.12",
+Financial Loss (SAR),"76,638,069.77",
+Recovery Rate,55.9%,

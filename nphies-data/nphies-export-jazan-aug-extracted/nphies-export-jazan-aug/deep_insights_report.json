@@ -1,0 +1,239 @@
+{
+  "analysis_date": "2025-10-14T14:03:17.876123",
+  "period": {
+    "start_date": "2025-08-01",
+    "end_date": "2025-09-01",
+    "total_days": 32
+  },
+  "financial_overview": {
+    "total_claimed": 173958621.89,
+    "total_approved": 97320552.11999999,
+    "total_rejected": 76638069.77,
+    "rejection_rate_pct": 44.05534427518107,
+    "avg_claim_value": 8729.794845686756,
+    "avg_approved_value": 4912.698239273094
+  },
+  "status_breakdown": {
+    "Rejected": {
+      "count": 2933,
+      "percentage": 13.404323385585668,
+      "total_claimed": 13635742.55,
+      "total_approved": 474.4199999999999
+    },
+    "Approved": {
+      "count": 8926,
+      "percentage": 40.79338238654541,
+      "total_claimed": 59589650.85,
+      "total_approved": 58974566.220000006
+    },
+    "Partial": {
+      "count": 5427,
+      "percentage": 24.802339929619304,
+      "total_claimed": 68410026.8,
+      "total_approved": 37806953.099999994
+    },
+    "NotRequired": {
+      "count": 717,
+      "percentage": 3.276815502033728,
+      "total_claimed": 374990.67,
+      "total_approved": 363138.26999999996
+    },
+    "Error": {
+      "count": 754,
+      "percentage": 3.4459119784287737,
+      "total_claimed": 10199132.12,
+      "total_approved": 0.0
+    },
+    "Cancelled": {
+      "count": 215,
+      "percentage": 0.9825876331063479,
+      "total_claimed": 1158928.84,
+      "total_approved": 175420.11
+    },
+    "Pended": {
+      "count": 839,
+      "percentage": 3.834376856633609,
+      "total_claimed": 19796445.22,
+      "total_approved": 0.0
+    },
+    "Queued": {
+      "count": 13,
+      "percentage": 0.05941227549015127,
+      "total_claimed": 170676.81999999998,
+      "total_approved": 0.0
+    }
+  },
+  "top_loss_insurers": [
+    {
+      "name": "CNHI",
+      "claims_count": 1180,
+      "total_claimed": 139088551.27,
+      "total_approved": 77282012.51,
+      "loss_amount": 61806538.760000005,
+      "loss_rate_pct": 44.44,
+      "approval_rate_pct": 30.68
+    },
+    {
+      "name": "Bupa Arabia for Cooperative Insurance",
+      "claims_count": 4793,
+      "total_claimed": 10101725.49,
+      "total_approved": 5727941.36,
+      "loss_amount": 4373784.13,
+      "loss_rate_pct": 43.3,
+      "approval_rate_pct": 42.19
+    },
+    {
+      "name": "The Cooperative Company for Cooperative Insurance (Tawuniya)",
+      "claims_count": 4327,
+      "total_claimed": 7920641.11,
+      "total_approved": 5370179.27,
+      "loss_amount": 2550461.840000001,
+      "loss_rate_pct": 32.2,
+      "approval_rate_pct": 49.53
+    },
+    {
+      "name": "The Mediterranean and Gulf Cooperative Insurance and Reinsurance Company (MedGulf)",
+      "claims_count": 3953,
+      "total_claimed": 4599534.23,
+      "total_approved": 2989396.58,
+      "loss_amount": 1610137.6500000004,
+      "loss_rate_pct": 35.01,
+      "approval_rate_pct": 39.87
+    },
+    {
+      "name": "Gulf Union Cooperative Insurance Company",
+      "claims_count": 745,
+      "total_claimed": 1889603.7,
+      "total_approved": 657168.61,
+      "loss_amount": 1232435.0899999999,
+      "loss_rate_pct": 65.22,
+      "approval_rate_pct": 44.97
+    },
+    {
+      "name": "Arabia Insurance Cooperative Company",
+      "claims_count": 393,
+      "total_claimed": 1461964.76,
+      "total_approved": 427884.07,
+      "loss_amount": 1034080.69,
+      "loss_rate_pct": 70.73,
+      "approval_rate_pct": 52.42
+    },
+    {
+      "name": "AL Jazira Takaful",
+      "claims_count": 138,
+      "total_claimed": 868070.93,
+      "total_approved": 119524.3,
+      "loss_amount": 748546.63,
+      "loss_rate_pct": 86.23,
+      "approval_rate_pct": 13.04
+    },
+    {
+      "name": "Al-Rajhi Company for Cooperative Insurance",
+      "claims_count": 674,
+      "total_claimed": 1030638.75,
+      "total_approved": 386135.03,
+      "loss_amount": 644503.72,
+      "loss_rate_pct": 62.53,
+      "approval_rate_pct": 37.69
+    },
+    {
+      "name": "Amana Cooperative Insurance Company *",
+      "claims_count": 276,
+      "total_claimed": 852599.01,
+      "total_approved": 330481.66,
+      "loss_amount": 522117.35000000003,
+      "loss_rate_pct": 61.24,
+      "approval_rate_pct": 55.8
+    },
+    {
+      "name": "Arabian Shield Cooperative Insurance Company *",
+      "claims_count": 1334,
+      "total_claimed": 2503450.03,
+      "total_approved": 2087799.28,
+      "loss_amount": 415650.74999999977,
+      "loss_rate_pct": 16.6,
+      "approval_rate_pct": 53.67
+    }
+  ],
+  "recovery_opportunities": {
+    "total_recoverable_amount": 54437473.95000002,
+    "number_of_claims": 9114,
+    "avg_per_claim": 5972.950839368007,
+    "by_insurer": [
+      {
+        "insurer": "CNHI",
+        "recoverable_amount": 41684877.57,
+        "claim_count": 572
+      },
+      {
+        "insurer": "Bupa Arabia for Cooperative Insurance",
+        "recoverable_amount": 3950129.95,
+        "claim_count": 2495
+      },
+      {
+        "insurer": "The Cooperative Company for Cooperative Insurance (Tawuniya)",
+        "recoverable_amount": 2368727.45,
+        "claim_count": 1614
+      },
+      {
+        "insurer": "The Mediterranean and Gulf Cooperative Insurance and Reinsurance Company (MedGulf)",
+        "recoverable_amount": 1327661.69,
+        "claim_count": 1820
+      },
+      {
+        "insurer": "Gulf Union Cooperative Insurance Company",
+        "recoverable_amount": 1176514.12,
+        "claim_count": 395
+      },
+      {
+        "insurer": "Arabia Insurance Cooperative Company",
+        "recoverable_amount": 1015667.1499999999,
+        "claim_count": 170
+      },
+      {
+        "insurer": "AL Jazira Takaful",
+        "recoverable_amount": 740596.0,
+        "claim_count": 119
+      },
+      {
+        "insurer": "Al-Rajhi Company for Cooperative Insurance",
+        "recoverable_amount": 551462.54,
+        "claim_count": 405
+      },
+      {
+        "insurer": "Amana Cooperative Insurance Company *",
+        "recoverable_amount": 516118.10000000003,
+        "claim_count": 112
+      },
+      {
+        "insurer": "Arabian Shield Cooperative Insurance Company *",
+        "recoverable_amount": 362149.24999999994,
+        "claim_count": 611
+      }
+    ]
+  },
+  "high_value_claims": {
+    "threshold": 9976.200000000004,
+    "count": 1993,
+    "total_value": 160618000.88,
+    "percentage_of_total": 92.33115273904863
+  },
+  "critical_issues": {
+    "complete_rejections": {
+      "count": 2933,
+      "value": 13635742.55
+    },
+    "partial_approvals_loss": {
+      "count": 5427,
+      "loss_amount": 30603073.700000003
+    },
+    "pending_at_risk": {
+      "count": 839,
+      "value": 19796445.22
+    },
+    "error_status": {
+      "count": 754,
+      "value": 10199132.12
+    }
+  }
+}

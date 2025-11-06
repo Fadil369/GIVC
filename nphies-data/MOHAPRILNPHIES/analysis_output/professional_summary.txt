@@ -1,0 +1,37 @@
+CLAIMS OVERVIEW
+--------------------------------------------------------------------------------
+Total claims: 9,866
+Approved claims: 5,018 (50.9%)
+Rejected/Error/Cancelled: 1,273 (12.9%)
+
+Top rejection drivers (count)
+  Bupa Arabia for Cooperative Insurance: 478 problem claims
+  The Cooperative Company for Cooperative Insurance (Tawuniya): 250 problem claims
+  Al-Rajhi Company for Cooperative Insurance: 115 problem claims
+  The Mediterranean and Gulf Cooperative Insurance and Reinsurance Company (MedGulf): 103 problem claims
+  Gulf Union Cooperative Insurance Company: 95 problem claims
+
+Financial leakage from partial approvals
+Partial approvals: 3,568 records
+Shortfall retained by payers: SAR 1,148,707.23
+
+High-value rejected/error claims (Net Amount > 10k)
+Count: 44
+Total at risk: SAR 927,691.52
+
+PAYMENT RECONCILIATION
+--------------------------------------------------------------------------------
+Payment bundles: 430
+Zero-value bundles: 393 (91.4%)
+Total paid amount: SAR 1,391,141.51
+
+ELIGIBILITY
+--------------------------------------------------------------------------------
+Eligibility requests: 1,174
+Failures: 1,173 (99.9%)
+Top patients hitting repeated errors:
+  Patient 2401451980: 18 errors
+  Patient 2150148175: 17 errors
+  Patient 1039320005: 12 errors
+  Patient 1113288508: 12 errors
+  Patient 2528129923: 12 errors

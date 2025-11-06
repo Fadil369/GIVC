@@ -1,0 +1,85 @@
+{
+  "analysis_date": "2025-10-14T15:06:44.764886",
+  "insurer": "CNHI",
+  "overview": {
+    "total_claims": 1180,
+    "total_claimed_sar": 139088551.27,
+    "total_approved_sar": 77282012.51,
+    "total_loss_sar": 61806538.760000005,
+    "loss_rate_percentage": 44.436826895997044
+  },
+  "status_breakdown": {
+    "Partial": {
+      "count": 444,
+      "claimed": 58035009.88000001,
+      "approved": 31160264.9,
+      "loss": 26874744.98000001
+    },
+    "Approved": {
+      "count": 362,
+      "claimed": 46121747.61,
+      "approved": 46121747.61,
+      "loss": 0.0
+    },
+    "Error": {
+      "count": 59,
+      "claimed": 8859633.159999998,
+      "approved": 0.0,
+      "loss": 8859633.159999998
+    },
+    "Rejected": {
+      "count": 69,
+      "claimed": 5950499.43,
+      "approved": 0.0,
+      "loss": 5950499.43
+    },
+    "Pended": {
+      "count": 238,
+      "claimed": 19443826.71,
+      "approved": 0.0,
+      "loss": 19443826.71
+    },
+    "Cancelled": {
+      "count": 8,
+      "claimed": 677834.48,
+      "approved": 0.0,
+      "loss": 677834.48
+    }
+  },
+  "high_value_claims": {
+    "count": 784,
+    "total_value": 130828926.17999999,
+    "total_loss": 57209280.78999999,
+    "threshold": "50000 SAR"
+  },
+  "top_100_appeals": {
+    "total_recoverable": 21342478.150000006,
+    "critical_priority": 100,
+    "high_priority": 0
+  },
+  "high_loss_patients": {
+    "count": 150,
+    "total_loss": 54567734.16,
+    "threshold": "100000 SAR"
+  },
+  "recommendations": {
+    "immediate": [
+      "Schedule emergency meeting with CNHI executives",
+      "Initiate appeals for top 100 high-value claims (Total: 21,342,478.15 SAR)",
+      "Assign case managers to high-loss patients",
+      "Review institutional claim submission protocols"
+    ],
+    "short_term": [
+      "Analyze rejection patterns by claim type",
+      "Review pricing agreements for institutional claims",
+      "Implement enhanced validation for claims >50K SAR",
+      "Establish direct communication channel with CNHI"
+    ],
+    "long_term": [
+      "Renegotiate contract terms with CNHI",
+      "Develop CNHI-specific submission guidelines",
+      "Implement predictive approval modeling",
+      "Create automated pre-submission validation"
+    ]
+  }
+}

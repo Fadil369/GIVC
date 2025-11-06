@@ -1,0 +1,21 @@
+Date,Total Claims,Approved,Rejected,Partial,Rejection Rate %,High Value Rejections,Critical Alerts,Top Rejecting Insurer,Action Required
+2025-10-16,0,0,0,0,0.0%,0,None,TBD,Monitor
+2025-10-17,0,0,0,0,0.0%,0,None,TBD,Monitor
+2025-10-18,0,0,0,0,0.0%,0,None,TBD,Monitor
+2025-10-19,0,0,0,0,0.0%,0,None,TBD,Monitor
+2025-10-20,0,0,0,0,0.0%,0,None,TBD,Monitor
+2025-10-21,0,0,0,0,0.0%,0,None,TBD,Monitor
+2025-10-22,0,0,0,0,0.0%,0,None,TBD,Monitor
+
+ALERT RULES:
+- Rejection Rate >20% = CRITICAL ALERT
+- High Value Rejections >3 = WARNING ALERT  
+- Same insurer >50% of rejections = PATTERN ALERT
+
+DAILY ACTIONS:
+1. Update data from NPHIES system
+2. Calculate rejection rate
+3. Identify high-value rejections (>5K SAR)
+4. Check for patterns
+5. Send alerts if thresholds exceeded
+6. Update team via morning briefing

@@ -1,0 +1,199 @@
+{
+  "name": "ClaimLinc GlobeMed Integration Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "target_path": "claimlinc-globemed",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-globemed-1",
+      "name": "GlobeMed Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "claimlinc-globemed-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process incoming claim data for GlobeMed\nconst claimData = $input.first().json.body;\n\n// Extract and validate required fields for GlobeMed format\nconst processedData = {\n  claimId: claimData.claimId || `GLB-${Date.now()}`,\n  batchNumber: claimData.batchNumber || `GLB-BATCH-${Date.now()}`,\n  providerInfo: {\n    providerCode: claimData.providerInfo?.providerCode || \"AH001\",\n    providerName: claimData.providerInfo?.providerName || \"Al Hayat Hospital\",\n    branch: claimData.providerInfo?.branch || \"MainRiyadh\",\n    contactPerson: claimData.providerInfo?.contactPerson || \"Billing Department\",\n    phone: claimData.providerInfo?.phone || \"+966-11-456-7890\",\n    email: claimData.providerInfo?.email || \"billing@alhayat.example\"\n  },\n  subscriberInfo: {\n    memberId: claimData.subscriberInfo?.memberId,\n    memberName: claimData.subscriberInfo?.memberName,\n    nationalId: claimData.subscriberInfo?.nationalId,\n    gender: claimData.subscriberInfo?.gender,\n    dateOfBirth: claimData.subscriberInfo?.dateOfBirth,\n    relationship: claimData.subscriberInfo?.relationship || \"self\",\n    policyNumber: claimData.subscriberInfo?.policyNumber\n  },\n  claimDetails: {\n    serviceType: claimData.claimDetails?.serviceType || \"outpatient\",\n    serviceDate: claimData.claimDetails?.serviceDate,\n    totalAmount: claimData.claimDetails?.totalAmount,\n    currency: claimData.claimDetails?.currency || \"SAR\",\n    providerFees: claimData.claimDetails?.providerFees || claimData.claimDetails?.totalAmount,\n    patientResponsibility: claimData.claimDetails?.patientResponsibility || 0,\n    insurancePayment: claimData.claimDetails?.insurancePayment || 0\n  },\n  diagnosisInformation: claimData.diagnosisInformation || [],\n  procedureInformation: claimData.procedureInformation || [],\n  medicationDetails: claimData.medicationDetails || [],\n  authorizationInfo: {\n    preAuthorizationRequired: claimData.authorizationInfo?.preAuthorizationRequired || false,\n    authorizationNumber: claimData.authorizationInfo?.authorizationNumber,\n    authorizationDate: claimData.authorizationInfo?.authorizationDate,\n    validFrom: claimData.authorizationInfo?.validFrom,\n    validTo: claimData.authorizationInfo?.validTo\n  }\n};\n\n// Validation for GlobeMed specific requirements\nconst errors = [];\nif (!processedData.subscriberInfo.memberId) errors.push(\"Missing member ID\");\nif (!processedData.subscriberInfo.memberName) errors.push(\"Missing member name\");\nif (!processedData.claimDetails.serviceDate) errors.push(\"Missing service date\");\nif (!processedData.claimDetails.totalAmount) errors.push(\"Missing total amount\");\nif (!processedData.providerInfo.providerCode) errors.push(\"Missing provider code\");\n\n// Check for required procedure codes for GlobeMed\nif (processedData.procedureInformation.length === 0) {\n  errors.push(\"At least one procedure is required\");\n}\n\nreturn {\n  data: processedData,\n  valid: errors.length === 0,\n  errors: errors,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "code-globemed-process-1",
+      "name": "Process Claim Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.valid }}",
+              "operation": "equal",
+              "value2": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "if-valid-globemed-1",
+      "name": "Is Data Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "python",
+        "parameters": "-c",
+        "commandToRun": "import asyncio\nimport sys\nimport os\nsys.path.append('/app')\n\nfrom src.portal_automation.globemed_bot import GlobeMedPortalBot\n\nasync def run_globemed_automation(claim_data):\n    async with GlobeMedPortalBot(headless=True) as bot:\n        # Login using environment variables\n        username = os.getenv('GLOBEMED_USERNAME')\n        password = os.getenv('GLOBEMED_PASSWORD')\n        \n        if not username or not password:\n            return {'success': False, 'error': 'Missing GlobeMed credentials'}\n        \n        # Login\n        login_success = await bot.login(username, password)\n        if not login_success:\n            return {'success': False, 'error': 'Login failed'}\n        \n        # Navigate to claims section\n        nav_success = await bot.navigate_to_claims_section()\n        if not nav_success:\n            return {'success': False, 'error': 'Navigation to claims failed'}\n        \n        # Create temporary file for upload\n        import json\n        temp_file = f'/tmp/globemed_claim_{claim_data[\"data\"][\"claimId\"]}.json'\n        with open(temp_file, 'w') as f:\n            json.dump(claim_data['data'], f)\n        \n        # Upload claim\n        submission_id = await bot.upload_claim_file(temp_file)\n        if not submission_id:\n            return {'success': False, 'error': 'File upload failed'}\n        \n        # Clean up\n        os.remove(temp_file)\n        \n        return {\n            'success': True,\n            'submission_id': submission_id,\n            'status': 'submitted',\n            'payer': 'GlobeMed',\n            'timestamp': new Date().toISOString()\n        }\n\n# Run the automation\nresult = asyncio.run(run_globemed_automation($input.first().json))\nreturn result"
+      },
+      "id": "code-globemed-run-1",
+      "name": "Run GlobeMed Automation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get current timestamp\nconst currentTime = new Date().toISOString();\n\n// Prepare success response with GlobeMed specific details\nconst response = {\n  success: true,\n  message: 'Claim submitted to GlobeMed successfully',\n  payer: 'GlobeMed Saudi Arabia',\n  submission_data: $input.first().json,\n  next_steps: [\n    'Monitor claim status in GlobeMed portal',\n    'Check for any rejection reports',\n    'Prepare for potential resubmission if needed'\n  ],\n  timestamp: currentTime\n};\n\nreturn response;"
+      },
+      "id": "code-globemed-success-1",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-globemed-success-1",
+      "name": "Send Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle validation errors with GlobeMed specific context\nconst errors = $input.first().json.errors;\nconst claimData = $input.first().json.data;\n\nconst errorResponse = {\n  success: false,\n  error: 'GlobeMed validation failed',\n  payer: 'GlobeMed Saudi Arabia',\n  errors: errors,\n  required_fields: [\n    'memberId - Patient member ID',\n    'memberName - Patient full name',\n    'serviceDate - Date of service',\n    'totalAmount - Total claim amount',\n    'providerCode - Provider code (AH001)',\n    'procedureInformation - At least one procedure'\n  ],\n  provided_data_summary: {\n    claimId: claimData.claimId,\n    memberId: claimData.subscriberInfo?.memberId,\n    serviceDate: claimData.claimDetails?.serviceDate,\n    totalAmount: claimData.claimDetails?.totalAmount,\n    providerCode: claimData.providerInfo?.providerCode,\n    procedures_count: claimData.procedureInformation?.length || 0\n  },\n  timestamp: new Date().toISOString()\n};\n\nreturn errorResponse;"
+      },
+      "id": "code-globemed-error-1",
+      "name": "Validation Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-globemed-error-1",
+      "name": "Send Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 400]
+    }
+  ],
+  "connections": {
+    "GlobeMed Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Claim Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Claim Data": {
+      "main": [
+        [
+          {
+            "node": "Is Data Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Data Valid?": {
+      "main": [
+        [
+          {
+            "node": "Run GlobeMed Automation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run GlobeMed Automation": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Response": {
+      "main": [
+        [
+          {
+            "node": "Send Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation Error": {
+      "main": [
+        [
+          {
+            "node": "Send Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "createdAt": "2025-11-05T12:13:00.000Z",
+      "updatedAt": "2025-11-05T12:13:00.000Z",
+      "id": "claimlinc-globemed",
+      "name": "ClaimLinc GlobeMed"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-05T12:13:00.000Z",
+  "versionId": "1"
+}

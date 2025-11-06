@@ -1,0 +1,149 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.secret
+secrets.yaml
+
+# Logs
+*.log
+logs/
+*.out
+*.err
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+tls/
+ssl/
+
+# Vault data
+vault-data/
+consul-data/
+
+# Docker
+*.tar
+*.gz
+.dockerignore
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.lock.hcl
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# OS
+Thumbs.db
+.DS_Store
+
+# PHI and sensitive data
+**/data/samples/*.csv
+**/exports/*.json
+**/exports/*.xml
+**/patient-data/
+**/phi/
+
+# Credentials
+*password*
+*credentials*
+*secret*
+!*example*
+
+# Audit logs (large files - archive separately)
+audit-logs/
+**/audit/*.log
+
+# Node modules (if any)
+node_modules/
+
+# Monitoring data
+prometheus-data/
+grafana-data/
+elasticsearch-data/
+
+# Redis and RabbitMQ data
+redis-data/
+rabbitmq-data/
+
+# Backup files
+*.backup
+backup/
+backups/
+projects/oaises+/nul

@@ -1,0 +1,40 @@
+tunnel: YOUR_TUNNEL_ID
+credentials-file: /root/.cloudflared/YOUR_TUNNEL_ID.json
+
+ingress:
+  # BrainSAIT Healthcare Platform
+  - hostname: hnh.brainsait.com
+    service: http://brainsait-web:3000
+  
+  - hostname: api.brainsait.com
+    service: http://brainsait-api:8000
+  
+  # Enterprise Services
+  - hostname: odoo.brainsait.com
+    service: http://odoo:8069
+  
+  - hostname: moodle.brainsait.com
+    service: http://moodle:80
+  
+  - hostname: wpeng.brainsait.com
+    service: http://wordpress:80
+  
+  - hostname: shop.brainsait.com
+    service: http://opencart:80
+  
+  - hostname: forum.brainsait.com
+    service: http://phpbb:80
+  
+  - hostname: n8n.brainsait.com
+    service: http://n8n:5678
+  
+  - hostname: llm.brainsait.com
+    service: http://llm-webui:8080
+  
+  - hostname: portainer.brainsait.com
+    service: https://portainer:9443
+    originRequest:
+      noTLSVerify: true
+  
+  # Catch-all rule (required)
+  - service: http_status:404

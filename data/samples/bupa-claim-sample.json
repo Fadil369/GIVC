@@ -1,0 +1,50 @@
+{
+  "claim_id": "BPA-2025-0001",
+  "provider": {
+    "name": "Al Hayat Hospital",
+    "code": "AH001",
+    "branch": "MainRiyadh"
+  },
+  "patient": {
+    "member_id": "BP123456789",
+    "name": "Ahmed Al-Rashid",
+    "national_id": "1234567890",
+    "date_of_birth": "1980-05-15",
+    "gender": "M"
+  },
+  "claim_details": {
+    "service_date": "2025-01-15",
+    "admission_date": "2025-01-15",
+    "discharge_date": "2025-01-18",
+    "type": "inpatient",
+    "total_amount": 12500.00,
+    "currency": "SAR",
+    "diagnosis_codes": ["I10", "E11.9"],
+    "procedure_codes": ["99213", "36415"],
+    "diagnosis_descriptions": [
+      "Essential hypertension",
+      "Type 2 diabetes mellitus without complications"
+    ],
+    "procedure_descriptions": [
+      "Office or other outpatient visit for E/M",
+      "Collection of venous blood by venipuncture"
+    ]
+  },
+  "payer": {
+    "name": "Bupa Arabia",
+    "insurance_type": "health",
+    "policy_number": "BP-HEALTH-2025-001",
+    "coverage_percentage": 80
+  },
+  "submission": {
+    "method": "portal",
+    "timestamp": "2025-01-20T10:30:00Z",
+    "batch_id": "BPA-BATCH-2025-001",
+    "status": "submitted"
+  },
+  "metadata": {
+    "created_by": "system",
+    "version": "1.0",
+    "source_system": "EMR"
+  }
+}

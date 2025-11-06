@@ -1,0 +1,47 @@
+CRITICAL INSURER MEETINGS STRATEGY
+==================================
+Date: October 12, 2025
+Timeline: Day 3-4 (October 14-15, 2025)
+Priority: HIGH
+
+🎯 TARGET INSURERS (By Financial Impact):
+
+1. BUPA ARABIA - CRITICAL PRIORITY
+   Rejection Rate: 24.7% (1,204 rejections)
+   Financial Loss: 4,373,784.13 SAR
+   Status: URGENT MEETING REQUIRED
+
+2. TAWUNIYA - HIGH PRIORITY  
+   Rejection Rate: 9.7% (425 rejections)
+   Financial Loss: 2,550,461.84 SAR
+   Status: STRATEGIC DISCUSSION NEEDED
+
+3. MEDGULF - MEDIUM PRIORITY
+   Rejection Rate: 9.5% (377 rejections) 
+   Financial Loss: 1,610,137.65 SAR
+   Status: PROCESS IMPROVEMENT FOCUS
+
+📅 MEETING SCHEDULE:
+
+DAY 3 (October 14):
+------------------
+09:00 AM - BUPA ARABIA (2 hours)
+02:00 PM - TAWUNIYA (1.5 hours)
+
+DAY 4 (October 15):
+------------------
+10:00 AM - MEDGULF (1 hour)
+02:00 PM - Follow-up calls/documentation
+
+👥 ATTENDEES REQUIRED:
+- Senior Management (relationship authority)
+- Claims Manager (technical details)
+- Operations Manager (process improvement)
+- Data Analyst (pattern presentation)
+
+📋 MEETING PREPARATION CHECKLIST:
+□ Print rejection analysis for each insurer
+□ Prepare financial impact summaries
+□ Gather sample rejected claims
+□ Create improvement proposals
+□ Draft partnership agreements

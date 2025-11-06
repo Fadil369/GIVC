@@ -1,0 +1,222 @@
+{
+  "name": "ClaimLinc Waseel/Tawuniya Integration Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "target_path": "claimlinc-waseel",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-waseel-1",
+      "name": "Waseel Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "claimlinc-waseel-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process incoming claim data for Waseel/Tawuniya (FHIR format)\nconst claimData = $input.first().json.body;\n\n// Extract FHIR Bundle data or convert to FHIR\nlet fhirData;\nif (claimData.resourceType === 'Bundle') {\n  fhirData = claimData;\n} else {\n  // Convert standard claim format to FHIR Bundle\n  fhirData = {\n    resourceType: 'Bundle',\n    id: `WSE-CLAIM-${Date.now()}`,\n    type: 'transaction',\n    entry: [\n      {\n        resource: {\n          resourceType: 'Claim',\n          id: claimData.claimId || `WSE-${Date.now()}`,\n          status: 'active',\n          type: {\n            coding: [\n              {\n                system: 'http://terminology.hl7.org/CodeSystem/claim-type',\n                code: 'institutional',\n                display: 'Institutional'\n              }\n            ]\n          },\n          patient: {\n            reference: 'Patient/P001',\n            display: claimData.patient?.name || 'Unknown Patient'\n          },\n          provider: {\n            reference: 'Organization/AH001',\n            display: claimData.provider?.name || 'Al Hayat Hospital'\n          },\n          insurance: [\n            {\n              sequence: 1,\n              focal: true,\n              coverage: {\n                reference: 'Coverage/C001',\n                display: 'Tawuniya Insurance Company'\n              }\n            }\n          ],\n          created: new Date().toISOString(),\n          insurer: {\n            reference: 'Organization/T001',\n            display: 'Tawuniya Insurance Company'\n          },\n          total: {\n            value: parseFloat(claimData.claim_details?.total_amount || 0),\n            currency: claimData.claim_details?.currency || 'SAR'\n          }\n        }\n      }\n    ]\n  };\n  \n  // Add diagnosis if available\n  if (claimData.claim_details?.diagnosis_codes) {\n    fhirData.entry[0].resource.diagnosis = claimData.claim_details.diagnosis_codes.map((code, index) => ({\n      sequence: index + 1,\n      diagnosisCodeableConcept: {\n        coding: [\n          {\n            system: 'http://hl7.org/fhir/sid/icd-10',\n            code: code\n          }\n        ]\n      }\n    }));\n  }\n  \n  // Add procedures if available\n  if (claimData.claim_details?.procedure_codes) {\n    fhirData.entry[0].resource.procedure = claimData.claim_details.procedure_codes.map((code, index) => ({\n      sequence: index + 1,\n      procedureCodeableConcept: {\n        coding: [\n          {\n            system: 'http://www.ama-assn.org/go/cpt',\n            code: code\n          }\n        ]\n      }\n    }));\n  }\n}\n\n// Validation for Waseel/Tawuniya requirements\nconst errors = [];\nif (!fhirData.entry || fhirData.entry.length === 0) {\n  errors.push('No claim entries found in FHIR Bundle');\n}\n\nconst claim = fhirData.entry?.[0]?.resource;\nif (claim) {\n  if (!claim.patient?.display) errors.push('Missing patient information');\n  if (!claim.provider?.display) errors.push('Missing provider information');\n  if (!claim.total?.value) errors.push('Missing total amount');\n  if (!claim.total?.currency) errors.push('Missing currency');\n}\n\nreturn {\n  data: fhirData,\n  valid: errors.length === 0,\n  errors: errors,\n  timestamp: new Date().toISOString(),\n  auth_method: 'oauth2_api'\n};"
+      },
+      "id": "code-waseel-process-1",
+      "name": "Process Claim Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.valid }}",
+              "operation": "equal",
+              "value2": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "if-valid-waseel-1",
+      "name": "Is Data Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "python",
+        "parameters": "-c",
+        "commandToRun": "import asyncio\nimport sys\nimport os\nimport aiohttp\nimport json\nfrom datetime import datetime, timedelta\nsys.path.append('/app')\n\nfrom src.portal_automation.waseel_bot import WaseelPortalBot\n\nasync def run_waseel_automation(claim_data):\n    async with WaseelPortalBot(headless=True) as bot:\n        # Authenticate using OAuth2 API\n        auth_success = await bot.authenticate()\n        if not auth_success:\n            return {'success': False, 'error': 'Authentication failed'}\n        \n        # Submit claim via API\n        submission_id = await bot.submit_claim_via_api(claim_data['data'])\n        if not submission_id:\n            return {'success': False, 'error': 'Claim submission failed'}\n        \n        return {\n            'success': True,\n            'submission_id': submission_id,\n            'status': 'submitted',\n            'payer': 'Tawuniya/Waseel',\n            'auth_method': 'oauth2_api',\n            'timestamp': new Date().toISOString()\n        }\n\n# Run the automation\nresult = asyncio.run(run_waseel_automation($input.first().json))\nreturn result"
+      },
+      "id": "code-waseel-run-1",
+      "name": "Run Waseel API Automation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "command": "python",
+        "parameters": "-c",
+        "commandToRun": "import asyncio\nimport sys\nimport os\nsys.path.append('/app')\n\nfrom src.portal_automation.waseel_bot import WaseelPortalBot\n\nasync def get_rejected_claims():\n    async with WaseelPortalBot(headless=True) as bot:\n        # Authenticate\n        auth_success = await bot.authenticate()\n        if not auth_success:\n            return {'success': False, 'error': 'Authentication failed'}\n        \n        # Get rejected claims\n        rejected_claims = await bot.get_rejected_claims_api()\n        if rejected_claims:\n            return {\n                'success': True,\n                'rejected_claims': rejected_claims,\n                'count': len(rejected_claims),\n                'action_required': 'Claims need review and resubmission'\n            }\n        else:\n            return {\n                'success': True,\n                'rejected_claims': [],\n                'count': 0,\n                'message': 'No rejected claims found'\n            }\n\n# Check for rejected claims\nresult = asyncio.run(get_rejected_claims())\nreturn result"
+      },
+      "id": "code-waseel-check-rejections-1",
+      "name": "Check for Rejected Claims",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine submission result with rejection check\nconst submissionResult = $('Run Waseel API Automation').first().json;\nconst rejectionResult = $('Check for Rejected Claims').first().json;\n\nconst combinedResponse = {\n  success: true,\n  message: 'Waseel/Tawuniya claim processing completed',\n  payer: 'Tawuniya Insurance Company via Waseel',\n  submission: submissionResult,\n  rejection_status: rejectionResult,\n  next_actions: [\n    'Monitor claim status via API',\n    'Review any rejected claims if found',\n    'Prepare resubmissions for rejected claims',\n    'Move approved claims to payment processing'\n  ],\n  api_endpoints: {\n    status_check: '/nphies/claims/{id}',\n    move_to_ready: '/nphies/claims/{id}/move-to-ready',\n    download_reports: '/nphies/reports/rejections'\n  },\n  timestamp: new Date().toISOString()\n};\n\nreturn combinedResponse;"
+      },
+      "id": "code-waseel-combine-results-1",
+      "name": "Combine Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-waseel-success-1",
+      "name": "Send Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle validation errors with Waseel specific context\nconst errors = $input.first().json.errors;\nconst claimData = $input.first().json.data;\n\nconst errorResponse = {\n  success: false,\n  error: 'Waseel/Tawuniya validation failed',\n  payer: 'Tawuniya Insurance Company via Waseel',\n  errors: errors,\n  format_requirements: {\n    preferred: 'FHIR R4 Claim Bundle format',\n    supported_fields: [\n      'patient.display - Patient name',\n      'provider.display - Provider name',\n      'total.value - Claim amount',\n      'total.currency - Currency (SAR)',\n      'diagnosis - ICD-10 codes (optional)',\n      'procedure - CPT codes (optional)'\n    ],\n    auth_method: 'OAuth2/OIDC via Waseel-Connect'\n  },\n  data_summary: {\n    resource_type: claimData.resourceType,\n    entry_count: claimData.entry?.length || 0,\n    claim_id: claimData.entry?.[0]?.resource?.id,\n    total_amount: claimData.entry?.[0]?.resource?.total?.value,\n    currency: claimData.entry?.[0]?.resource?.total?.currency\n  },\n  timestamp: new Date().toISOString()\n};\n\nreturn errorResponse;"
+      },
+      "id": "code-waseel-error-1",
+      "name": "Validation Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-waseel-error-1",
+      "name": "Send Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 400]
+    }
+  ],
+  "connections": {
+    "Waseel Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Claim Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Claim Data": {
+      "main": [
+        [
+          {
+            "node": "Is Data Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Data Valid?": {
+      "main": [
+        [
+          {
+            "node": "Run Waseel API Automation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Waseel API Automation": {
+      "main": [
+        [
+          {
+            "node": "Check for Rejected Claims",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for Rejected Claims": {
+      "main": [
+        [
+          {
+            "node": "Combine Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Results": {
+      "main": [
+        [
+          {
+            "node": "Send Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation Error": {
+      "main": [
+        [
+          {
+            "node": "Send Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "createdAt": "2025-11-05T12:14:00.000Z",
+      "updatedAt": "2025-11-05T12:14:00.000Z",
+      "id": "claimlinc-waseel",
+      "name": "ClaimLinc Waseel"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-05T12:14:00.000Z",
+  "versionId": "1"
+}

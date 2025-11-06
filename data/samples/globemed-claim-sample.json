@@ -1,0 +1,146 @@
+{
+  "claimId": "GLB-2025-0001",
+  "batchNumber": "GLB-BATCH-2025-001",
+  "providerInfo": {
+    "providerCode": "AH001",
+    "providerName": "Al Hayat Hospital",
+    "branch": "Unaizah",
+    "contactPerson": "Dr. Mohammad Al-Saud",
+    "phone": "+966-11-456-7890",
+    "email": "billing@alhayat.example"
+  },
+  "subscriberInfo": {
+    "memberId": "GM123456789",
+    "memberName": "Sarah Al-Mansouri",
+    "nationalId": "1098765432",
+    "gender": "F",
+    "dateOfBirth": "1975-08-12",
+    "relationship": "self",
+    "policyNumber": "GM-HEALTH-2025-001",
+    "effectiveDate": "2025-01-01",
+    "expirationDate": "2025-12-31"
+  },
+  "claimDetails": {
+    "serviceType": "outpatient",
+    "serviceDate": "2025-01-18",
+    "admissionDate": null,
+    "dischargeDate": null,
+    "totalAmount": 3500.00,
+    "currency": "SAR",
+    "providerFees": 3500.00,
+    "patientResponsibility": 700.00,
+    "insurancePayment": 2800.00
+  },
+  "diagnosisInformation": [
+    {
+      "sequence": 1,
+      "diagnosisCode": "N18.6",
+      "diagnosisDescription": "End stage renal disease",
+      "diagnosisType": "primary"
+    },
+    {
+      "sequence": 2,
+      "diagnosisCode": "E11.22",
+      "diagnosisDescription": "Type 2 diabetes mellitus with diabetic chronic kidney disease",
+      "diagnosisType": "secondary"
+    }
+  ],
+  "procedureInformation": [
+    {
+      "sequence": 1,
+      "procedureCode": "90935",
+      "procedureDescription": "Hemodialysis, single evaluation",
+      "procedureDate": "2025-01-18",
+      "quantity": 1,
+      "unitPrice": 1500.00,
+      "totalAmount": 1500.00
+    },
+    {
+      "sequence": 2,
+      "procedureCode": "90937",
+      "procedureDescription": "Hemodialysis, repeated evaluation",
+      "procedureDate": "2025-01-18",
+      "quantity": 1,
+      "unitPrice": 1000.00,
+      "totalAmount": 1000.00
+    },
+    {
+      "sequence": 3,
+      "procedureCode": "A9270",
+      "procedureDescription": "Disposable supplies used during dialysis session",
+      "procedureDate": "2025-01-18",
+      "quantity": 1,
+      "unitPrice": 1000.00,
+      "totalAmount": 1000.00
+    }
+  ],
+  "medicationDetails": [
+    {
+      "medicationName": "Epoetin Alfa",
+      "medicationCode": "J0885",
+      "quantity": 4000,
+      "unit": "units",
+      "unitPrice": 0.125,
+      "totalAmount": 500.00
+    }
+  ],
+  "insuranceInfo": {
+    "payerName": "GlobeMed Saudi Arabia",
+    "payerCode": "GM001",
+    "planName": "GlobeMed Health Plan Plus",
+    "copayPercentage": 20,
+    "deductibleAmount": 500.00,
+    "outOfPocketMax": 3000.00
+  },
+  "authorizationInfo": {
+    "preAuthorizationRequired": true,
+    "authorizationNumber": "AUTH-GM-2025-001234",
+    "authorizationDate": "2025-01-15",
+    "validFrom": "2025-01-15",
+    "validTo": "2025-02-15",
+    "authorizedUnits": 4
+  },
+  "submissionDetails": {
+    "submissionMethod": "portal",
+    "submissionDate": "2025-01-20T15:45:00Z",
+    "submissionType": "electronic",
+    "claimStatus": "submitted",
+    "referenceNumber": "GLB-REF-2025-0001"
+  },
+  "documents": [
+    {
+      "documentType": "medical_record",
+      "documentName": "dialysis_procedure_notes.pdf",
+      "documentSize": 2048576,
+      "uploadedDate": "2025-01-20T15:30:00Z"
+    },
+    {
+      "documentType": "lab_results",
+      "documentName": "kidney_function_tests.pdf",
+      "documentSize": 1536000,
+      "uploadedDate": "2025-01-20T15:32:00Z"
+    },
+    {
+      "documentType": "prescription",
+      "documentName": "epoetin_alfa_prescription.pdf",
+      "documentSize": 512000,
+      "uploadedDate": "2025-01-20T15:35:00Z"
+    }
+  ],
+  "additionalInfo": {
+    "attendingPhysician": "Dr. Khalid Al-Rashid",
+    "referringPhysician": "Dr. Ahmed Al-Zahra",
+    "clinicalNotes": "Patient presenting for regular hemodialysis session. Stable condition. No complications noted during procedure.",
+    "admissionReason": "Routine hemodialysis for end-stage renal disease",
+    "dischargeDisposition": "Home"
+  },
+  "billingDetails": {
+    "billingDate": "2025-01-20",
+    "billingCode": "GLB-BILL-001",
+    "paymentTerms": "30 days",
+    "latePaymentPenalty": 2.0,
+    "discountApplicable": false,
+    "taxAmount": 525.00,
+    "totalWithTax": 4025.00
+  }
+}

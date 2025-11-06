@@ -1,0 +1,15 @@
+NPHIES Claims Analysis Dashboard,,,
+"Generated: October 12, 2025",,,
+,,,
+KEY PERFORMANCE INDICATORS,,,
+Metric,Value,Percentage,Status
+Total Claims,21881,100.0%,
+Approved Claims,8926,40.8%,✅ Good
+Rejected Claims,2933,13.4%,❌ Needs Attention
+Partial Claims,5427,24.8%,⚠️ Monitor
+,,,
+FINANCIAL OVERVIEW,,,
+Total Claim Value (SAR),"173,958,621.89",,
+Approved Amount (SAR),"97,320,552.12",,
+Financial Loss (SAR),"76,638,069.77",,❌ Critical
+Recovery Rate,55.9%,,⚠️ Below Target

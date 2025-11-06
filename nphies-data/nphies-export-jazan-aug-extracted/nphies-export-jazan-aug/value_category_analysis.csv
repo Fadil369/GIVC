@@ -1,0 +1,10 @@
+,Net Amount,Net Amount,Net Amount,Approved Amount,Approved Amount,Status
+,count,sum,mean,sum,mean,<lambda>
+Value_Category,,,,,,
+Micro (<100),5088,307683.02,60.47,174321.03,34.28,"[('Approved', 3042), ('Rejected', 840), ('Partial', 672), ('Pended', 209), ('Error', 177), ('NotRequired', 87), ('Cancelled', 59)]"
+Small (100-500),6563,1647284.28,251.0,961787.05,146.61,"[('Approved', 2596), ('Partial', 2277), ('Rejected', 779), ('NotRequired', 364), ('Error', 247), ('Pended', 234), ('Cancelled', 63), ('Queued', 2)]"
+Medium (500-1K),3162,2270619.12,718.1,1342277.66,424.77,"[('Approved', 1285), ('Partial', 976), ('Rejected', 447), ('NotRequired', 195), ('Pended', 118), ('Error', 116), ('Cancelled', 23), ('Queued', 1)]"
+Large (1K-5K),2417,4843703.73,2004.01,3026254.36,1253.11,"[('Approved', 1076), ('Partial', 659), ('Rejected', 443), ('Error', 90), ('NotRequired', 70), ('Pended', 40), ('Cancelled', 37), ('Queued', 2)]"
+Very Large (5K-10K),583,4371293.59,7497.93,2654423.71,4592.43,"[('Approved', 270), ('Partial', 134), ('Rejected', 121), ('Error', 22), ('Pended', 18), ('Cancelled', 12), ('Queued', 4), ('NotRequired', 1)]"
+High Value (10K-50K),1104,22729810.77,20588.6,11932469.09,10887.29,"[('Approved', 368), ('Partial', 338), ('Rejected', 232), ('Pended', 84), ('Error', 59), ('Cancelled', 15), ('Queued', 3)]"
+Ultra High (>50K),879,137788227.38,156755.66,77227570.87,88361.07,"[('Partial', 368), ('Approved', 271), ('Pended', 136), ('Rejected', 53), ('Error', 41), ('Cancelled', 5), ('Queued', 1)]"

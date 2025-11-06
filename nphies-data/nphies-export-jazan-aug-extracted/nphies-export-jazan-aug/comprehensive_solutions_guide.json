@@ -1,0 +1,133 @@
+{
+  "analysis_date": "2025-10-14T14:05:43.424522",
+  "total_claims": 21881,
+  "total_loss": 76638069.77,
+  "issue_categories": {
+    "Documentation Issue": {
+      "count": 839,
+      "claimed": 19796445.22,
+      "loss": 19796445.22,
+      "solutions": {
+        "priority": "🟡 MEDIUM",
+        "immediate_actions": [
+          "Review all pended claims daily",
+          "Prepare required documentation promptly",
+          "Set up daily pending claims monitoring",
+          "Assign dedicated team for pending follow-ups"
+        ],
+        "short_term": [
+          "Create documentation checklist by claim type",
+          "Implement document management system",
+          "Train clinical staff on documentation requirements"
+        ],
+        "long_term": [
+          "Implement EMR integration with billing",
+          "Create automated documentation generation",
+          "Establish proactive documentation review process"
+        ]
+      }
+    },
+    "Major Partial Denial": {
+      "count": 2023,
+      "claimed": 24560957.39,
+      "loss": 17390473.92,
+      "solutions": {
+        "priority": "🔴 CRITICAL",
+        "immediate_actions": [
+          "Analyze partial denial patterns by service type",
+          "Review pricing agreements with insurers",
+          "Document discrepancies for negotiation",
+          "Initiate appeals for high-value partials"
+        ],
+        "short_term": [
+          "Create service code mapping validation",
+          "Review and update fee schedules",
+          "Implement partial denial tracking system"
+        ],
+        "long_term": [
+          "Renegotiate contracts with problematic insurers",
+          "Establish clear pricing transparency",
+          "Implement predictive approval modeling"
+        ]
+      }
+    },
+    "Complete Rejection": {
+      "count": 2933,
+      "claimed": 13635742.55,
+      "loss": 13635268.13,
+      "solutions": {
+        "priority": "🔴 CRITICAL",
+        "immediate_actions": [
+          "Review rejection reasons through NPHIES portal",
+          "Categorize rejections by error code",
+          "Prepare appeal documentation for valid claims",
+          "Schedule meetings with top 3 rejecting insurers"
+        ],
+        "short_term": [
+          "Implement pre-submission validation checklist",
+          "Train billing team on common rejection causes",
+          "Create rejection reason database for tracking"
+        ],
+        "long_term": [
+          "Develop automated validation system",
+          "Establish direct communication channels with insurers",
+          "Implement AI-based claim review before submission"
+        ]
+      }
+    },
+    "Minor Partial Denial": {
+      "count": 3404,
+      "claimed": 43849069.41,
+      "loss": 13212599.779999997,
+      "solutions": {}
+    },
+    "Technical Error": {
+      "count": 754,
+      "claimed": 10199132.12,
+      "loss": 10199132.12,
+      "solutions": {
+        "priority": "🟠 HIGH",
+        "immediate_actions": [
+          "Review all error status claims",
+          "Identify common technical issues",
+          "Resubmit corrected claims within 24 hours",
+          "Contact NPHIES support for persistent errors"
+        ],
+        "short_term": [
+          "Implement robust error handling in billing system",
+          "Create technical error playbook",
+          "Schedule NPHIES integration review"
+        ],
+        "long_term": [
+          "Upgrade billing system with better validation",
+          "Implement automated error detection and correction",
+          "Establish redundant submission pathways"
+        ]
+      }
+    },
+    "Cancelled Claim": {
+      "count": 215,
+      "claimed": 1158928.84,
+      "loss": 983508.7300000001,
+      "solutions": {}
+    },
+    "Other Status": {
+      "count": 833,
+      "claimed": 1168695.51,
+      "loss": 805557.24,
+      "solutions": {}
+    },
+    "Fully Approved": {
+      "count": 8926,
+      "claimed": 59589650.85,
+      "loss": 615084.6300000027,
+      "solutions": {}
+    }
+  },
+  "critical_patterns": {
+    "high_value_claims": 879,
+    "problematic_combinations": 7,
+    "high_loss_patients": 254,
+    "significant_providers": 1
+  }
+}

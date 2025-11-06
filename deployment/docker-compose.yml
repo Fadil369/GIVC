@@ -1,0 +1,451 @@
+version: '3.8'
+
+services:
+  # ========================================
+  # Vault HA Cluster
+  # ========================================
+  vault-1:
+    image: hashicorp/vault:1.15.0
+    container_name: claimlinc-vault-1
+    hostname: vault-1
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+      - "8201:8201"
+    environment:
+      VAULT_ADDR: 'https://0.0.0.0:8200'
+      VAULT_CLUSTER_ADDR: 'https://vault-1:8201'
+    volumes:
+      - ./config/vault/vault-1.hcl:/vault/config/vault.hcl:ro
+      - ./config/security/tls:/vault/tls:ro
+      - vault-1-data:/vault/data
+      - vault-1-logs:/vault/logs
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - claimlinc-network
+    command: server
+
+  vault-2:
+    image: hashicorp/vault:1.15.0
+    container_name: claimlinc-vault-2
+    hostname: vault-2
+    restart: unless-stopped
+    environment:
+      VAULT_ADDR: 'https://0.0.0.0:8200'
+      VAULT_CLUSTER_ADDR: 'https://vault-2:8201'
+    volumes:
+      - ./config/vault/vault-2.hcl:/vault/config/vault.hcl:ro
+      - ./config/security/tls:/vault/tls:ro
+      - vault-2-data:/vault/data
+      - vault-2-logs:/vault/logs
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - claimlinc-network
+    command: server
+
+  vault-3:
+    image: hashicorp/vault:1.15.0
+    container_name: claimlinc-vault-3
+    hostname: vault-3
+    restart: unless-stopped
+    environment:
+      VAULT_ADDR: 'https://0.0.0.0:8200'
+      VAULT_CLUSTER_ADDR: 'https://vault-3:8201'
+    volumes:
+      - ./config/vault/vault-3.hcl:/vault/config/vault.hcl:ro
+      - ./config/security/tls:/vault/tls:ro
+      - vault-3-data:/vault/data
+      - vault-3-logs:/vault/logs
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - claimlinc-network
+    command: server
+
+  # ========================================
+  # Consul (Vault Storage Backend)
+  # ========================================
+  consul-server:
+    image: hashicorp/consul:1.16
+    container_name: claimlinc-consul
+    hostname: consul-server
+    restart: unless-stopped
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    volumes:
+      - ./config/consul/server.json:/consul/config/server.json:ro
+      - consul-data:/consul/data
+    networks:
+      - claimlinc-network
+    command: agent -server -ui -bootstrap-expect=1 -client=0.0.0.0
+
+  # ========================================
+  # RabbitMQ Cluster (Quorum Queues)
+  # ========================================
+  rabbitmq-1:
+    image: rabbitmq:3.12-management-alpine
+    container_name: claimlinc-rabbitmq-1
+    hostname: rabbitmq-1
+    restart: unless-stopped
+    ports:
+      - "5671:5671"
+      - "5672:5672"
+      - "15671:15671"
+      - "15672:15672"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit log_levels [{connection,error}]"
+    volumes:
+      - ./config/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./config/security/tls:/etc/rabbitmq/tls:ro
+      - rabbitmq-1-data:/var/lib/rabbitmq
+    networks:
+      - claimlinc-network
+
+  rabbitmq-2:
+    image: rabbitmq:3.12-management-alpine
+    container_name: claimlinc-rabbitmq-2
+    hostname: rabbitmq-2
+    restart: unless-stopped
+    environment:
+      RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - ./config/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./config/security/tls:/etc/rabbitmq/tls:ro
+      - rabbitmq-2-data:/var/lib/rabbitmq
+    networks:
+      - claimlinc-network
+    depends_on:
+      - rabbitmq-1
+
+  rabbitmq-3:
+    image: rabbitmq:3.12-management-alpine
+    container_name: claimlinc-rabbitmq-3
+    hostname: rabbitmq-3
+    restart: unless-stopped
+    environment:
+      RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - ./config/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./config/security/tls:/etc/rabbitmq/tls:ro
+      - rabbitmq-3-data:/var/lib/rabbitmq
+    networks:
+      - claimlinc-network
+    depends_on:
+      - rabbitmq-1
+
+  # ========================================
+  # Redis Cluster (Result Backend)
+  # ========================================
+  redis-primary:
+    image: redis:7-alpine
+    container_name: claimlinc-redis-primary
+    hostname: redis-primary
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+      - "6380:6380"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./config/redis/redis-primary.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./config/security/tls:/etc/redis/tls:ro
+      - redis-primary-data:/data
+    networks:
+      - claimlinc-network
+
+  redis-replica-1:
+    image: redis:7-alpine
+    container_name: claimlinc-redis-replica-1
+    hostname: redis-replica-1
+    restart: unless-stopped
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./config/redis/redis-replica.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./config/security/tls:/etc/redis/tls:ro
+      - redis-replica-1-data:/data
+    networks:
+      - claimlinc-network
+    depends_on:
+      - redis-primary
+
+  redis-replica-2:
+    image: redis:7-alpine
+    container_name: claimlinc-redis-replica-2
+    hostname: redis-replica-2
+    restart: unless-stopped
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./config/redis/redis-replica.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./config/security/tls:/etc/redis/tls:ro
+      - redis-replica-2-data:/data
+    networks:
+      - claimlinc-network
+    depends_on:
+      - redis-primary
+
+  # ========================================
+  # PostgreSQL (Application Database)
+  # ========================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: claimlinc-postgres
+    hostname: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-claimlinc}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./config/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - claimlinc-network
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+
+  # ========================================
+  # FastAPI Application
+  # ========================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: claimlinc-api
+    hostname: api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      VAULT_ADDR: https://vault-1:8200
+      VAULT_ROLE_ID: ${VAULT_ROLE_ID_API}
+      VAULT_SECRET_ID: ${VAULT_SECRET_ID_API}
+    volumes:
+      - ./api:/app/api:ro
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+    networks:
+      - claimlinc-network
+    depends_on:
+      - vault-1
+      - postgres
+      - rabbitmq-1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ========================================
+  # Celery Workers
+  # ========================================
+  celery-worker-nphies:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: claimlinc-celery-nphies
+    hostname: celery-worker-nphies
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      VAULT_ADDR: https://vault-1:8200
+      VAULT_ROLE_ID: ${VAULT_ROLE_ID_WORKER}
+      VAULT_SECRET_ID: ${VAULT_SECRET_ID_WORKER}
+      CELERY_QUEUES: celery.nphies.eligibility,celery.nphies.claims
+    volumes:
+      - ./workers:/app/workers:ro
+      - ./config:/app/config:ro
+      - ./nphies-sim:/app/nphies-sim:ro
+      - ./logs:/app/logs
+    networks:
+      - claimlinc-network
+    depends_on:
+      - vault-1
+      - rabbitmq-1
+      - redis-primary
+    command: celery -A workers.celery_app worker -Q celery.nphies.eligibility,celery.nphies.claims -l info
+
+  celery-worker-general:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: claimlinc-celery-general
+    hostname: celery-worker-general
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      VAULT_ADDR: https://vault-1:8200
+      VAULT_ROLE_ID: ${VAULT_ROLE_ID_WORKER}
+      VAULT_SECRET_ID: ${VAULT_SECRET_ID_WORKER}
+      CELERY_QUEUES: celery.general
+    volumes:
+      - ./workers:/app/workers:ro
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+    networks:
+      - claimlinc-network
+    depends_on:
+      - vault-1
+      - rabbitmq-1
+      - redis-primary
+    command: celery -A workers.celery_app worker -Q celery.general -l info
+
+  # ========================================
+  # Celery Beat (Periodic Tasks)
+  # ========================================
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: claimlinc-celery-beat
+    hostname: celery-beat
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      VAULT_ADDR: https://vault-1:8200
+      VAULT_ROLE_ID: ${VAULT_ROLE_ID_WORKER}
+      VAULT_SECRET_ID: ${VAULT_SECRET_ID_WORKER}
+    volumes:
+      - ./workers:/app/workers:ro
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+    networks:
+      - claimlinc-network
+    depends_on:
+      - vault-1
+      - rabbitmq-1
+      - redis-primary
+    command: celery -A workers.celery_app beat -l info
+
+  # ========================================
+  # Flower (Celery Monitoring)
+  # ========================================
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: claimlinc-flower
+    hostname: flower
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+      FLOWER_BASIC_AUTH: ${FLOWER_USER}:${FLOWER_PASSWORD}
+    volumes:
+      - ./config:/app/config:ro
+    networks:
+      - claimlinc-network
+    depends_on:
+      - rabbitmq-1
+      - redis-primary
+    command: celery -A workers.celery_app flower --port=5555
+
+  # ========================================
+  # Monitoring Stack
+  # ========================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: claimlinc-prometheus
+    hostname: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts:/etc/prometheus/alerts:ro
+      - prometheus-data:/prometheus
+    networks:
+      - claimlinc-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=90d'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: claimlinc-grafana
+    hostname: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - grafana-data:/var/lib/grafana
+    networks:
+      - claimlinc-network
+    depends_on:
+      - prometheus
+
+  # ========================================
+  # Log Aggregation (Optional)
+  # ========================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    container_name: claimlinc-elasticsearch
+    hostname: elasticsearch
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - claimlinc-network
+
+# ========================================
+# Networks
+# ========================================
+networks:
+  claimlinc-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+# ========================================
+# Volumes
+# ========================================
+volumes:
+  vault-1-data:
+  vault-1-logs:
+  vault-2-data:
+  vault-2-logs:
+  vault-3-data:
+  vault-3-logs:
+  consul-data:
+  rabbitmq-1-data:
+  rabbitmq-2-data:
+  rabbitmq-3-data:
+  redis-primary-data:
+  redis-replica-1-data:
+  redis-replica-2-data:
+  postgres-data:
+  prometheus-data:
+  grafana-data:
+  elasticsearch-data:

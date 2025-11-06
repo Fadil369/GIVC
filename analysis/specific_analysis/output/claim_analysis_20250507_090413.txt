@@ -1,0 +1,127 @@
+Medical Billing Rejection Analysis Report
+Generated on: 2025-05-07 09:04:13
+========================================
+
+Executive Summary
+----------------------------------------
+      Total Rejected Amount $1,543,370.26
+       Top Rejection Reason         Other
+Doctor with Most Rejections      22398782
+  Total Rejections Analyzed           289
+
+Rejection Categories
+--------------------
+      rejection_category  count
+                   Other    200
+medication not indicated     56
+quantity limits exceeded     17
+  authorization required      9
+         duplicate claim      6
+            coding error      1
+
+Doctor Analysis
+---------------
+Doctor_Code  rejection_count
+   22398782              109
+ 1400914988              106
+ 2517394082                4
+ 1400765839                3
+14001456346                2
+ 1400136826                2
+ 1400207514                2
+ 1400252410                2
+ 1400356784                2
+ 1401399661                2
+
+Doctor Rejection Types
+----------------------
+Doctor_Code       rejection_category  count
+ 1400914988                    Other     66
+   22398782                    Other     60
+ 1400914988 medication not indicated     29
+   22398782 medication not indicated     27
+   22398782 quantity limits exceeded     10
+   22398782   authorization required      9
+ 1400914988 quantity limits exceeded      7
+ 1400914988          duplicate claim      4
+ 2517394082                    Other      4
+ 1400765839                    Other      3
+ 1400356784                    Other      2
+ 1400252410                    Other      2
+ 1401399661                    Other      2
+ 1400207514                    Other      2
+ 1400136826                    Other      2
+14001456346                    Other      2
+ 1400754377                    Other      2
+   22398782          duplicate claim      2
+ 1400196640                    Other      1
+ 1400091860                    Other      1
+
+Service Analysis
+----------------
+Service Analysis data not available.
+
+Service Code Analysis
+---------------------
+Service Code Analysis data not available.
+
+Financial Impact by Doctor
+--------------------------
+Doctor_Code Rejected_Amount
+ 2517394082      582,958.35
+   22398782      364,249.68
+ 1400914988      202,096.29
+ 1400325571       48,698.01
+ 1400252410       39,420.07
+ 1400309632       29,028.28
+ 1400308377       26,974.05
+ 1400230744       22,889.00
+ 1400398796       18,398.67
+ 1400207514       16,336.61
+
+Financial Impact by Service
+---------------------------
+Financial Impact by Service data not available.
+
+Common Diagnosis Codes
+----------------------
+diagnosis_code  count
+         C50.9      5
+         J15.2      5
+           A09      5
+           J45      5
+           C45      3
+           R10      3
+         C43.9      3
+           J17      3
+         K29.1      3
+         J30.1      2
+
+Common Medication Codes
+-----------------------
+medication_code  count
+     2812211518     10
+     1506222195      8
+      52-124-98      6
+     3010222852      6
+     2301221622      4
+     1710211185      4
+     0508210905      4
+     0801233059      4
+     1001233084      4
+     219-368-20      4
+
+Resolution Suggestions
+----------------------
+      rejection_category  count                                                                                                                                                                                                 resolution_suggestions
+                   Other    200                                        Review payer guidelines for specific requirements; Contact payer for clarification; Verify all claim information for accuracy; Consider appealing with additional documentation
+medication not indicated     56 Review medication-diagnosis matching guidelines; Ensure appropriate documentation of medical necessity; Check diagnosis codes for accuracy and specificity; Consider alternative medications with approved indications
+quantity limits exceeded     17                                        Review payer guidelines for specific requirements; Contact payer for clarification; Verify all claim information for accuracy; Consider appealing with additional documentation
+  authorization required      9                               Verify authorization requirements before service; Implement authorization tracking system; Document authorization number on all claims; Create process for checking authorization status
+         duplicate claim      6                                                              Implement claim tracking system; Verify claim status before resubmission; Use unique identifiers for all claims; Document all claim submission activities
+            coding error      1                                          Implement regular coding audit process; Provide ongoing training on correct code usage; Use coding verification software; Consult current coding guidelines for proper coding
+
+
+
+
+https://tsbcloud.itu.int/u/FADILMOHAM

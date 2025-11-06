@@ -1,0 +1,178 @@
+{
+  "name": "ClaimLinc Bupa Integration Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "target_path": "claimlinc-bupa",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-bupa-1",
+      "name": "Bupa Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "claimlinc-bupa-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process incoming claim data for Bupa\nconst claimData = $input.first().json.body;\n\n// Extract and validate required fields\nconst processedData = {\n  claimId: claimData.claim_id || `BPA-${Date.now()}`,\n  provider: {\n    name: claimData.provider?.name || \"Al Hayat Hospital\",\n    code: claimData.provider?.code || \"AH001\",\n    branch: claimData.provider?.branch || \"MainRiyadh\"\n  },\n  patient: {\n    member_id: claimData.patient?.member_id,\n    name: claimData.patient?.name,\n    national_id: claimData.patient?.national_id\n  },\n  claim_details: {\n    service_date: claimData.claim_details?.service_date,\n    total_amount: claimData.claim_details?.total_amount,\n    currency: claimData.claim_details?.currency || \"SAR\",\n    diagnosis_codes: claimData.claim_details?.diagnosis_codes || [],\n    procedure_codes: claimData.claim_details?.procedure_codes || []\n  }\n};\n\n// Validation\nconst errors = [];\nif (!processedData.patient.member_id) errors.push(\"Missing member ID\");\nif (!processedData.claim_details.service_date) errors.push(\"Missing service date\");\nif (!processedData.claim_details.total_amount) errors.push(\"Missing total amount\");\n\nreturn {\n  data: processedData,\n  valid: errors.length === 0,\n  errors: errors,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "code-bupa-process-1",
+      "name": "Process Claim Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.valid }}",
+              "operation": "equal",
+              "value2": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "if-valid-bupa-1",
+      "name": "Is Data Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "python",
+        "parameters": "-c",
+        "commandToRun": "import asyncio\nimport sys\nimport os\nsys.path.append('/app')\n\nfrom src.portal_automation.bupa_bot import BupaPortalBot\n\nasync def run_bupa_automation(claim_data):\n    async with BupaPortalBot(headless=True) as bot:\n        # Login using environment variables\n        username = os.getenv('BUPA_USERNAME')\n        password = os.getenv('BUPA_PASSWORD')\n        \n        if not username or not password:\n            return {'success': False, 'error': 'Missing Bupa credentials'}\n        \n        # Login\n        login_success = await bot.login(username, password)\n        if not login_success:\n            return {'success': False, 'error': 'Login failed'}\n        \n        # Navigate to claims section\n        nav_success = await bot.navigate_to_claims_section()\n        if not nav_success:\n            return {'success': False, 'error': 'Navigation to claims failed'}\n        \n        # Create temporary file for upload\n        import json\n        temp_file = f'/tmp/bupa_claim_{claim_data[\"data\"][\"claimId\"]}.json'\n        with open(temp_file, 'w') as f:\n            json.dump(claim_data['data'], f)\n        \n        # Upload claim\n        submission_id = await bot.upload_claim_file(temp_file)\n        if not submission_id:\n            return {'success': False, 'error': 'File upload failed'}\n        \n        # Clean up\n        os.remove(temp_file)\n        \n        return {\n            'success': True,\n            'submission_id': submission_id,\n            'status': 'submitted',\n            'timestamp': new Date().toISOString()\n        }\n\n# Run the automation\nresult = asyncio.run(run_bupa_automation($input.first().json))\nreturn result"
+      },
+      "id": "code-bupa-run-1",
+      "name": "Run Bupa Automation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-bupa-success-1",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle validation errors\nconst errors = $input.first().json.errors;\nconst errorMessage = {\n  success: false,\n  error: 'Validation failed',\n  details: errors,\n  timestamp: new Date().toISOString()\n};\n\nreturn errorMessage;"
+      },
+      "id": "code-bupa-error-1",
+      "name": "Validation Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-bupa-error-1",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 400]
+    }
+  ],
+  "connections": {
+    "Bupa Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Claim Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Claim Data": {
+      "main": [
+        [
+          {
+            "node": "Is Data Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Data Valid?": {
+      "main": [
+        [
+          {
+            "node": "Run Bupa Automation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Bupa Automation": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation Error": {
+      "main": [
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "createdAt": "2025-11-05T12:12:00.000Z",
+      "updatedAt": "2025-11-05T12:12:00.000Z",
+      "id": "claimlinc-bupa",
+      "name": "ClaimLinc Bupa"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-05T12:12:00.000Z",
+  "versionId": "1"
+}
