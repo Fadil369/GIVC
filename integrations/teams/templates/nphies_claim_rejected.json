@@ -1,0 +1,132 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "Container",
+            "style": "attention",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "❌ Claim Rejected",
+                "weight": "bolder",
+                "size": "large",
+                "color": "attention"
+              }
+            ]
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {% if data.claim_id %}
+              {
+                "title": "Claim ID:",
+                "value": "{{ data.claim_id }}"
+              },
+              {% endif %}
+              {
+                "title": "Rejected At:",
+                "value": "{{ timestamp|format_datetime('SHORT') }}"
+              },
+              {% if data.patient_id %}
+              {
+                "title": "Patient ID:",
+                "value": "{{ data.patient_id }}"
+              },
+              {% endif %}
+              {% if data.payer %}
+              {
+                "title": "Payer:",
+                "value": "{{ data.payer }}"
+              },
+              {% endif %}
+              {% if data.rejection_code %}
+              {
+                "title": "Rejection Code:",
+                "value": "{{ data.rejection_code }}"
+              }
+              {% endif %}
+            ]
+          },
+          {% if data.rejection_reason %}
+          {
+            "type": "TextBlock",
+            "text": "**Reason:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "TextBlock",
+            "text": "{{ data.rejection_reason }}",
+            "wrap": true,
+            "color": "attention"
+          },
+          {% endif %}
+          {% if data.errors %}
+          {
+            "type": "TextBlock",
+            "text": "**Errors:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "Container",
+            "items": [
+              {% for error in data.errors %}
+              {
+                "type": "TextBlock",
+                "text": "• {{ error.field|default('Unknown') }}: {{ error.message }}",
+                "wrap": true,
+                "color": "attention"
+              }{% if not loop.last %},{% endif %}
+              {% endfor %}
+            ]
+          },
+          {% endif %}
+          {
+            "type": "TextBlock",
+            "text": "**Next Steps:** Review rejection reason and resubmit corrected claim.",
+            "wrap": true,
+            "spacing": "medium",
+            "isSubtle": true
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.Execute",
+            "title": "✅ Acknowledge",
+            "verb": "acknowledge",
+            "data": {
+              "action": "acknowledge",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}"
+            }
+          },
+          {% if data.claim_id %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📝 Edit & Resubmit",
+            "url": "{{ claimlinc_url }}/claims/{{ data.claim_id }}/edit"
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "📄 View Claim Details",
+            "url": "{{ claimlinc_url }}/claims/{{ data.claim_id }}"
+          },
+          {% endif %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📚 Rejection Code Guide",
+            "url": "{{ nphies_docs_url }}/rejection-codes/{{ data.rejection_code|default('all') }}"
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+  ]
+}

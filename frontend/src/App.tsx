@@ -30,6 +30,7 @@ const MedicalAgents = lazy(() => import('@/components/MedicalAgents/MedicalAgent
 const CustomerSupportHub = lazy(() => import('@/components/CustomerSupport/CustomerSupportHub'));
 const ClaimsProcessingCenter = lazy(() => import('@/components/ClaimsProcessing/ClaimsProcessingCenter'));
 const RiskAssessmentEngine = lazy(() => import('@/components/RiskAssessment/RiskAssessmentEngine'));
+const FollowUpWorksheet = lazy(() => import('@/components/FollowUps/FollowUpWorksheet'));
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
                         <Route path="support" element={<ErrorBoundary><CustomerSupportHub /></ErrorBoundary>} />
                         <Route path="claims" element={<ErrorBoundary><ClaimsProcessingCenter /></ErrorBoundary>} />
                         <Route path="risk-assessment" element={<ErrorBoundary><RiskAssessmentEngine /></ErrorBoundary>} />
+                        <Route path="follow-ups" element={<ErrorBoundary><FollowUpWorksheet /></ErrorBoundary>} />
                       </Route>
                       <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>

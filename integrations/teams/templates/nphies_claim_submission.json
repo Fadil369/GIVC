@@ -1,0 +1,151 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "Container",
+            "style": "good",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "✅ NPHIES Claim Submitted",
+                "weight": "bolder",
+                "size": "large",
+                "color": "good"
+              }
+            ]
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {% if data.claim_id %}
+              {
+                "title": "Claim ID:",
+                "value": "{{ data.claim_id }}"
+              },
+              {% endif %}
+              {% if data.poll_id %}
+              {
+                "title": "Poll ID:",
+                "value": "{{ data.poll_id }}"
+              },
+              {% endif %}
+              {
+                "title": "Submitted:",
+                "value": "{{ timestamp|format_datetime('SHORT') }}"
+              },
+              {% if data.patient_id %}
+              {
+                "title": "Patient ID:",
+                "value": "{{ data.patient_id }}"
+              },
+              {% endif %}
+              {% if data.provider %}
+              {
+                "title": "Provider:",
+                "value": "{{ data.provider }}"
+              },
+              {% endif %}
+              {% if data.payer %}
+              {
+                "title": "Payer:",
+                "value": "{{ data.payer }}"
+              },
+              {% endif %}
+              {% if data.total_amount %}
+              {
+                "title": "Total Amount:",
+                "value": "{{ data.total_amount }}"
+              }
+              {% endif %}
+            ]
+          },
+          {% if data.services %}
+          {
+            "type": "TextBlock",
+            "text": "**Services:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "Container",
+            "items": [
+              {% for service in data.services %}
+              {
+                "type": "ColumnSet",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                      {
+                        "type": "TextBlock",
+                        "text": "• {{ service.description }}",
+                        "wrap": true
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                      {
+                        "type": "TextBlock",
+                        "text": "{{ service.amount }}",
+                        "horizontalAlignment": "right"
+                      }
+                    ]
+                  }
+                ]
+              }{% if not loop.last %},{% endif %}
+              {% endfor %}
+            ]
+          },
+          {% endif %}
+          {
+            "type": "TextBlock",
+            "text": "**Status:** Polling for response every 60 seconds. Expected response in 5-10 minutes.",
+            "wrap": true,
+            "spacing": "medium",
+            "isSubtle": true
+          }
+        ],
+        "actions": [
+          {% if data.poll_id %}
+          {
+            "type": "Action.Execute",
+            "title": "🔍 Poll Now",
+            "verb": "poll",
+            "data": {
+              "action": "poll_nphies_response",
+              "poll_id": "{{ data.poll_id }}",
+              "claim_id": "{{ data.claim_id }}",
+              "correlation_id": "{{ correlation_id }}"
+            }
+          },
+          {% endif %}
+          {% if data.claim_id %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📄 View Claim Details",
+            "url": "{{ claimlinc_url }}/claims/{{ data.claim_id }}"
+          },
+          {% endif %}
+          {% if data.poll_id %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📊 NPHIES Dashboard",
+            "url": "{{ nphies_portal_url }}/claims/{{ data.poll_id }}"
+          }
+          {% endif %}
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+  ]
+}

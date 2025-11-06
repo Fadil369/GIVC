@@ -1,0 +1,198 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "Container",
+            "style": "{{ priority_color }}",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "{{ alert_icon }} Follow-up: {{ data.status_display }}",
+                "weight": "bolder",
+                "size": "large",
+                "wrap": true
+              },
+              {
+                "type": "TextBlock",
+                "text": "{{ data.branch }} · {{ data.insurance_company }}",
+                "spacing": "small",
+                "wrap": true,
+                "isSubtle": true
+              }
+            ]
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {
+                "title": "Batch #:",
+                "value": "{{ data.batch_no or '—' }}"
+              },
+              {
+                "title": "Processor:",
+                "value": "{{ data.processor or 'Unassigned' }}"
+              },
+              {
+                "title": "Status:",
+                "value": "{{ data.status_display }}"
+              },
+              {
+                "title": "Due Date:",
+                "value": "{{ data.due_date_display }}"
+              },
+              {
+                "title": "Re-submission:",
+                "value": "{{ data.resubmission_date_display }}"
+              }
+            ]
+          },
+          {
+            "type": "ColumnSet",
+            "columns": [
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "**Billing**",
+                    "weight": "bolder"
+                  },
+                  {
+                    "type": "TextBlock",
+                    "text": "{{ data.billing_amount_display }}",
+                    "wrap": true
+                  },
+                  {
+                    "type": "TextBlock",
+                    "text": "Approved: {{ data.approved_to_pay_display }}",
+                    "spacing": "small",
+                    "wrap": true
+                  }
+                ]
+              },
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "**Rejections**",
+                    "weight": "bolder"
+                  },
+                  {
+                    "type": "TextBlock",
+                    "text": "{{ data.final_rejection_display }} ({{ data.final_rejection_percent_display }})",
+                    "wrap": true
+                  },
+                  {
+                    "type": "TextBlock",
+                    "text": "Recovery: {{ data.recovery_amount_display }}",
+                    "spacing": "small",
+                    "wrap": true
+                  }
+                ]
+              }
+            ]
+          }
+          {% if data.alerts %},
+          {
+            "type": "TextBlock",
+            "text": "**Attention Needed:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "Container",
+            "items": [
+              {% for alert in data.alerts %}
+              {
+                "type": "TextBlock",
+                "text": "• {{ alert }}",
+                "wrap": true,
+                "spacing": "small"
+              }{% if not loop.last %},
+              {% endif %}
+              {% endfor %}
+            ]
+          }
+          {% endif %}
+          {% if data.portal_resources %},
+          {
+            "type": "TextBlock",
+            "text": "**Related Portals & Channels:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "Container",
+            "items": [
+              {% for portal in data.portal_resources %}
+              {
+                "type": "TextBlock",
+                "text": "- {{ portal.name }}{% if portal.url %} [Open]({{ portal.url }}){% endif %}{% if portal.description %} — {{ portal.description }}{% endif %}",
+                "wrap": true,
+                "spacing": "small"
+              }{% if not loop.last %},
+              {% endif %}
+              {% endfor %}
+            ]
+          }
+          {% endif %},
+          {
+            "type": "FactSet",
+            "spacing": "medium",
+            "facts": [
+              {
+                "title": "Stakeholders:",
+                "value": "{{ stakeholders_formatted }}"
+              },
+              {
+                "title": "Correlation:",
+                "value": "{{ correlation_id }}"
+              },
+              {
+                "title": "Recorded:",
+                "value": "{{ timestamp|format_datetime('MEDIUM') }}"
+              }
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.Execute",
+            "title": "✅ Acknowledge",
+            "verb": "acknowledge",
+            "data": {
+              "action": "acknowledge",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}",
+              "context": "followup"
+            }
+          }
+          {% if priority.value in ['critical', 'high'] %},
+          {
+            "type": "Action.Execute",
+            "title": "🚨 Escalate",
+            "verb": "escalate",
+            "style": "destructive",
+            "data": {
+              "action": "escalate",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}",
+              "context": "followup"
+            }
+          }
+          {% endif %}
+        ]
+      }
+    }
+  ]
+}

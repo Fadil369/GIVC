@@ -1,0 +1,31 @@
+{
+  "name": "team-worksheet-workers",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers API for Team Worksheet",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "db:migrate": "wrangler d1 migrations apply team-worksheet-db",
+    "db:migrate:local": "wrangler d1 migrations apply team-worksheet-db --local",
+    "db:console": "wrangler d1 execute team-worksheet-db --command",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.0.0",
+    "@hono/zod-validator": "^0.2.0",
+    "zod": "^3.22.4",
+    "jose": "^5.2.0",
+    "bcryptjs": "^2.4.3",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "@types/bcryptjs": "^2.4.6",
+    "wrangler": "^3.22.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  }
+}

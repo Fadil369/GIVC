@@ -1,0 +1,143 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "Container",
+            "style": "attention",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "🚨 NPHIES API Error",
+                "weight": "bolder",
+                "size": "large",
+                "color": "attention"
+              }
+            ]
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {% set comma = joiner(',') %}
+              {% if data.error_type %}
+              {{ comma() }}{
+                "title": "Error Type:",
+                "value": "{{ data.error_type }}"
+              }
+              {% endif %}
+              {{ comma() }}{
+                "title": "Occurred At:",
+                "value": "{{ timestamp|format_datetime('SHORT') }}"
+              }
+              {{ comma() }}{
+                "title": "Correlation ID:",
+                "value": "{{ correlation_id }}"
+              }
+              {% if data.http_status %}
+              {{ comma() }}{
+                "title": "HTTP Status:",
+                "value": "{{ data.http_status }}"
+              }
+              {% endif %}
+              {% if data.operation %}
+              {{ comma() }}{
+                "title": "Operation:",
+                "value": "{{ data.operation }}"
+              }
+              {% endif %}
+              {% if data.endpoint %}
+              {{ comma() }}{
+                "title": "Endpoint:",
+                "value": "{{ data.endpoint }}"
+              }
+              {% endif %}
+            ]
+          },
+          {% if data.error_message %}
+          {
+            "type": "TextBlock",
+            "text": "**Error Message:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "TextBlock",
+            "text": "{{ data.error_message }}",
+            "wrap": true,
+            "color": "attention"
+          },
+          {% endif %}
+          {% if data.certificate_expires %}
+          {
+            "type": "TextBlock",
+            "text": "⚠️ **Certificate Issue:** mTLS certificate {% if data.certificate_expired %}has expired{% else %}expires {{ data.certificate_expires|format_datetime('SHORT') }}{% endif %}",
+            "wrap": true,
+            "color": "attention",
+            "spacing": "medium"
+          },
+          {% endif %}
+          {% if data.jwt_error %}
+          {
+            "type": "TextBlock",
+            "text": "⚠️ **JWT Error:** {{ data.jwt_error }}",
+            "wrap": true,
+            "color": "attention",
+            "spacing": "medium"
+          },
+          {% endif %}
+          {
+            "type": "TextBlock",
+            "text": "**Recommended Actions:**\n{% if data.error_type == 'certificate' %}1. Renew mTLS certificate in Vault\n2. Restart NPHIES workers\n3. Verify connectivity{% elif data.error_type == 'jwt' %}1. Check JWT signing key in Vault\n2. Verify token expiration time\n3. Review NPHIES token endpoint{% elif data.error_type == 'network' %}1. Check NPHIES endpoint availability\n2. Verify firewall rules\n3. Review network logs{% else %}1. Check NPHIES status page\n2. Review API documentation\n3. Contact NPHIES support if issue persists{% endif %}",
+            "wrap": true,
+            "spacing": "medium"
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.Execute",
+            "title": "✅ Acknowledge",
+            "verb": "acknowledge",
+            "data": {
+              "action": "acknowledge",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}"
+            }
+          },
+          {
+            "type": "Action.Execute",
+            "title": "🚨 Escalate",
+            "verb": "escalate",
+            "style": "positive",
+            "data": {
+              "action": "escalate",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}",
+              "escalation_tier": "on-call-integration"
+            }
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "📋 View Logs",
+            "url": "{{ kibana_url }}/app/logs?correlation_id={{ correlation_id }}"
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "📊 NPHIES Status",
+            "url": "{{ nphies_status_url }}"
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "📖 API Docs",
+            "url": "{{ nphies_docs_url }}/api-reference"
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+  ]
+}

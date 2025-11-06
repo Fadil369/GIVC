@@ -50,6 +50,16 @@ const Sidebar = ({ isOpen, onToggle, isMobile }) => {
       badge: 'جديد'
     },
     {
+      id: 'follow-ups',
+      name: 'متابعة المطالبات',
+      englishName: 'Follow-Ups',
+      path: '/follow-ups',
+      icon: '🧾',
+      description: 'إدارة حالات المتابعة',
+      englishDescription: 'Follow-up Management',
+      badge: 'Live'
+    },
+    {
       id: 'vault',
       name: 'خزينة الطب',
       englishName: 'MediVault',

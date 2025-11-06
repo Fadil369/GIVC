@@ -48,6 +48,12 @@ except Exception as e:
     PriorAuthorizationService = MockService
     AnalyticsService = MockService
 
+try:
+    from routers.follow_up_router import router as follow_up_router
+except Exception as exc:
+    follow_up_router = None
+    print(f"⚠️  Follow-up router unavailable: {exc}")
+
 # Initialize FastAPI app
 app = FastAPI(
     title="GIVC Healthcare Platform API",
@@ -83,6 +89,9 @@ else:
     claims_service = MockService()
     prior_auth_service = MockService()
     analytics_service = MockService()
+
+if 'follow_up_router' in globals() and follow_up_router is not None:
+    app.include_router(follow_up_router)
 
 # =============================================================================
 # Pydantic Models

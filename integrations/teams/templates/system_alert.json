@@ -1,0 +1,178 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "Container",
+            "style": "{{ priority_color }}",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "{{ alert_icon }} {{ event_type|replace('system.', '')|replace('.', ' ')|replace('_', ' ')|title }}",
+                "weight": "bolder",
+                "size": "large",
+                "color": "{% if priority.value == 'critical' %}attention{% else %}default{% endif %}"
+              }
+            ]
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {% if data.service %}
+              {
+                "title": "Service:",
+                "value": "{{ data.service }}"
+              },
+              {% endif %}
+              {
+                "title": "Priority:",
+                "value": "{{ priority_formatted }}"
+              },
+              {
+                "title": "Occurred At:",
+                "value": "{{ timestamp|format_datetime('SHORT') }}"
+              },
+              {
+                "title": "Correlation ID:",
+                "value": "{{ correlation_id }}"
+              },
+              {% if data.node %}
+              {
+                "title": "Node:",
+                "value": "{{ data.node }}"
+              },
+              {% endif %}
+              {% if data.pod %}
+              {
+                "title": "Pod:",
+                "value": "{{ data.pod }}"
+              },
+              {% endif %}
+              {% if data.namespace %}
+              {
+                "title": "Namespace:",
+                "value": "{{ data.namespace }}"
+              }
+              {% endif %}
+            ]
+          },
+          {% if data.message %}
+          {
+            "type": "TextBlock",
+            "text": "**Message:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "TextBlock",
+            "text": "{{ data.message }}",
+            "wrap": true,
+            "color": "{% if priority.value == 'critical' %}attention{% elif priority.value == 'high' %}warning{% else %}default{% endif %}"
+          },
+          {% endif %}
+          {% if data.metrics %}
+          {
+            "type": "TextBlock",
+            "text": "**Metrics:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {% for key, value in data.metrics.items() %}
+              {
+                "title": "{{ key|replace('_', ' ')|title }}:",
+                "value": "{{ value }}"
+              }{% if not loop.last %},{% endif %}
+              {% endfor %}
+            ]
+          },
+          {% endif %}
+          {% if event_type == 'system.rabbitmq.node_down' %}
+          {
+            "type": "TextBlock",
+            "text": "**Impact:** Message delivery may be delayed. Cluster has {{ data.healthy_nodes|default(2) }} healthy nodes.",
+            "wrap": true,
+            "color": "attention",
+            "spacing": "medium"
+          }
+          {% elif event_type == 'system.redis.connection_lost' %}
+          {
+            "type": "TextBlock",
+            "text": "**Impact:** Session state and caching unavailable. Replica failover in progress.",
+            "wrap": true,
+            "color": "attention",
+            "spacing": "medium"
+          }
+          {% elif event_type == 'system.postgres.replication_lag' %}
+          {
+            "type": "TextBlock",
+            "text": "**Impact:** Read replicas are {{ data.lag_seconds|default('unknown') }} seconds behind primary. Read queries may show stale data.",
+            "wrap": true,
+            "color": "warning",
+            "spacing": "medium"
+          }
+          {% elif event_type == 'system.kubernetes.pod_crashlooping' %}
+          {
+            "type": "TextBlock",
+            "text": "**Impact:** Service {{ data.service }} is unstable. Crash count: {{ data.crash_count|default(0) }}",
+            "wrap": true,
+            "color": "attention",
+            "spacing": "medium"
+          }
+          {% endif %}
+        ],
+        "actions": [
+          {
+            "type": "Action.Execute",
+            "title": "✅ Acknowledge",
+            "verb": "acknowledge",
+            "data": {
+              "action": "acknowledge",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}"
+            }
+          },
+          {% if priority.value in ['critical', 'high'] %}
+          {
+            "type": "Action.Execute",
+            "title": "🚨 Escalate to On-Call",
+            "verb": "escalate",
+            "style": "positive",
+            "data": {
+              "action": "escalate",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}",
+              "escalation_tier": "on-call-sre"
+            }
+          },
+          {% endif %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📊 Grafana Dashboard",
+            "url": "{{ grafana_url }}/d/{{ data.dashboard_id|default('system-overview') }}"
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "📋 View Logs",
+            "url": "{{ kibana_url }}/app/logs?correlation_id={{ correlation_id }}"
+          },
+          {% if data.runbook_url %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📖 Runbook",
+            "url": "{{ data.runbook_url }}"
+          }
+          {% endif %}
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+  ]
+}

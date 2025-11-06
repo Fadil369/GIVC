@@ -1,0 +1,172 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "Container",
+            "style": "{{ priority_color }}",
+            "items": [
+              {
+                "type": "ColumnSet",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "url": "https://raw.githubusercontent.com/hashicorp/vault/main/website/public/img/logo-hashicorp.svg",
+                        "size": "small"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                      {
+                        "type": "TextBlock",
+                        "text": "🔒 Vault {{ event_type|replace('vault.', '')|replace('.', ' ')|replace('_', ' ')|title }}",
+                        "weight": "bolder",
+                        "size": "large",
+                        "color": "{% if priority.value == 'critical' %}attention{% else %}default{% endif %}"
+                      },
+                      {
+                        "type": "TextBlock",
+                        "text": "{{ data.node|default('Unknown Node') }}",
+                        "isSubtle": true,
+                        "spacing": "none"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {
+                "title": "Priority:",
+                "value": "{{ priority_formatted }}"
+              },
+              {
+                "title": "Event Type:",
+                "value": "{{ event_type }}"
+              },
+              {
+                "title": "Event Time:",
+                "value": "{{ timestamp|format_datetime('SHORT') }}"
+              },
+              {
+                "title": "Correlation ID:",
+                "value": "{{ correlation_id }}"
+              },
+              {
+                "title": "Stakeholders:",
+                "value": "{{ stakeholders_formatted }}"
+              }
+              {% if data.cluster_id %},
+              {
+                "title": "Cluster ID:",
+                "value": "{{ data.cluster_id }}"
+              }
+              {% endif %}
+              {% if data.sealed_at %},
+              {
+                "title": "Sealed At:",
+                "value": "{{ data.sealed_at|format_datetime('SHORT') }}"
+              }
+              {% endif %}
+              {% if data.auto_unseal_error %},
+              {
+                "title": "Auto-unseal:",
+                "value": "Failed: {{ data.auto_unseal_error }}"
+              }
+              {% endif %}
+              {% if data.certificate_expires %},
+              {
+                "title": "Expires:",
+                "value": "{{ data.certificate_expires|format_datetime('SHORT') }}"
+              }
+              {% endif %}
+            ]
+          },
+          {% if event_type == 'vault.seal.detected' %}
+          {
+            "type": "TextBlock",
+            "text": "**Impact:** All write operations blocked. Read operations continue from standby nodes.",
+            "wrap": true,
+            "spacing": "medium",
+            "color": "attention"
+          },
+          {
+            "type": "TextBlock",
+            "text": "**Recommended Actions:**\n1. Verify Azure Key Vault connectivity\n2. Manual unseal via CLI if AKV unavailable\n3. Check audit logs for root cause",
+            "wrap": true
+          }
+          {% elif event_type == 'vault.certificate.expiring' %}
+          {
+            "type": "TextBlock",
+            "text": "**Action Required:** NPHIES mTLS certificate expires soon. Renew certificate to avoid service disruption.",
+            "wrap": true,
+            "spacing": "medium",
+            "color": "warning"
+          }
+          {% elif event_type == 'vault.secret.rotation.complete' %}
+          {
+            "type": "TextBlock",
+            "text": "✅ Secret rotation completed successfully. All services have been updated with new credentials.",
+            "wrap": true,
+            "spacing": "medium",
+            "color": "good"
+          }
+          {% endif %}
+        ],
+        "actions": [
+          {
+            "type": "Action.Execute",
+            "title": "✅ Acknowledge",
+            "verb": "acknowledge",
+            "data": {
+              "action": "acknowledge",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}"
+            },
+            "associatedInputs": "auto"
+          },
+          {% if priority.value in ['critical', 'high'] %}
+          {
+            "type": "Action.Execute",
+            "title": "🚨 Escalate to On-Call",
+            "verb": "escalate",
+            "style": "positive",
+            "data": {
+              "action": "escalate",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}",
+              "escalation_tier": "on-call-sre"
+            }
+          },
+          {% endif %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📊 View Dashboard",
+            "url": "{{ grafana_url }}/d/vault-health"
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "📖 Runbook",
+            "url": "{{ vault_runbook_url }}"
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+  ]
+}

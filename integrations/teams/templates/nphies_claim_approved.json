@@ -1,0 +1,159 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "Container",
+            "style": "good",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "✅ Claim Approved",
+                "weight": "bolder",
+                "size": "large",
+                "color": "good"
+              }
+            ]
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {% if data.claim_id %}
+              {
+                "title": "Claim ID:",
+                "value": "{{ data.claim_id }}"
+              },
+              {% endif %}
+              {% if data.approval_number %}
+              {
+                "title": "Approval #:",
+                "value": "{{ data.approval_number }}"
+              },
+              {% endif %}
+              {
+                "title": "Approved At:",
+                "value": "{{ timestamp|format_datetime('SHORT') }}"
+              },
+              {% if data.patient_id %}
+              {
+                "title": "Patient ID:",
+                "value": "{{ data.patient_id }}"
+              },
+              {% endif %}
+              {% if data.payer %}
+              {
+                "title": "Payer:",
+                "value": "{{ data.payer }}"
+              },
+              {% endif %}
+              {% if data.approved_amount %}
+              {
+                "title": "Approved Amount:",
+                "value": "{{ data.approved_amount }}"
+              },
+              {% endif %}
+              {% if data.net_amount %}
+              {
+                "title": "Net Amount:",
+                "value": "{{ data.net_amount }}"
+              }
+              {% endif %}
+            ]
+          },
+          {% if data.patient_share or data.payer_share %}
+          {
+            "type": "TextBlock",
+            "text": "**Payment Breakdown:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "ColumnSet",
+            "columns": [
+              {% if data.patient_share %}
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "Patient Share:",
+                    "wrap": true
+                  },
+                  {
+                    "type": "TextBlock",
+                    "text": "{{ data.patient_share }}",
+                    "weight": "bolder",
+                    "size": "large",
+                    "spacing": "none"
+                  }
+                ]
+              },
+              {% endif %}
+              {% if data.payer_share %}
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "Payer Share:",
+                    "wrap": true
+                  },
+                  {
+                    "type": "TextBlock",
+                    "text": "{{ data.payer_share }}",
+                    "weight": "bolder",
+                    "size": "large",
+                    "spacing": "none"
+                  }
+                ]
+              }
+              {% endif %}
+            ]
+          },
+          {% endif %}
+          {% if data.notes %}
+          {
+            "type": "TextBlock",
+            "text": "**Notes:** {{ data.notes }}",
+            "wrap": true,
+            "spacing": "medium",
+            "isSubtle": true
+          }
+          {% endif %}
+        ],
+        "actions": [
+          {
+            "type": "Action.Execute",
+            "title": "✅ Acknowledge",
+            "verb": "acknowledge",
+            "data": {
+              "action": "acknowledge",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}"
+            }
+          },
+          {% if data.claim_id %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📄 View Claim Details",
+            "url": "{{ claimlinc_url }}/claims/{{ data.claim_id }}"
+          },
+          {% endif %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "💳 Process Payment",
+            "url": "{{ claimlinc_url }}/payments/new?claim={{ data.claim_id }}"
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+  ]
+}

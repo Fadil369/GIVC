@@ -29,7 +29,10 @@ export default defineConfig({
         },
       },
     },
-    include: ['frontend/src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+    include: [
+      'frontend/src/**/*.{test,spec}.{js,ts,jsx,tsx}',
+      'tests/**/*.{test,spec}.{js,ts,jsx,tsx}',
+    ],
     exclude: ['node_modules', 'dist', '.git'],
   },
   resolve: {

@@ -1,0 +1,158 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "Container",
+            "style": "warning",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "⚠️ {{ event_type|replace('celery.', '')|replace('.', ' ')|replace('_', ' ')|title }}",
+                "weight": "bolder",
+                "size": "large"
+              }
+            ]
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {% if data.task_name %}
+              {
+                "title": "Task Name:",
+                "value": "{{ data.task_name }}"
+              },
+              {% endif %}
+              {% if data.task_id %}
+              {
+                "title": "Task ID:",
+                "value": "{{ data.task_id }}"
+              },
+              {% endif %}
+              {
+                "title": "Correlation ID:",
+                "value": "{{ correlation_id }}"
+              },
+              {% if data.retry_count is defined %}
+              {
+                "title": "Retry Attempts:",
+                "value": "{{ data.retry_count }}/{{ data.max_retries|default(5) }} {% if data.retry_count >= data.max_retries|default(5) %}(exhausted){% endif %}"
+              },
+              {% endif %}
+              {% if data.queue %}
+              {
+                "title": "Queue:",
+                "value": "{{ data.queue }}"
+              },
+              {% endif %}
+              {% if data.worker %}
+              {
+                "title": "Worker:",
+                "value": "{{ data.worker }}"
+              },
+              {% endif %}
+              {% if data.error %}
+              {
+                "title": "Error:",
+                "value": "{{ data.error }}"
+              }
+              {% endif %}
+            ]
+          },
+          {% if data.patient_id or data.member_id %}
+          {
+            "type": "TextBlock",
+            "text": "**Patient Context:**",
+            "weight": "bolder",
+            "spacing": "medium"
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {% if data.patient_id %}
+              {
+                "title": "Patient ID:",
+                "value": "{{ data.patient_id }}"
+              },
+              {% endif %}
+              {% if data.member_id %}
+              {
+                "title": "Member ID:",
+                "value": "{{ data.member_id }}"
+              },
+              {% endif %}
+              {% if data.payer %}
+              {
+                "title": "Payer:",
+                "value": "{{ data.payer }}"
+              }
+              {% endif %}
+            ]
+          },
+          {% endif %}
+          {
+            "type": "TextBlock",
+            "text": "**Next Steps:** {% if data.retry_count >= data.max_retries|default(5) %}Task moved to Dead Letter Queue (DLQ). Manual intervention required.{% else %}Task will be retried automatically.{% endif %}",
+            "wrap": true,
+            "color": "attention",
+            "spacing": "medium"
+          }
+        ],
+        "actions": [
+          {% if data.task_id and data.retry_count >= data.max_retries|default(5) %}
+          {
+            "type": "Action.Execute",
+            "title": "🔄 Retry Task",
+            "verb": "retry",
+            "data": {
+              "action": "retry_task",
+              "task_id": "{{ data.task_id }}",
+              "queue": "{{ data.queue|default('default') }}",
+              "correlation_id": "{{ correlation_id }}"
+            }
+          },
+          {
+            "type": "Action.Execute",
+            "title": "🗑️ Discard Task",
+            "verb": "discard",
+            "style": "destructive",
+            "data": {
+              "action": "discard_task",
+              "task_id": "{{ data.task_id }}",
+              "correlation_id": "{{ correlation_id }}"
+            }
+          },
+          {% endif %}
+          {
+            "type": "Action.Execute",
+            "title": "✅ Acknowledge",
+            "verb": "acknowledge",
+            "data": {
+              "action": "acknowledge",
+              "event_id": "{{ correlation_id }}",
+              "correlation_id": "{{ correlation_id }}"
+            }
+          },
+          {% if data.task_id %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📊 View Flower",
+            "url": "{{ flower_url }}/task/{{ data.task_id }}"
+          },
+          {% endif %}
+          {
+            "type": "Action.OpenUrl",
+            "title": "📋 View Logs",
+            "url": "{{ kibana_url }}/app/logs?correlation_id={{ correlation_id }}"
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+  ]
+}

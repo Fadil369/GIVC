@@ -22,9 +22,13 @@ services:
       - PROMETHEUS_ENABLED=${PROMETHEUS_ENABLED:-true}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - ENVIRONMENT=${ENVIRONMENT:-production}
+      - FOLLOW_UP_WORKBOOK_PATH=${FOLLOW_UP_WORKBOOK_PATH:-/data/daily-follow-ups.xlsx}
+      - ACCOUNTS_WORKBOOK_PATH=${ACCOUNTS_WORKBOOK_PATH:-/data/Accounts.xlsx}
     volumes:
       - ./models:/app/models
       - ./logs:/app/logs
+      - ./daily-follow-ups.xlsx:/data/daily-follow-ups.xlsx:ro
+      - ./Accounts.xlsx:/data/Accounts.xlsx:ro
     depends_on:
       postgres:
         condition: service_healthy

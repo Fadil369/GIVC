@@ -191,6 +191,10 @@ ULTRATHINK_ENABLED=true
 SECURITY_MIDDLEWARE_ENABLED=true
 ML_MODEL_PATH=/app/models
 
+# Worksheet Automation
+FOLLOW_UP_WORKBOOK_PATH=/data/daily-follow-ups.xlsx
+ACCOUNTS_WORKBOOK_PATH=/data/Accounts.xlsx
+
 # Rate Limiting
 RATE_LIMIT_DEFAULT=100
 RATE_LIMIT_STRICT=10

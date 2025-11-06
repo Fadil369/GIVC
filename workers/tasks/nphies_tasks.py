@@ -10,6 +10,11 @@ import logging
 import hashlib
 import json
 from datetime import datetime
+import asyncio
+
+# Teams integration
+from integrations.teams.event_aggregator import send_teams_notification
+from integrations.teams.models import TeamsEvent, EventType, TeamsPriority, StakeholderGroup
 
 logger = logging.getLogger(__name__)
 
@@ -141,6 +146,24 @@ def check_nphies_eligibility(
             exc_info=True
         )
         
+        # Send Teams notification for API errors
+        try:
+            asyncio.create_task(send_teams_notification(TeamsEvent(
+                event_type=EventType.NPHIES_API_ERROR,
+                correlation_id=correlation_id or self.request.id,
+                stakeholders=[StakeholderGroup.NPHIES_INTEGRATION, StakeholderGroup.SRE],
+                priority=TeamsPriority.HIGH,
+                data={
+                    "error_type": "api",
+                    "operation": "check_eligibility",
+                    "error_message": str(exc),
+                    "patient_id": patient_data.get('member_id'),
+                    "payer": payer_code
+                }
+            )))
+        except Exception as teams_error:
+            logger.warning(f"Failed to send Teams notification: {teams_error}")
+        
         # Retry with exponential backoff
         raise self.retry(exc=exc, countdown=min(2 ** self.request.retries * 60, 600))
 
@@ -206,6 +229,33 @@ def submit_nphies_claim(
             f"NPHIES claim submitted: {response.get('status')} [{correlation_id}]"
         )
         
+        # Send Teams notification for successful submission
+        try:
+            asyncio.create_task(send_teams_notification(TeamsEvent(
+                event_type=EventType.NPHIES_CLAIM_SUBMITTED,
+                correlation_id=correlation_id or self.request.id,
+                stakeholders=[
+                    StakeholderGroup.NPHIES_INTEGRATION,
+                    StakeholderGroup.PMO,
+                    StakeholderGroup.COMPLIANCE
+                ],
+                priority=TeamsPriority.INFO,
+                data={
+                    "claim_id": claim_data.get('claim_id'),
+                    "poll_id": response.get('request_id'),
+                    "patient_id": claim_data.get('patient_id'),
+                    "provider": claim_data.get('provider_name'),
+                    "payer": payer_code,
+                    "total_amount": f"{claim_data.get('total_amount', 0)} SAR",
+                    "services": [
+                        {"description": s.get('description'), "amount": f"{s.get('amount', 0)} SAR"}
+                        for s in claim_data.get('services', [])
+                    ]
+                }
+            )))
+        except Exception as teams_error:
+            logger.warning(f"Failed to send Teams notification: {teams_error}")
+        
         return {
             'status': 'success',
             'correlation_id': correlation_id,
@@ -218,6 +268,34 @@ def submit_nphies_claim(
             f"NPHIES claim submission failed: {exc} [{correlation_id}]",
             exc_info=True
         )
+        
+        # Send Teams notification for submission failures
+        try:
+            # Determine error type
+            error_type = "api"
+            if "certificate" in str(exc).lower():
+                error_type = "certificate"
+            elif "jwt" in str(exc).lower() or "token" in str(exc).lower():
+                error_type = "jwt"
+            elif "timeout" in str(exc).lower() or "connection" in str(exc).lower():
+                error_type = "network"
+            
+            asyncio.create_task(send_teams_notification(TeamsEvent(
+                event_type=EventType.NPHIES_API_ERROR,
+                correlation_id=correlation_id or self.request.id,
+                stakeholders=[StakeholderGroup.NPHIES_INTEGRATION, StakeholderGroup.SRE],
+                priority=TeamsPriority.HIGH if error_type == "certificate" else TeamsPriority.MEDIUM,
+                data={
+                    "error_type": error_type,
+                    "operation": "submit_claim",
+                    "error_message": str(exc),
+                    "claim_id": claim_data.get('claim_id'),
+                    "patient_id": claim_data.get('patient_id'),
+                    "payer": payer_code
+                }
+            )))
+        except Exception as teams_error:
+            logger.warning(f"Failed to send Teams notification: {teams_error}")
         
         # Retry with exponential backoff
         raise self.retry(exc=exc, countdown=min(2 ** self.request.retries * 120, 1800))
@@ -275,6 +353,57 @@ def poll_nphies_response(
             status=response['status'],
             adjudication=response.get('adjudication')
         )
+        
+        # Send Teams notification based on claim outcome
+        try:
+            adjudication = response.get('adjudication', {})
+            claim_status = response.get('status', '').lower()
+            
+            if claim_status == 'approved' or 'approved' in claim_status:
+                # Claim approved
+                asyncio.create_task(send_teams_notification(TeamsEvent(
+                    event_type=EventType.NPHIES_CLAIM_APPROVED,
+                    correlation_id=correlation_id or self.request.id,
+                    stakeholders=[
+                        StakeholderGroup.NPHIES_INTEGRATION,
+                        StakeholderGroup.PMO,
+                        StakeholderGroup.COMPLIANCE
+                    ],
+                    priority=TeamsPriority.INFO,
+                    data={
+                        "claim_id": adjudication.get('claim_id'),
+                        "approval_number": adjudication.get('approval_number'),
+                        "patient_id": adjudication.get('patient_id'),
+                        "payer": adjudication.get('payer'),
+                        "approved_amount": f"{adjudication.get('approved_amount', 0)} SAR",
+                        "net_amount": f"{adjudication.get('net_amount', 0)} SAR",
+                        "patient_share": f"{adjudication.get('patient_share', 0)} SAR",
+                        "payer_share": f"{adjudication.get('payer_share', 0)} SAR",
+                        "notes": adjudication.get('notes')
+                    }
+                )))
+            elif claim_status == 'rejected' or 'rejected' in claim_status or 'denied' in claim_status:
+                # Claim rejected
+                asyncio.create_task(send_teams_notification(TeamsEvent(
+                    event_type=EventType.NPHIES_CLAIM_REJECTED,
+                    correlation_id=correlation_id or self.request.id,
+                    stakeholders=[
+                        StakeholderGroup.NPHIES_INTEGRATION,
+                        StakeholderGroup.PMO,
+                        StakeholderGroup.COMPLIANCE
+                    ],
+                    priority=TeamsPriority.HIGH,
+                    data={
+                        "claim_id": adjudication.get('claim_id'),
+                        "patient_id": adjudication.get('patient_id'),
+                        "payer": adjudication.get('payer'),
+                        "rejection_code": adjudication.get('rejection_code'),
+                        "rejection_reason": adjudication.get('rejection_reason'),
+                        "errors": adjudication.get('errors', [])
+                    }
+                )))
+        except Exception as teams_error:
+            logger.warning(f"Failed to send Teams notification: {teams_error}")
         
         return {
             'status': 'success',

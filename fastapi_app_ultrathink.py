@@ -90,6 +90,13 @@ except Exception as e:
     PriorAuthorizationService = MockService
     AnalyticsService = MockService
 
+# Follow-up router (worksheet API)
+try:
+    from routers.follow_up_router import router as follow_up_router
+except Exception as exc:
+    follow_up_router = None
+    print(f"⚠️  Follow-up router unavailable: {exc}")
+
 # =============================================================================
 # FastAPI Application
 # =============================================================================
@@ -185,6 +192,9 @@ else:
 if ULTRATHINK_ENABLED:
     app.include_router(ultrathink_router, prefix="/api/v1")
     print("✅ Ultrathink AI Router: Registered at /api/v1/ultrathink")
+
+if follow_up_router is not None:
+    app.include_router(follow_up_router)
 
 # =============================================================================
 # Pydantic Models

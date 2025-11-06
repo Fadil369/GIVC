@@ -57,6 +57,16 @@ class Settings:
     CERT_KEY_PATH = os.getenv("CERT_KEY_PATH", str(BASE_DIR / "certs" / "private_key.pem"))
     CA_BUNDLE_PATH = os.getenv("CA_BUNDLE_PATH", str(BASE_DIR / "certs" / "ca_bundle.pem"))
     
+    # Worksheet & Portal Data
+    FOLLOW_UP_WORKBOOK_PATH = os.getenv(
+        "FOLLOW_UP_WORKBOOK_PATH",
+        str(BASE_DIR / "daily-follow-ups.xlsx"),
+    )
+    ACCOUNTS_WORKBOOK_PATH = os.getenv(
+        "ACCOUNTS_WORKBOOK_PATH",
+        str(BASE_DIR / "Accounts.xlsx"),
+    )
+
     @property
     def use_certificates(self) -> bool:
         """Check if certificates are configured for production"""
