@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-10-05T11:23:25.825Z",
+  "oasisVersion": "unknown",
+  "baseUrl": "http://128.1.1.185/prod/faces/Home",
+  "authentication": {
+    "loginUrl": "https://128.1.1.185/prod/faces/Login.jsf",
+    "loginMethod": "",
+    "credentialFields": [],
+    "sessionMechanism": ""
+  },
+  "navigation": {
+    "homeToClaimSubmission": [],
+    "breadcrumbs": []
+  },
+  "pages": {
+    "login": {
+      "url": "https://128.1.1.185/prod/faces/Login.jsf",
+      "title": "Error 500--Internal Server Error",
+      "forms": [],
+      "buttons": [],
+      "links": [],
+      "tables": []
+    },
+    "home": {
+      "url": "",
+      "title": "",
+      "forms": [],
+      "buttons": [],
+      "links": [],
+      "tables": []
+    }
+  },
+  "apiEndpoints": [],
+  "cookies": [],
+  "screenshots": [
+    "01-login-page-1759663414967.png",
+    "error-1759663417030.png"
+  ],
+  "errors": [
+    "Login failed: Error: Could not locate username or password fields",
+    "Fatal error: Error: Could not locate username or password fields"
+  ]
+}

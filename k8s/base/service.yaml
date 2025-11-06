@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: givc-frontend
+  labels:
+    app: givc
+    component: frontend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: givc
+    component: frontend
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: givc-backend
+  labels:
+    app: givc
+    component: backend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: givc
+    component: backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: givc-redis
+  labels:
+    app: givc
+    component: cache
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP
+    name: redis
+  selector:
+    app: givc
+    component: cache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: givc-postgres
+  labels:
+    app: givc
+    component: database
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: givc
+    component: database

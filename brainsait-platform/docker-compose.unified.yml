@@ -1,0 +1,275 @@
+version: '3.8'
+
+# 🧠 BrainSAIT Unified Platform - Complete Docker Stack
+# Integrates: GIVC Healthcare + Agentic Workflow + New BrainSAIT Services
+# OID: 1.3.6.1.4.1.61026
+
+services:
+  # ==========================================
+  # 🗄️ SHARED DATA LAYER
+  # ==========================================
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: brainsait-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-brainsait}
+      POSTGRES_USER: ${POSTGRES_USER:-brainsait}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-brainsait_secure_2024}
+      POSTGRES_MULTIPLE_DATABASES: "givc,workflow,registry"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/init-multi-db.sh:/docker-entrypoint-initdb.d/init-multi-db.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-brainsait}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - brainsait-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: brainsait-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-brainsait2024}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-brainsait2024}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 🧠 AI & LLM SERVICES
+  # ==========================================
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: brainsait-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 🔐 OID REGISTRY SERVICE (NEW)
+  # ==========================================
+
+  oid-registry:
+    build:
+      context: ./services/oid-registry
+      dockerfile: Dockerfile
+    container_name: brainsait-oid-registry
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-brainsait}:${POSTGRES_PASSWORD:-brainsait_secure_2024}@postgres:5432/registry
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-brainsait2024}@redis:6379/0
+      - OID_ROOT=1.3.6.1.4.1.61026
+    ports:
+      - "8010:8000"
+    volumes:
+      - ./services/oid-registry:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 🌐 MCP GATEWAY (NEW)
+  # ==========================================
+
+  mcp-gateway:
+    build:
+      context: ./services/mcp-gateway
+      dockerfile: Dockerfile
+    container_name: brainsait-mcp-gateway
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-brainsait}:${POSTGRES_PASSWORD:-brainsait_secure_2024}@postgres:5432/registry
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-brainsait2024}@redis:6379/1
+      - REGISTRY_URL=http://oid-registry:8000
+    ports:
+      - "8020:8000"
+    volumes:
+      - ./services/mcp-gateway:/app
+    depends_on:
+      - oid-registry
+      - redis
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 💬 CHAT ENGINE (NEW)
+  # ==========================================
+
+  chat-engine:
+    build:
+      context: ./services/chat-engine
+      dockerfile: Dockerfile
+    container_name: brainsait-chat-engine
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MCP_GATEWAY_URL=http://mcp-gateway:8000
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-brainsait2024}@redis:6379/3
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-brainsait}:${POSTGRES_PASSWORD:-brainsait_secure_2024}@postgres:5432/brainsait
+    ports:
+      - "8040:8000"
+    volumes:
+      - ./services/chat-engine:/app
+    depends_on:
+      - mcp-gateway
+      - postgres
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 📝 TEMPLATE ENGINE (NEW)
+  # ==========================================
+
+  template-engine:
+    build:
+      context: ./services/template-engine
+      dockerfile: Dockerfile
+    container_name: brainsait-template-engine
+    restart: unless-stopped
+    environment:
+      - NOTION_API_KEY=${NOTION_API_KEY}
+      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
+      - REGISTRY_URL=http://oid-registry:8000
+    ports:
+      - "8030:8000"
+    volumes:
+      - ./services/template-engine:/app
+    depends_on:
+      - oid-registry
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 💳 PAYMENT ENGINE (NEW)
+  # ==========================================
+
+  payment-engine:
+    build:
+      context: ./services/payment-engine
+      dockerfile: Dockerfile
+    container_name: brainsait-payment-engine
+    restart: unless-stopped
+    environment:
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - MADA_API_KEY=${MADA_API_KEY}
+      - STC_PAY_API_KEY=${STC_PAY_API_KEY}
+      - REGISTRY_URL=http://oid-registry:8000
+    ports:
+      - "8050:8000"
+    volumes:
+      - ./services/payment-engine:/app
+    depends_on:
+      - oid-registry
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 🏥 GIVC HEALTHCARE PLATFORM (EXISTING)
+  # ==========================================
+
+  givc-app:
+    build:
+      context: ../GIVC
+      dockerfile: Dockerfile
+      target: production
+    container_name: givc-healthcare
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - VITE_API_BASE_URL=http://mcp-gateway:8000/api/v1
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-brainsait}:${POSTGRES_PASSWORD:-brainsait_secure_2024}@postgres:5432/givc
+    ports:
+      - "3000:80"
+    depends_on:
+      - postgres
+      - redis
+      - mcp-gateway
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 🔄 WORKFLOW AUTOMATION (EXISTING - N8N)
+  # ==========================================
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: brainsait-n8n
+    restart: unless-stopped
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-brainsait2024}
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=workflow
+      - DB_POSTGRESDB_USER=${POSTGRES_USER:-brainsait}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD:-brainsait_secure_2024}
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    depends_on:
+      - postgres
+    networks:
+      - brainsait-network
+
+  # ==========================================
+  # 🎛️ WORKFLOW ORCHESTRATOR (EXISTING)
+  # ==========================================
+
+  workflow-orchestrator:
+    build:
+      context: ../brainsait-agentic-workflow/orchestrator
+      dockerfile: Dockerfile
+    container_name: brainsait-orchestrator
+    restart: unless-stopped
+    environment:
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-brainsait2024}@redis:6379/5
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-brainsait}:${POSTGRES_PASSWORD:-brainsait_secure_2024}@postgres:5432/workflow
+      - OLLAMA_URL=http://ollama:11434
+      - N8N_URL=http://n8n:5678
+      - MCP_GATEWAY_URL=http://mcp-gateway:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../brainsait-agentic-workflow/orchestrator:/app
+    depends_on:
+      - redis
+      - postgres
+      - mcp-gateway
+    networks:
+      - brainsait-network
+
+volumes:
+  postgres-data:
+  redis-data:
+  ollama-data:
+  n8n-data:
+
+networks:
+  brainsait-network:
+    driver: bridge

@@ -1,0 +1,80 @@
+{
+  "analysis_date": "2025-10-22T14:03:23.432554",
+  "data_sources": [
+    "Accounts.xlsx",
+    "Copy of MOH NPHIES.xlsx",
+    "MOH NPHIES.xlsx",
+    "MOH UPDATE..xlsx",
+    "TAWUNIYA INITIAL REJ 23 vs 24 vs 25.xlsx",
+    "Worksheet Resubmission..xlsx"
+  ],
+  "rejection_patterns": {
+    "Worksheet Resubmission..xlsx": {
+      "financial_impact": {
+        "total_rejected_amount": 19197002.907432213,
+        "average_rejection_amount": 21425.22645918774,
+        "count": 896,
+        "column": "Recovery Amount"
+      }
+    }
+  },
+  "payer_insights": {
+    "Worksheet Resubmission..xlsx": {
+      "Insurance Company": {
+        "Bupa": 659,
+        "NCCI": 108,
+        "MOH": 89,
+        "ART": 26,
+        "Malath": 14,
+        "Saico": 2
+      },
+      "Details for Sum of % Initial Rejection - Billing Month: Apr, Insurance Company: Bupa, Branch: 3-SGH-Aseer": {
+        "2023-04-01 00:00:00": 8,
+        "Month": 1
+      },
+      "Details for Sum of % Initial Rejection - Billing Month: Apr, Insurance Company: Bupa, Branch: 5-SGH-Dammam": {
+        "2023-04-01 00:00:00": 5,
+        "Month": 1
+      }
+    }
+  },
+  "common_rejection_codes": {},
+  "resubmission_success_rate": {},
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "Payer-Specific Rules",
+      "recommendation": "Create payer-specific validation rules based on historical rejection patterns",
+      "action": "Enhance services/validators.py with payer-specific validators",
+      "impact": "Reduce initial rejections by 40-50%"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Financial Analytics",
+      "recommendation": "Add financial impact tracking to analytics dashboard",
+      "action": "Extend services/analytics.py with financial metrics",
+      "impact": "Better ROI visibility and prioritization"
+    },
+    {
+      "priority": "HIGH",
+      "category": "Resubmission Automation",
+      "recommendation": "Implement automated resubmission workflow based on rejection patterns",
+      "action": "Create services/resubmission_service.py",
+      "impact": "Reduce resubmission time from days to hours"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "MOH Integration",
+      "recommendation": "Add MOH (Ministry of Health) specific validation and handling",
+      "action": "Create config/moh_rules.py and enhance validators",
+      "impact": "Improve MOH approval rate by 30-40%"
+    },
+    {
+      "priority": "LOW",
+      "category": "Predictive Analytics",
+      "recommendation": "Implement ML-based rejection prediction using historical data",
+      "action": "Create services/ml_predictor.py",
+      "impact": "Proactive rejection prevention (20-30% improvement)"
+    }
+  ]
+}

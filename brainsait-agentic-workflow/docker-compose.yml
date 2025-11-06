@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  # Redis for task queue and caching
+  redis:
+    image: redis:7-alpine
+    container_name: brainsait-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - brainsait-network
+
+  # PostgreSQL for workflow state and content storage
+  postgres:
+    image: postgres:15-alpine
+    container_name: brainsait-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: brainsait_workflow
+      POSTGRES_USER: brainsait
+      POSTGRES_PASSWORD: brainsait_secure_2024
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - brainsait-network
+
+  # N8N for workflow automation
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: brainsait-n8n
+    restart: unless-stopped
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=brainsait2024
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678
+      - GENERIC_TIMEZONE=Asia/Riyadh
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=brainsait_workflow
+      - DB_POSTGRESDB_USER=brainsait
+      - DB_POSTGRESDB_PASSWORD=brainsait_secure_2024
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - brainsait-network
+
+  # Ollama for local LLM inference
+  ollama:
+    image: ollama/ollama:latest
+    container_name: brainsait-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - brainsait-network
+
+  # Open WebUI for LLM interface
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: brainsait-openwebui
+    restart: unless-stopped
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=brainsait_secret_key_2024
+      - ENABLE_SIGNUP=false
+    ports:
+      - "3000:8080"
+    volumes:
+      - openwebui-data:/app/backend/data
+    depends_on:
+      - ollama
+    networks:
+      - brainsait-network
+
+  # Agentic Workflow Orchestrator (Custom Python service)
+  workflow-orchestrator:
+    build: ./orchestrator
+    container_name: brainsait-orchestrator
+    restart: unless-stopped
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://brainsait:brainsait_secure_2024@postgres:5432/brainsait_workflow
+      - OLLAMA_URL=http://ollama:11434
+      - N8N_URL=http://n8n:5678
+      - WORDPRESS_URL=http://host.docker.internal:8080
+      - MOODLE_URL=http://host.docker.internal:8081
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./orchestrator:/app
+      - workflow-data:/data
+    depends_on:
+      - redis
+      - postgres
+      - ollama
+      - n8n
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - brainsait-network
+
+  # Content Management Dashboard
+  dashboard:
+    build: ./dashboard
+    container_name: brainsait-dashboard
+    restart: unless-stopped
+    environment:
+      - API_URL=http://workflow-orchestrator:8000
+      - NODE_ENV=production
+    ports:
+      - "3001:3000"
+    depends_on:
+      - workflow-orchestrator
+    networks:
+      - brainsait-network
+
+volumes:
+  redis-data:
+  postgres-data:
+  n8n-data:
+  ollama-data:
+  openwebui-data:
+  workflow-data:
+
+networks:
+  brainsait-network:
+    driver: bridge

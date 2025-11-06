@@ -1,3 +1,11 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
 # Python
 __pycache__/
 *.py[cod]
@@ -35,55 +43,87 @@ coverage.xml
 .pytest_cache/
 htmlcov/
 
+# Build outputs
+build_unified/
+.output/
+.next/
+out/
+
 # Virtual environments
 venv/
+.venv/
 ENV/
 env/
-.venv
 
 # IDEs
 .vscode/
+.vscode/settings.json
+.vscode/launch.json
+.vscode-test
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
 
 # Environment variables
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env.*.local
+.env.backup
+*.env.backup
+.env.test
 *.secret
 secrets.yaml
+
+# Certificates and Private Keys (SECURITY)
+certificates/*.pem
+certificates/*.key
+certificates/*.crt
+certificates/*.p12
+certificates/*.pfx
+!certificates/README.md
+!certificates/.gitkeep
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+tls/
+ssl/
 
 # Logs
 *.log
 logs/
 *.out
 *.err
+audit-report-*.log
+deployment-*.log
 
 # Database
 *.db
 *.sqlite
 *.sqlite3
 
-# Certificates and keys
-*.pem
-*.key
-*.crt
-*.p12
-*.pfx
-tls/
-ssl/
-
-# Vault data
-vault-data/
-consul-data/
-
 # Docker
 *.tar
 *.gz
 .dockerignore
+.docker/
+
+# Vault data
+vault-data/
+consul-data/
 
 # Terraform
 .terraform/
@@ -99,19 +139,25 @@ kubeconfig
 # Temporary files
 tmp/
 temp/
+.tmp/
 *.tmp
+*.temp
 *.bak
-*.swp
 
 # Compiled binaries
 *.exe
 *.dll
-*.so
 *.dylib
 
-# OS
-Thumbs.db
+# OS files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
 
 # PHI and sensitive data
 **/data/samples/*.csv
@@ -125,13 +171,11 @@ Thumbs.db
 *credentials*
 *secret*
 !*example*
+credentials.json
 
 # Audit logs (large files - archive separately)
 audit-logs/
 **/audit/*.log
-
-# Node modules (if any)
-node_modules/
 
 # Monitoring data
 prometheus-data/
@@ -144,6 +188,91 @@ rabbitmq-data/
 
 # Backup files
 *.backup
+*.backup.*
 backup/
 backups/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage/
+*.lcov
+.nyc_output
+
+# Test results
+test-results/
+playwright-report/
+test-output/
+
+# Cloudflare
+.wrangler/
+wrangler.toml.backup
+
+# TypeScript
+*.tsbuildinfo
+.tscache/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Vitest
+.vitest-cache/
+
+# Storybook build outputs
+.out
+.storybook-out
+storybook-static
+
+# Application specific
+uploads/
+public/uploads/
+medical-files/
+
+# Performance monitoring
+.lighthouse/
+bundle-analyzer-report.html
+
+# Sentry
+.sentryclirc
+
+# Husky
+.husky/_/
+
+# Nested Git Repositories
+GIVC/
+
+# Spec testing
+.specify/
+spec-kit/
+
+# ClaimLinc-GIVC specific
 projects/oaises+/nul

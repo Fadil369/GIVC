@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GIVC Health Check</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <script>
+        document.write(JSON.stringify({
+            status: "healthy",
+            timestamp: new Date().toISOString(),
+            service: "givc-healthcare-platform",
+            version: "1.0.0"
+        }));
+    </script>
+</body>
+</html>

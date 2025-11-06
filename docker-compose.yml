@@ -1,0 +1,191 @@
+# Docker Compose version 3.8 (version key is now obsolete and optional)
+
+services:
+  # FastAPI Backend - Ultrathink AI
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    container_name: givc-ultrathink-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://givc:givc123@postgres:5432/ultrathink}
+      - API_SECRET_KEY=${API_SECRET_KEY:-your-secret-key-change-in-production}
+      - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-change-in-production}
+      - ULTRATHINK_ENABLED=${ULTRATHINK_ENABLED:-true}
+      - SECURITY_MIDDLEWARE_ENABLED=${SECURITY_MIDDLEWARE_ENABLED:-true}
+      - ML_MODEL_PATH=${ML_MODEL_PATH:-/app/models}
+      - RATE_LIMIT_DEFAULT=${RATE_LIMIT_DEFAULT:-100}
+      - RATE_LIMIT_STRICT=${RATE_LIMIT_STRICT:-10}
+      - PROMETHEUS_ENABLED=${PROMETHEUS_ENABLED:-true}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+    volumes:
+      - ./models:/app/models
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - givc-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Main application
+  givc-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/default.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    networks:
+      - givc-network
+
+  # Development server (alternative to production build)
+  givc-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://localhost:8787/api/v1
+    command: npm run dev
+    profiles:
+      - dev
+    networks:
+      - givc-network
+
+  # Cloudflare Workers development (using Wrangler)
+  givc-workers:
+    image: node:18-alpine
+    working_dir: /app
+    ports:
+      - "8787:8787"
+    volumes:
+      - .:/app
+    command: |
+      sh -c "
+        npm install -g wrangler@latest &&
+        cd workers &&
+        wrangler dev --port 8787 --host 0.0.0.0
+      "
+    environment:
+      - NODE_ENV=development
+    profiles:
+      - dev
+    networks:
+      - givc-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-changeme}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    profiles:
+      - dev
+      - production
+    networks:
+      - givc-network
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:16-alpine
+    container_name: givc-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-ultrathink}
+      - POSTGRES_USER=${POSTGRES_USER:-givc}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-givc123}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-givc}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    profiles:
+      - dev
+      - production
+    networks:
+      - givc-network
+
+networks:
+  givc-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  postgres-data:

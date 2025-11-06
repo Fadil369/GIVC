@@ -1,0 +1,30 @@
+apiVersion: v2
+name: givc-healthcare
+description: GIVC Healthcare Platform - Container Orchestration for Pod-based Deployment
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - healthcare
+  - medical
+  - nphies
+  - hipaa
+  - rcm
+  - telemedicine
+
+maintainers:
+  - name: Dr. Al Fadil
+    email: dr.fadil@givc.thefadil.site
+    organization: BRAINSAIT LTD
+
+sources:
+  - https://github.com/fadil369/GIVC
+
+icon: https://givc.thefadil.site/assets/logo.png
+
+dependencies: []
+
+annotations:
+  category: Healthcare
+  licenses: GPL-3.0
