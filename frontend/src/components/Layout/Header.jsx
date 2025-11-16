@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../../hooks/useAuth.jsx';
+import { useAuth } from '../../hooks/useAuth';
 import { NavLink, useLocation } from 'react-router-dom';
 
 const Header = ({ onToggleSidebar, isMobile }) => {

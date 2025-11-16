@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import logger from '@/services/logger';
-
 const CustomerSupportHub = () => {
   const [activeTab, setActiveTab] = useState('chat');
   const [chatMessages, setChatMessages] = useState([]);
@@ -292,7 +290,7 @@ const CustomerSupportHub = () => {
         // Navigate to provider directory
         break;
       default:
-        logger.info('Action clicked:', action);
+        console.log('Action clicked:', action);
     }
   };
 

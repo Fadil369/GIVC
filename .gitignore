@@ -71,6 +71,7 @@ env/
 .settings/
 *.sublime-workspace
 *.sublime-project
+.claude/
 
 # Environment variables
 .env

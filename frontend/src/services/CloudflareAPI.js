@@ -45,7 +45,7 @@ class CloudflareAPI {
         return await response.text();
       }
     } catch (error) {
-      logger.error('Cloudflare API Request Failed:', error);
+      console.error('Cloudflare API Request Failed:', error);
       throw error;
     }
   }

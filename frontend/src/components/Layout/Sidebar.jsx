@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth.jsx';
+import { useAuth } from '../../hooks/useAuth';
 
 const Sidebar = ({ isOpen, onToggle, isMobile }) => {
   const { user } = useAuth();
@@ -48,16 +48,6 @@ const Sidebar = ({ isOpen, onToggle, isMobile }) => {
       description: 'التحليل التنبؤي',
       englishDescription: 'Predictive Analysis',
       badge: 'جديد'
-    },
-    {
-      id: 'follow-ups',
-      name: 'متابعة المطالبات',
-      englishName: 'Follow-Ups',
-      path: '/follow-ups',
-      icon: '🧾',
-      description: 'إدارة حالات المتابعة',
-      englishDescription: 'Follow-up Management',
-      badge: 'Live'
     },
     {
       id: 'vault',
