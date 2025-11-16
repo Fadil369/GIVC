@@ -31,6 +31,7 @@ const CustomerSupportHub = lazy(() => import('@/components/CustomerSupport/Custo
 const ClaimsProcessingCenter = lazy(() => import('@/components/ClaimsProcessing/ClaimsProcessingCenter'));
 const RiskAssessmentEngine = lazy(() => import('@/components/RiskAssessment/RiskAssessmentEngine'));
 const FollowUpWorksheet = lazy(() => import('@/components/FollowUps/FollowUpWorksheet'));
+const EligibilityVerification = lazy(() => import('@/components/EligibilityVerification/EligibilityVerification'));
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
                         <Route path="claims" element={<ErrorBoundary><ClaimsProcessingCenter /></ErrorBoundary>} />
                         <Route path="risk-assessment" element={<ErrorBoundary><RiskAssessmentEngine /></ErrorBoundary>} />
                         <Route path="follow-ups" element={<ErrorBoundary><FollowUpWorksheet /></ErrorBoundary>} />
+                        <Route path="eligibility" element={<ErrorBoundary><EligibilityVerification /></ErrorBoundary>} />
                       </Route>
                       <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
