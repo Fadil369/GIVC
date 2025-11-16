@@ -27,8 +27,8 @@ services:
     volumes:
       - ./models:/app/models
       - ./logs:/app/logs
-      - ./daily-follow-ups.xlsx:/data/daily-follow-ups.xlsx:ro
-      - ./Accounts.xlsx:/data/Accounts.xlsx:ro
+      - ./data/daily-follow-ups.xlsx:/data/daily-follow-ups.xlsx:ro
+      - ./data/Accounts.xlsx:/data/Accounts.xlsx:ro
     depends_on:
       postgres:
         condition: service_healthy
