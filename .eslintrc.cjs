@@ -12,7 +12,7 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'plugin:import/recommended',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs', 'node_modules', 'build_unified', 'backups'],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'node_modules', 'build_unified', 'backups', 'projects', 'brainsait-platform', 'brainsait-agentic-workflow'],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
