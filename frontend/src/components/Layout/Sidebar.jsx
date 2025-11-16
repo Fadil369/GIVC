@@ -40,14 +40,23 @@ const Sidebar = ({ isOpen, onToggle, isMobile }) => {
       badge: '42'
     },
     {
+      id: 'eligibility',
+      name: 'التحقق من الأهلية',
+      englishName: 'Eligibility',
+      path: '/eligibility',
+      icon: '🔍',
+      description: 'التحقق من تغطية التأمين',
+      englishDescription: 'Insurance Eligibility Check',
+      badge: 'جديد'
+    },
+    {
       id: 'risk',
       name: 'محرك المخاطر',
       englishName: 'Risk Engine',
       path: '/risk-assessment',
       icon: '⚖️',
       description: 'التحليل التنبؤي',
-      englishDescription: 'Predictive Analysis',
-      badge: 'جديد'
+      englishDescription: 'Predictive Analysis'
     },
     {
       id: 'follow-ups',
