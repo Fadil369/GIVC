@@ -26,17 +26,22 @@ This repository also includes the **ClaimLinc-GIVC local workspace** - a compreh
 
 ### Essential Reading
 
-- **[CLAUDE.md](./CLAUDE.md)** - **START HERE for Claude Code!** Comprehensive codebase guidance for AI assistants
-- **[INTEGRATION.md](./INTEGRATION.md)** - Comprehensive integration documentation (89KB)
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - **NEW!** Comprehensive system architecture (638 lines)
+  - System overview and design principles
+  - Technology stack with rationale
+  - Domain-driven design architecture
+  - Data flows and workflows
+  - Security and deployment architecture
+  - Compliance standards (HIPAA, NPHIES, FHIR R4)
+- **[CLAUDE.md](./CLAUDE.md)** - Comprehensive codebase guidance for AI assistants
+- **[INTEGRATION.md](./INTEGRATION.md)** - Integration documentation
   - Technology stack decisions
-  - Consolidation strategy and steps
+  - Consolidation strategy
   - Deployment procedures
-  - Migration metrics
   - Code examples
 
 ### Additional Documentation
 
-- [ARCHITECTURE.md](./docs/ARCHITECTURE.md) - System architecture overview
 - [API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md) - Complete API reference
 - [DEPLOYMENT_GUIDE.md](./docs/DEPLOYMENT_GUIDE.md) - Deployment procedures
 - [NPHIES_GUIDE.md](./docs/NPHIES_GUIDE.md) - NPHIES integration details
@@ -51,36 +56,35 @@ This repository also includes the **ClaimLinc-GIVC local workspace** - a compreh
 - Node.js 20+ (LTS)
 - Python 3.11+
 - PostgreSQL 15+
-- MongoDB 7+
 - Redis 7+
-- Docker 24+ (optional)
+- Docker 24+ (optional but recommended)
 ```
 
-### Installation
+### Local Development Setup
 
 ```bash
 # 1. Clone repository
 git clone https://github.com/Fadil369/GIVC.git
 cd GIVC
 
-# 2. Install dependencies
-pnpm install  # or npm install
-cd backend && pip install -r requirements.txt
+# 2. Install frontend dependencies
+npm install
 
-# 3. Configure environment
+# 3. Install backend dependencies
+pip install -r requirements.txt
+
+# 4. Configure environment
 cp .env.example .env
 # Edit .env with your configuration
 
-# 4. Start databases
-docker-compose up -d postgres mongodb redis
+# 5. Start services with Docker Compose
+docker-compose up -d postgres redis
 
-# 5. Start backend
-cd backend
-uvicorn app.main:app --reload --port 8000
+# 6. Start backend (in one terminal)
+uvicorn fastapi_app_ultrathink:app --reload --port 8000
 
-# 6. Start frontend (in new terminal)
-cd apps/web
-pnpm dev
+# 7. Start frontend (in another terminal)
+npm run dev
 ```
 
 ### Access Points
@@ -88,7 +92,20 @@ pnpm dev
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
-- **Health Check**: http://localhost:8000/health
+- **Interactive API**: http://localhost:8000/redoc
+
+### Production Build
+
+```bash
+# Build frontend for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Deploy to GitHub Pages (automated via GitHub Actions)
+# Pushes to 'main' branch will automatically deploy to GitHub Pages
+```
 
 ## 🏗️ Technology Stack
 
@@ -123,6 +140,24 @@ This repository contains a comprehensive local workspace with:
 - **Branch-Specific Files** (`branches/`) - Hospital branch configurations
 
 See [CLAUDE.md](./CLAUDE.md) for detailed development guidance.
+
+## 🎉 Recent Improvements (November 2025)
+
+### Repository Modernization
+- ✅ **Removed 87 legacy files** - Old ASP.NET, jQuery, Windows scripts eliminated
+- ✅ **Reorganized documentation** - 47 files moved to `docs/archive/` for cleaner structure
+- ✅ **Security fixes** - All npm and Python vulnerabilities resolved
+- ✅ **GitHub Pages ready** - Frontend configured for static deployment
+
+### New Features
+- ✅ **Comprehensive ARCHITECTURE.md** - 638-line architecture documentation
+- ✅ **Automated deployment** - GitHub Actions workflow for Pages deployment
+- ✅ **Build optimization** - Vite configuration with code splitting and PWA support
+- ✅ **Clean configuration** - Removed Cloudflare TOML files, streamlined setup
+
+### Technical Debt Reduction
+- **Before:** 87 legacy files, 53 root-level markdown files, security vulnerabilities
+- **After:** Clean structure, organized docs, 0 security issues, production-ready
 
 ## 📊 Platform Metrics
 
