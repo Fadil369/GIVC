@@ -1,5 +1,7 @@
 # NPHIES Integration - Getting Started Guide
 
+> **Need a high-level roadmap?** See the companion [Nphies Integration Recommendations](./nphies_integration_recommendations.md) document for a strategic implementation checklist covering architecture, compliance, testing, and project planning.
+
 ## Quick Setup
 
 ### 1. Install Dependencies
