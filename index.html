@@ -91,6 +91,7 @@
     <link rel="stylesheet" href="./assets/css/main.css">
     <link rel="stylesheet" href="./assets/css/glass.css">
     <link rel="stylesheet" href="./assets/css/responsive.css">
+    <link rel="stylesheet" href="./assets/css/rcm-enhanced.css">
 </head>
 <body>
     <!-- Loading Screen -->
@@ -128,6 +129,7 @@
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#services" class="nav-link">Services</a></li>
                     <li><a href="#technology" class="nav-link">Technology</a></li>
+                    <li><a href="#rcm-features" class="nav-link">RCM</a></li>
                     <li><a href="#team" class="nav-link">Team</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
                 </ul>
@@ -152,6 +154,7 @@
                     <a href="#about" class="mobile-nav-link">About</a>
                     <a href="#services" class="mobile-nav-link">Services</a>
                     <a href="#technology" class="mobile-nav-link">Technology</a>
+                    <a href="#rcm-features" class="mobile-nav-link">RCM</a>
                     <a href="#team" class="mobile-nav-link">Team</a>
                     <a href="#contact" class="mobile-nav-link">Contact</a>
                     <a href="#contact" class="btn-primary glass-btn mt-4">Get Started</a>
@@ -506,6 +509,258 @@
         </div>
     </section>
 
+    <!-- RCM Integration & Live Features Section -->
+    <section id="rcm-features" class="rcm-section py-20 bg-gradient-to-br from-blue-50 to-green-50 relative">
+        <div class="container mx-auto px-4">
+            <div class="section-header text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                    🏥 Revenue Cycle Management
+                    <span class="text-sm ml-2 px-3 py-1 bg-green-100 text-green-800 rounded-full font-normal">RCM Accredited</span>
+                </h2>
+                <p class="section-subtitle text-xl text-gray-600 max-w-3xl mx-auto">
+                    AI-Powered Healthcare Claims Management with NPHIES & FHIR R4 Integration
+                </p>
+            </div>
+
+            <!-- Live Platform Status -->
+            <div class="platform-status glass-card mb-12 animate-fade-in-up">
+                <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900">🔴 Live Platform Status</h3>
+                    <button id="refreshStatus" class="btn-primary glass-btn">
+                        <span class="btn-icon">🔄</span> Refresh Status
+                    </button>
+                </div>
+                <div id="statusGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="status-card glass-card text-center p-4 loading-skeleton">
+                        <div class="status-icon text-3xl mb-2">☁️</div>
+                        <h4 class="font-semibold text-gray-900 mb-1">Workers</h4>
+                        <div class="status-badge loading"></div>
+                        <p class="text-xs text-gray-600 mt-1">Edge Computing</p>
+                    </div>
+                    <div class="status-card glass-card text-center p-4 loading-skeleton">
+                        <div class="status-icon text-3xl mb-2">📦</div>
+                        <h4 class="font-semibold text-gray-900 mb-1">R2 Storage</h4>
+                        <div class="status-badge loading"></div>
+                        <p class="text-xs text-gray-600 mt-1">Object Storage</p>
+                    </div>
+                    <div class="status-card glass-card text-center p-4 loading-skeleton">
+                        <div class="status-icon text-3xl mb-2">🗄️</div>
+                        <h4 class="font-semibold text-gray-900 mb-1">D1 Database</h4>
+                        <div class="status-badge loading"></div>
+                        <p class="text-xs text-gray-600 mt-1">SQL Database</p>
+                    </div>
+                    <div class="status-card glass-card text-center p-4 loading-skeleton">
+                        <div class="status-icon text-3xl mb-2">🧠</div>
+                        <h4 class="font-semibold text-gray-900 mb-1">Workers AI</h4>
+                        <div class="status-badge loading"></div>
+                        <p class="text-xs text-gray-600 mt-1">AI Processing</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RCM Feature Cards -->
+            <div class="rcm-features-grid grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <!-- Claims Management -->
+                <div class="rcm-card glass-card animate-fade-in-up">
+                    <div class="rcm-card-header mb-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="feature-icon text-4xl">💼</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-900">Claims Management</h3>
+                                    <p class="text-sm text-gray-600">AI-Powered Claims Processing</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rcm-card-content space-y-4 mb-6">
+                        <div class="feature-item flex items-start space-x-3">
+                            <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">NPHIES Integration</h4>
+                                <p class="text-sm text-gray-600">Direct integration with National Health Platform</p>
+                            </div>
+                        </div>
+                        <div class="feature-item flex items-start space-x-3">
+                            <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">FHIR R4 Standard</h4>
+                                <p class="text-sm text-gray-600">Full compliance with healthcare interoperability standards</p>
+                            </div>
+                        </div>
+                        <div class="feature-item flex items-start space-x-3">
+                            <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Fraud Detection</h4>
+                                <p class="text-sm text-gray-600">AI-powered anomaly detection and prevention</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rcm-card-actions flex gap-3">
+                        <button class="btn-primary flex-1" data-action="test-claims">
+                            <span class="btn-icon">🧪</span> Test Claims API
+                        </button>
+                        <button class="btn-outline flex-1" data-action="view-claims">
+                            <span class="btn-icon">📋</span> View Claims
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Predictive Analytics -->
+                <div class="rcm-card glass-card animate-fade-in-up animation-delay-200">
+                    <div class="rcm-card-header mb-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="feature-icon text-4xl">📊</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-900">Predictive Analytics</h3>
+                                    <p class="text-sm text-gray-600">Real-Time Insights & Forecasting</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rcm-card-content space-y-4 mb-6">
+                        <div class="feature-item flex items-start space-x-3">
+                            <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Revenue Forecasting</h4>
+                                <p class="text-sm text-gray-600">ML-based revenue predictions and optimization</p>
+                            </div>
+                        </div>
+                        <div class="feature-item flex items-start space-x-3">
+                            <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Denial Prevention</h4>
+                                <p class="text-sm text-gray-600">Proactive identification of claim risks</p>
+                            </div>
+                        </div>
+                        <div class="feature-item flex items-start space-x-3">
+                            <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Performance Metrics</h4>
+                                <p class="text-sm text-gray-600">Real-time KPI tracking and reporting</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rcm-card-actions flex gap-3">
+                        <button class="btn-primary flex-1" data-action="test-analytics">
+                            <span class="btn-icon">🧪</span> Test Analytics API
+                        </button>
+                        <button class="btn-outline flex-1" data-action="view-dashboard">
+                            <span class="btn-icon">📈</span> View Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive API Testing Panel -->
+            <div class="api-testing-panel glass-card mb-12 animate-fade-in-up animation-delay-400">
+                <div class="panel-header mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">🚀 Live API Testing</h3>
+                    <p class="text-gray-600">Test our Cloudflare Workers endpoints in real-time</p>
+                </div>
+                <div class="api-endpoints grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button class="api-test-btn glass-card p-4 hover:shadow-lg transition-all" data-endpoint="auth">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="text-2xl">🔐</span>
+                            <span class="font-semibold text-gray-900">Authentication</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">/api/v1/auth</p>
+                        <div class="flex items-center justify-between">
+                            <span class="status-dot"></span>
+                            <span class="text-xs text-blue-600 font-semibold">Test →</span>
+                        </div>
+                    </button>
+                    
+                    <button class="api-test-btn glass-card p-4 hover:shadow-lg transition-all" data-endpoint="medivault">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="text-2xl">📁</span>
+                            <span class="font-semibold text-gray-900">MediVault</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">/api/v1/medivault</p>
+                        <div class="flex items-center justify-between">
+                            <span class="status-dot"></span>
+                            <span class="text-xs text-blue-600 font-semibold">Test →</span>
+                        </div>
+                    </button>
+                    
+                    <button class="api-test-btn glass-card p-4 hover:shadow-lg transition-all" data-endpoint="triage">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="text-2xl">🩺</span>
+                            <span class="font-semibold text-gray-900">AI Triage</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">/api/v1/triage</p>
+                        <div class="flex items-center justify-between">
+                            <span class="status-dot"></span>
+                            <span class="text-xs text-blue-600 font-semibold">Test →</span>
+                        </div>
+                    </button>
+                    
+                    <button class="api-test-btn glass-card p-4 hover:shadow-lg transition-all" data-endpoint="dicom">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="text-2xl">🖼️</span>
+                            <span class="font-semibold text-gray-900">DICOM Agent</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">/api/v1/agents/dicom</p>
+                        <div class="flex items-center justify-between">
+                            <span class="status-dot"></span>
+                            <span class="text-xs text-blue-600 font-semibold">Test →</span>
+                        </div>
+                    </button>
+                    
+                    <button class="api-test-btn glass-card p-4 hover:shadow-lg transition-all" data-endpoint="compliance">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="text-2xl">✅</span>
+                            <span class="font-semibold text-gray-900">Compliance</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">/api/v1/compliance</p>
+                        <div class="flex items-center justify-between">
+                            <span class="status-dot"></span>
+                            <span class="text-xs text-blue-600 font-semibold">Test →</span>
+                        </div>
+                    </button>
+                    
+                    <button class="api-test-btn glass-card p-4 hover:shadow-lg transition-all" data-endpoint="analytics">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="text-2xl">📊</span>
+                            <span class="font-semibold text-gray-900">Analytics</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">/api/v1/analytics</p>
+                        <div class="flex items-center justify-between">
+                            <span class="status-dot"></span>
+                            <span class="text-xs text-blue-600 font-semibold">Test →</span>
+                        </div>
+                    </button>
+                </div>
+                
+                <!-- API Response Display -->
+                <div id="apiResponse" class="api-response mt-6 hidden">
+                    <div class="response-header flex items-center justify-between mb-3">
+                        <h4 class="font-semibold text-gray-900">API Response</h4>
+                        <button id="closeResponse" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+                    <div id="responseContent" class="response-content glass-card p-4 bg-gray-900 text-green-400 font-mono text-sm rounded-lg overflow-x-auto"></div>
+                </div>
+            </div>
+
+            <!-- Integration Links -->
+            <div class="integration-links glass-card text-center animate-fade-in-up animation-delay-600">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">🔗 External Integrations</h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="https://github.com/Fadil369/brainsait-rcm" target="_blank" rel="noopener" class="integration-link btn-primary glass-btn">
+                        <span class="btn-icon">🔧</span> brainsait-rcm Repository
+                    </a>
+                    <a href="https://github.com/Fadil369/GIVC" target="_blank" rel="noopener" class="integration-link btn-outline glass-btn">
+                        <span class="btn-icon">📦</span> GIVC Repository
+                    </a>
+                    <a href="./frontend/" class="integration-link btn-outline glass-btn">
+                        <span class="btn-icon">🚀</span> Launch Full Platform
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Contact & CTA Section -->
     <section id="contact" class="contact-section py-20 bg-white relative">
         <div class="container mx-auto px-4">
@@ -683,5 +938,6 @@
     <script src="./assets/js/main.js"></script>
     <script src="./assets/js/animations.js"></script>
     <script src="./assets/js/forms.js"></script>
+    <script src="./assets/js/rcm-integration.js"></script>
 </body>
 </html>
