@@ -5,6 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: process.env.GITHUB_PAGES === 'true' ? '/GIVC/' : '/',
   plugins: [
     react(),
     VitePWA({
@@ -46,6 +47,7 @@ export default defineConfig({
     }),
   ],
   root: './frontend',
+  publicDir: 'public',
   build: {
     outDir: '../dist',
     emptyOutDir: true,
