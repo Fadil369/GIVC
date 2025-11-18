@@ -21,10 +21,10 @@ lxml==5.1.0
 
 # Authentication & Security
 PyJWT==2.8.0
-cryptography==43.0.1
+cryptography==44.0.1
 python-jose[cryptography]==3.4.0
-urllib3==2.2.2  # Security fix for proxy headers
-certifi==2024.8.30  # Updated root certificates
+urllib3==2.5.0  # Security fix for proxy headers
+certifi==2024.7.4  # Updated root certificates
 
 # Database
 asyncpg==0.29.0
@@ -57,7 +57,7 @@ pytest-cov==4.1.0
 httpx-mock==0.7.0
 
 # Code Quality
-black==24.8.0  # Security fix for ReDoS vulnerability
+black==25.9.0  # Security fix for ReDoS vulnerability
 flake8==7.0.0
 mypy==1.8.0
 

@@ -18,7 +18,7 @@ markdown==3.5.1
 beautifulsoup4==4.12.3
 lxml==5.1.0
 openai==1.10.0
-langchain==0.3.14  # Security updates
+langchain==1.0.3  # Security updates
 langchain-community==0.3.14  # DoS vulnerability fix (CVE-2024-XXXX)
 chromadb==0.4.22
 sentence-transformers==2.3.1
